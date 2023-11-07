@@ -1,0 +1,98 @@
+<div>
+  <link rel="stylesheet" href="https://unicons.iconscout.com/release/v2.1.9/css/unicons.css">
+  <div class="section-login" [ngClass]="flip">
+    <div class="container">
+      <div class="row full-height justify-content-center">
+        <div class="col-12 text-center align-self-center">
+          <div class="section pt-sm-2 text-center">
+            <img src="assets/img/logo.png" alt="logo" />
+            <!-- <h6 class="mb-0 pb-3"><span>Cadastrar </span><span>Logar</span></h6>
+            <input class="checkbox" type="checkbox" id="reg-log" name="reg-log"/>
+            <label for="reg-log"></label> -->
+            <div class="card-3d-wrap mx-auto">
+              <div class="card-3d-wrapper">
+                <div class="card-front">
+                  <div class="center-wrap">
+                    <div class="section text-center">
+                      <form [formGroup]="form">
+                        <h4 class="mb-3 pb-3">CRIE SUA CONTA</h4>
+                        <div class="form-group mt-2">
+                          <input type="email"
+                          formControlName="email"
+                          [ngClass]="validaCSS(f.email)"
+                          class="form-control form-style" placeholder="E-mail" />
+                          <i class="input-icon uil uil-at"></i>
+                          <div *ngIf="f.email.errors?.required && f.email.touched" class="invalid-feedback text-start">E-mail é obrigatório</div>
+                          <div *ngIf="f.email.errors?.email && f.email.touched" class="invalid-feedback text-start">E-mail inválido</div>
+                        </div>
+                        <div class="form-group mt-2">
+                          <input type="password"
+                          formControlName="password"
+                          [ngClass]="validaCSS(f.password)"
+                          class="form-control form-style" placeholder="Senha" />
+                          <i class="input-icon uil uil-lock-alt"></i>
+                          <div *ngIf="f.password.errors?.required && f.password.touched" class="invalid-feedback text-start">Password é obrigatório</div>
+                          <div *ngIf="f.password.errors?.minlength" class="invalid-feedback text-start">Mínimo 6 caracteres</div>
+                          <!-- <div *ngIf="f.password.errors?.pattern" class="invalid-feedback text-start">Senha deve conter letras e números.</div> -->
+                        </div>
+                        <div class="form-group mt-2">
+                          <input type="password"
+                          formControlName="confirmPassword"
+                          [ngClass]="validaCSS(f.confirmPassword)"
+                          class="form-control form-style" placeholder="Repetir senha" />
+                          <i class="input-icon uil uil-lock-alt"></i>
+                          <div *ngIf="f.confirmPassword.errors?.required && f.confirmPassword.touched" class="invalid-feedback text-start">Repetir senha é obrigatório</div>
+                          <div *ngIf="f.confirmPassword.errors?.invalido && f.confirmPassword.touched" class="invalid-feedback text-start">Senhas devem ser iguais</div>
+                        </div>
+                        <div class="btn mt-4 me-2" (click)="toggleFlip()">Login</div>
+                        <div class="btn mt-4" [ngClass]="{'disabled': !form.valid}" (click)="register()">Cadastrar</div>
+                      </form>
+                    </div>
+                  </div>
+                </div>
+                <div class="card-back">
+                  <div class="center-wrap">
+                    <div class="section text-center">
+                      <form #loginForm="ngForm" (ngSubmit)="login()">
+                        <h4 class="mb-4 pb-3">ENTRE NA SUA CONTA</h4>
+                        <div class="form-group">
+                          <input
+                            [(ngModel)]="model.login"
+                            [ngModelOptions]="{standalone: true}"
+                            type="email"
+                            id="login"
+                            name="login"
+                            class="form-style"
+                            placeholder="E-mail"
+                          />
+                          <i class="input-icon uil uil-at"></i>
+                        </div>
+                        <div class="form-group mt-2">
+                          <input
+                            [(ngModel)]="model.password"
+                            [ngModelOptions]="{standalone: true}"
+                            type="password"
+                            id="password"
+                            name="password"
+                            class="form-style"
+                            placeholder="Senha"
+                          /><i class="input-icon uil uil-lock-alt"></i>
+                        </div>
+                        <div class="btn mt-4 me-2" (click)="toggleFlip()">Cadastrar</div>
+                        <div class="btn mt-4" (click)="login()" >Login</div> <!-- //[ngClass]="{'disabled', !model}" -->
+                        <div class="mb-0 mt-4 text-center">
+                          <div class="link">Esqueceu sua senha?</div>
+                        </div>
+                      </form>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="Toastify"></div>
+</div>

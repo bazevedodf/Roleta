@@ -1,0 +1,92 @@
+<app-navbar></app-navbar>
+<div class="container-fluid cover-bgImg px-0">
+  <div class="container px-0">
+    <div class="row justify-content-center">
+      <div class="col-md-4 col-xm-12 text-center">
+        <div class="body-game">
+          <h6>{{reelDialog}}</h6>
+          <div class="main">
+            <app-ngx-wheel
+              #whell
+              [width] = 368
+              [height] = 368
+              [spinDuration] = 10
+              [disableSpinOnClick]='true'
+              [items]= 'items'
+              [innerRadius]='85'
+              [spinAmount]='3'
+              [textOrientation]='textOrientation'
+              [textAlignment]='textAlignment'
+              [soundFile] = soudFile
+              [idToLandOn]='idToLandOn'
+              (onSpinStart)='before()'
+              (onSpinComplete)='after()'
+              style="margin-top: -35px;"
+            >
+            </app-ngx-wheel>
+          </div>
+          <div class="d-flex justify-content-center" style="margin-top: -15px;">
+            <label class="label-button buttons-small">
+              <input type="radio" name="test" value="1" [(ngModel)]="valorAposta">
+              <img src="/assets/img/azul.png" alt="Option 1" >
+              <span class="texto-botao outlined">R$ 1,00</span>
+            </label>
+            <label class="label-button  buttons-small">
+              <input type="radio" name="test" value="5" [(ngModel)]="valorAposta" >
+              <img src="/assets/img/azul.png" alt="Option 2" style="transform: scaleX(-1);">
+               <span class="texto-botao outlined">R$ 5,00</span>
+            </label>
+          </div>
+          <div class="justify-content-center">
+            <label class="label-button">
+              <input type="radio" name="test" value="20" [(ngModel)]="valorAposta" >
+              <img src="/assets/img/azul.png" alt="Option 1" >
+              <span class="texto-botao outlined">R$ 20,00</span>
+            </label>
+            <label class="label-button">
+              <input type="radio" name="test" value="50" [(ngModel)]="valorAposta">
+              <img src="/assets/img/azul.png" alt="Option 2" style="transform: scaleX(-1);">
+              <span class="texto-botao outlined">R$ 50,00</span>
+            </label>
+          </div>
+          <div class="mx-auto" style="width: 390px;">
+            <button (click)="spin()" class="playgame"><i class="fa-solid fa-play me-2"></i>PLAY</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <app-dialog [(visible)]="showAlert" [closable]="false">
+    <h4 class="text-center">{{tituloAlert}}</h4>
+    <div class="text-center mb-2">
+      {{mensagemAlert}}
+    </div>
+    <div class="text-center">
+      <a class='btn mt-2 my-0' (click)="showAlert = !showAlert">OK</a>
+    </div>
+  </app-dialog>
+  <app-dialog [(visible)]="showDialog" [closable]="false">
+    <h4 class="text-center">{{tituloDialo}}</h4>
+    <h2 *ngIf="valorPremio > 0" class="text-center"> Lucrou {{valorPremio | currency:'BRL' }}</h2>
+    <div class="text-center mb-2">
+      {{mensagemDialog}}
+    </div>
+    <div class="text-center">
+      <a class='btn mt-2 my-0' routerLink="/deposit">Depositar</a>
+      <a class='btn mt-2 my-0' (click)="showDialog = !showDialog">Teste Sua Sorte</a>
+    </div>
+  </app-dialog>
+  <app-dialog [(visible)]="showResult" [closable]="false">
+    <h4 class="text-center">{{tituloResult}}</h4>
+    <h2 *ngIf="valorPremio > 0" class="text-center"> Lucrou {{valorPremio | currency:'BRL' }}</h2>
+    <div class="text-center">Vamos para próxima rodada?</div>
+    <div class="text-center">
+      <a class='btn mt-2 my-0' (click)="proxima()">Próxima Rodada</a>
+    </div>
+  </app-dialog>
+
+<!--   <section id="Game">
+
+  </section> -->
+</div>
+

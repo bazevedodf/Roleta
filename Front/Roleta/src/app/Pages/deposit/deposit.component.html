@@ -1,0 +1,83 @@
+<app-navbar></app-navbar>
+<div class="container mt-4 text-center">
+  <h1 class="text-uppercase">Depósito via PIX</h1>
+  <div class="card" *ngIf="modoGerarPix === 'Gerado'">
+    <div class="card-body">
+      <div class="d-flex justify-content-center align-items-center lh-1 mt-3">
+        <i class="fa-regular fa-circle-check"></i>
+        <div class="ms-3 text-start">
+          <h4>Pronto!</h4>
+          Agora você so precisa finalizar o pagamento
+        </div>
+      </div>
+      <hr>
+      <small class="text-white fw-bold">Abra o App do seu banco, escaneie o QrCode ou copie o código do Pix, confirme o valor de R${{PixDeposit!.value}},00 para efetuar o pagamento.</small>
+      <div class="qrcode mt-3 bg-white rounded-2">
+        <button class="btn btn-copiar-pix mb-2 mt-4"
+        (click)="copyCode()"
+        id="btnCopy">
+          <i class="fa-regular fa-copy me-2"></i>Copiar código PIX
+        </button>
+        <br>
+        <img [src]="PixDeposit!.qrCode" alt="">
+        <br>
+        <img class="mb-3" src="assets/img/logo-pix.png" style="width: 100px;" alt="">
+      </div>
+      <div class="text-center mt-3">
+        <a routerLink="/game" style="cursor: pointer;"><button class="btn button-small mb-2">Confirmar Pagamento</button></a>
+        <button class="btn button-small ms-3" (click)="voltar()">Voltar</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="card" *ngIf="modoGerarPix === 'Gerar'">
+    <div class="card-body">
+      <div class="row text-start">
+        <form [formGroup]="form">
+          <div class="mb-3">
+            <label for="nome" class="form-label text-white fw-bold">Nome Completo</label>
+            <input type="text"
+              formControlName="nome"
+              [ngClass]="validaCSS(f.nome)"
+              class="form-control"
+              id="nome" placeholder="João da Silva">
+            <div *ngIf="f.nome.errors?.required && f.nome.touched" class="invalid-feedback text-start">Nome é obrigatório</div>
+          </div>
+          <div class="mb-3">
+            <label for="cpf" class="form-label text-white fw-bold">CPF</label>
+            <input type="text"
+              mask= "000.000.000-00"
+              formControlName="cpf"
+              [ngClass]="validaCSS(f.cpf)"
+              class="form-control"
+              id="cpf" placeholder="000.000.000-00">
+            <div *ngIf="f.cpf.errors?.required && f.cpf.touched" class="invalid-feedback text-start">CPF é obrigatório</div>
+          </div>
+          <div class="row">
+            <div class="col-xs-12 col-md-4 text-center" *ngFor="let item of planos">
+              <label class="option_item">
+                <input type="radio" name="produtoId" formControlName="produtoId" value="{{item.id}}" class="checkbox">
+                <div class="option_inner align-items-center" [ngClass]="item.classe">
+                  <div class="tickmark"></div>
+                  <div class="icon align-items-center"><img src="assets/img/option-value.png" width="50px" alt=""></div>
+                  <div class="name fw-bold lh-1">
+                    <ng-container >
+                      Crédito de <br>
+                      {{item.titulo}}<br>
+                      <!-- 50,00 + <b>(25,00 BÔNUS)</b><br> -->
+                      <small style="font-size: 10px;">Valor: R$ {{item.valor}},00</small>
+                    </ng-container>
+                  </div>
+                </div>
+              </label>
+            </div>
+            <div class="text-center"><button class="btn button" [ngClass]="{'disabled': !form.valid}" (click)="GerarPix()">Gerar Código PIX</button></div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+  <p *ngIf="PixDeposit === undefined">
+    <small class="text-secondary fw-bold">Os depósitos são realizadas através de um intermediador de pagamentos. O CPF é uma exigência do Banco Central do Brasil para processar pagamentos via PIX.</small>
+  </p>
+</div>

@@ -1,0 +1,19 @@
+.main {
+  margin: 0 auto;
+  width: 388px;
+  height: 500px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: url(../../../assets/img/fortune_wheel_back.png);
+  background-size: 388px 520px;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+@media (max-width: 720px) {
+  .main {
+    margin-left: -24px;
+  }
+
+}

@@ -1,0 +1,49 @@
+h1 {
+  color: #fff;
+}
+.card {
+  //background-color: #8358ff;
+  color: #fff;
+  background-image: linear-gradient(45deg, rgba(13, 16, 45, 0.933), rgba(107, 59, 114, 0.933));
+  border: 1px solid rgb(224, 182, 81);
+}
+
+.table {
+  --bs-table-bg: transparent;
+  color: #fff;
+}
+thead, tr, th, td{
+  color: #fff;
+}
+
+.table-group-divider{
+  color: rgb(224, 182, 81);
+}
+
+label {
+  color: #fff;
+}
+
+.input-group-text{
+  color: #fff;
+  font-weight: bold;
+  background-color: transparent;
+}
+
+.form-control {
+  font-weight: bold;
+}
+
+.btn {
+  border-radius: 4px;
+  height: 38px;
+  font-size: 16px;
+  font-weight: bold;
+  text-transform:none;
+  transition: all 200ms linear;
+  letter-spacing: 1px;
+  display: inline-flex;
+  align-items: center;
+  background-color: #8358ff;
+  color: #fff;
+}

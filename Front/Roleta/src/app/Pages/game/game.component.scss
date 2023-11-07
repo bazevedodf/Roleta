@@ -1,0 +1,154 @@
+.cover-bgImg{
+  width: 100%;
+  height: calc(100vh - 80px);
+  background-image: url("../../../assets/img/fundo.png");
+  //padding-top: 50px;
+}
+#Game {
+  color: #fff;
+}
+
+.body-game{
+  padding-top: 70px;
+  color: #fff;
+  max-width:414px;
+  background-image: url("../../../assets/img/bg.png");
+  height: calc(100vh - 80px);
+  background-repeat: no-repeat;
+  background-size:contain;
+  background-position:center top;
+}
+
+.main {
+  margin: 0 auto;
+  width: 370px;
+  height: 430px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: url(../../../assets/img/roleta.gif);
+  background-size: 370px 486px;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+
+@media (max-width: 720px) {
+  .body-game{
+    padding-top: 70px;
+  }
+  .main {
+    margin-top: -5px;
+  }
+}
+
+.texto-botao{
+  position: absolute;
+  margin-top: -41px;
+  text-align: 0 -webkit-auto;
+  display: inline;
+  margin-left: -29px;
+  color: white;
+}
+
+.outlined {
+  font-weight: bold;
+  text-shadow:
+    -1px -1px 0 #000,
+     0   -1px 0 #000,
+     1px -1px 0 #000,
+     1px  0   0 #000,
+     1px  1px 0 #000,
+     0    1px 0 #000,
+    -1px  1px 0 #000,
+    -1px  0   0 #000;
+}
+
+
+.playgame{
+  background: url(../../../assets/img/laranja.png) no-repeat;
+  border: none;
+  width: 312px;
+  background-size: cover;
+  height: 69px;
+  font-size: 28px;
+  font-weight: bolder;
+  padding-bottom: 21px;
+  color: #fff;
+  -webkit-text-stroke: 1px rgb(0, 0, 0);
+}
+
+.label-button{
+  margin-left: 10px;
+  margin-right: 10px;
+  margin-bottom: 5px;
+}
+
+/* HIDE RADIO */
+[type=radio] {
+  position: absolute;
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.buttons-small [type=radio] + img {
+  cursor: pointer;
+  display: block;
+  box-sizing: border-box;
+  width: 104px;
+  height: 44px;
+  background: url(../../../assets/img/azul.png) no-repeat;
+}
+
+.buttons-small [type=radio]:checked + img {
+  /* background: url(../../../assets/img/verde.png) no-repeat;
+  display: block;
+  box-sizing: border-box;
+  padding-left: 114px;
+  background-size:114px; */
+  cursor: pointer;
+  display: block;
+  box-sizing: border-box;
+  width: 104px;
+  height: 44px;
+  background: url(../../../assets/img/verde.png) no-repeat;
+  background-size: 104px 44px;
+  padding-left: 104px;
+}
+
+/* IMAGE STYLES */
+[type=radio] + img {
+  cursor: pointer;
+  display: block;
+  box-sizing: border-box;
+  width: 124px;
+  height: 47px;
+  background: url(../../../assets/img/azul.png) no-repeat;
+}
+
+/* CHECKED STYLES */
+[type=radio]:checked + img {
+  background: url(../../../assets/img/verde.png) no-repeat;
+  display: block;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+  width: 124px; /* Width of new image */
+  height: 47px; /* Height of new image */
+  padding-left: 124px; /* Equal to width of new image */
+  background-size:124px;
+}
+
+/* .freeSpinDeposit {
+  text-align: center;
+  display: block;
+  font-size: 1.2rem;
+  color: #fff;
+  padding: 10px 0;
+  border-radius: 22px;
+  background-color: #8358ff;
+} */
+
+
+
+

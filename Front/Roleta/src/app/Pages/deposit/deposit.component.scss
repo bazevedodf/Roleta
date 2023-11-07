@@ -1,0 +1,236 @@
+* {
+  text-decoration: none!important;
+}
+
+h1 {
+  color: #fff;
+}
+
+.card {
+  //background-color: #8358ff;
+  background-image: linear-gradient(45deg, rgba(13, 16, 45, 0.933), rgba(107, 59, 114, 0.933));
+  border: 1px solid rgb(224, 182, 81);
+  color: #fff;
+}
+.container{
+  width: 50%;
+}
+
+.qrcode img{
+  width: 50%;
+}
+.qrcode i {
+  float: left;
+}
+.fa-regular {
+  font-size: 4rem;
+}
+
+.btn-copiar-pix {
+  color: #616161;
+  background-color: transparent;
+  padding: 10px;
+  border: 1px solid #616161;
+}
+.btn-copiar-pix .fa-regular{
+  color: #616161;
+  font-size: 1.3rem;
+}
+
+.form-control {
+  background-color: #230f3c;
+  border-radius: 4px;
+  color: #c4c3ca;
+  font-size: 14px;
+  font-weight: 500;
+  height: 48px;
+  letter-spacing: .5px;
+  line-height: 22px;
+  transition: all .2s linear;
+  width: 100%;
+}
+.form-control::placeholder {
+  color: #8e8d95
+}
+
+.button {
+  background-color: #4f3697;
+  border-radius: 10px;
+  cursor: pointer;
+  font-size: 24px;
+  font-weight: 700;
+  margin-top: 30px;
+  padding: 10px 40px;
+  color: #fff;
+}
+
+.button-small {
+  background-color: #4f3697;
+  border-radius: 10px;
+  cursor: pointer;
+  font-size: 18px;
+  font-weight: 700;
+  padding: 10px 15px;
+  color: #fff;
+}
+
+.container .option_item {
+  position: relative;
+  margin: 10px;
+}
+
+.container .option_item .checkbox {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 1;
+  opacity: 0;
+}
+
+.option_item .option_inner {
+  width: 100%;
+  height: 100%;
+  background: #fff;
+  border-radius: 5px;
+  text-align: center;
+  padding: 40px 40px;
+  cursor: pointer;
+  color: #585c68;
+  display: block;
+  border: 5px solid transparent;
+  position: relative;
+  box-shadow: rgba(0, 0, 0, 1) 0px 5px 15px;
+}
+
+.option_item .option_inner .icon {
+  margin-bottom: 10px;
+}
+
+.option_item .option_inner .icon  img{
+  width: 80px;
+}
+
+.option_item .option_inner .name {
+  margin-top: 5px;
+  user-select: none;
+}
+
+.option_item .checkbox:checked ~ .option_inner.option1 {
+  border-color: #3b5999;
+  color: #3b5999;
+}
+
+.option_item .checkbox:checked ~ .option_inner.option2 {
+  border-color: #099704;
+  color: #099704;
+}
+
+.option_item .checkbox:checked ~ .option_inner.option3 {
+  border-color: #e4405f;
+  color: #e4405f;
+}
+
+.option_item .option_inner .tickmark {
+  position: absolute;
+  top: -2px;
+  left: -2px;
+  border: 30px solid;
+  border-color: #000 transparent transparent #000;
+  display: none;
+}
+
+.option_item .option_inner .tickmark:before {
+  content: "";
+  position: absolute;
+  top: -18px;
+  left: -18px;
+  width: 15px;
+  height: 5px;
+  border: 3px solid;
+  border-color: transparent transparent #fff #fff;
+  transform: rotate(-45deg);
+}
+
+.option_item .checkbox:checked ~ .option_inner .tickmark {
+  display: block;
+}
+
+.option_item .option_inner.option1 .tickmark {
+  border-color: #3b5999 transparent transparent #3b5999;
+}
+
+.option_item .option_inner.option2 .tickmark {
+  border-color: #099704 transparent transparent #099704;
+}
+
+.option_item .option_inner.option3 .tickmark {
+  border-color: #e4405f transparent transparent #e4405f;
+}
+
+
+
+@media (max-width: 720px) {
+  .container{
+    width: 100%;
+  }
+
+  .qrcode img{
+    width: 70%;
+  }
+
+  .container .option_item {
+    width: 100%;
+    position: relative;
+    margin-left: 0px;
+  }
+
+  .option_item .option_inner {
+    background: #fff;
+    border-radius: 5px;
+    text-align: left;
+    padding: 10px 40px;
+    cursor: pointer;
+    color: #585c68;
+    display: flex;
+    border: 5px solid transparent;
+    position: relative;
+    box-shadow: rgba(0, 0, 0, 1) 0px 5px 15px;
+  }
+
+  .option_item .option_inner .icon {
+    margin-right: 15px;
+    margin-bottom: 0px;
+  }
+
+  .option_item .option_inner .icon  img{
+    width: 50px;
+  }
+
+
+}
+
+.option2-value {
+  border: 1px solid #ccc;
+  box-sizing: border-box;
+  float: left;
+  position: relative;
+  height: 70px;
+  width: 120px;
+}
+
+.option-value label {
+  bottom: 1px;
+  cursor: pointer;
+  display: block;
+  font-size: 0;
+  left: 1px;
+  position: absolute;
+  right: 1px;
+  text-indent: 100%;
+  top: -50px;
+  white-space: nowrap;
+  background-image: url(../../../assets/img/option-value.png);
+  background-repeat: no-repeat;
+  background-size: 40%;
+  background-position:center;
+}

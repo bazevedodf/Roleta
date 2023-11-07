@@ -1,0 +1,23 @@
+<div class="main">
+  <app-ngx-wheel
+    #whell
+    [width] = 388
+    [height] = 388
+    [spinDuration] = 10
+    [disableSpinOnClick]='true'
+    [items]= 'items'
+    [innerRadius]='90'
+    [spinAmount]='3'
+    [textOrientation]='textOrientation'
+    [textAlignment]='textAlignment'
+    [idToLandOn]='idToLandOn'
+    (onSpinStart)='before()'
+    (onSpinComplete)='after()'
+    style="margin-top: -35px;"
+  >
+  </app-ngx-wheel>
+</div>
+<div>
+  <button (click)="reset()">Reset</button>
+  <button (click)="spin()">Play Game</button>
+</div>
