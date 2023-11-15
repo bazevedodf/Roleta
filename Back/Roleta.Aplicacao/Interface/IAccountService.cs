@@ -8,6 +8,9 @@ namespace Roleta.Aplicacao.Interface
     {
         Task<bool> EmailExists(string email);
         Task<bool> UserExists(string userName);
+        Task<bool> CheckRoleAsync(UserDto userDto, string role);
+        Task<bool> SetUserRole(UserDto userDto, string roleName);
+
         Task<UserDto> GetByIdAsync(Guid id, bool includeRole = false);
         Task<UserGameDto> GetUserGameAsync(string userLogin, bool includeDados = false);
         Task<UserDto> GetByUserLoginAsync(string userLogin);

@@ -1,5 +1,6 @@
 ﻿using Roleta.Aplicacao.Dtos;
 using Roleta.Dominio;
+using Roleta.Persistencia.Models;
 
 namespace Roleta.Aplicacao.Interface
 {
@@ -13,6 +14,8 @@ namespace Roleta.Aplicacao.Interface
         Task<PagamentoDto> GetByIdAsync(int id);
         Task<PagamentoDto[]> GetAllByUserIdAsync(Guid userId);
         Task<PagamentoDto[]> GetAllByStatusAsync(string status);
+        Task<int> GetAllAproveByParentEmailAsync(string? parentEmail = null);
         Task<PagamentoDto> GetByTransactionIdAsync(string transactionId, bool includeProduto = false);
+        Task<PageList<PagamentoDto>> GetAllByParentEmailAsync(DateTime dataIni, DateTime dataFim, PageParams pageParams);
     }
 }

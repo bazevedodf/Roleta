@@ -160,24 +160,24 @@ namespace Roleta.Persistencia.Migrations
                     b.HasData(
                         new
                         {
-                            Id = new Guid("56a286b7-3f5a-4cc1-875b-6b9735722eba"),
-                            ConcurrencyStamp = "7446fabb-52ac-4237-9b43-a891c2a568b6",
+                            Id = new Guid("9cc9ed87-685c-4af1-a1d3-f359941553d2"),
+                            ConcurrencyStamp = "a08d988d-d5f4-41ad-a561-8d6875a899fa",
                             Name = "Admin",
                             NormalizedName = "ADMIN"
                         },
                         new
                         {
-                            Id = new Guid("2f2dc261-e1e8-475a-88ba-ee501bbd0f73"),
-                            ConcurrencyStamp = "dc8dc1ee-74f5-4204-ae99-f47669f0998f",
-                            Name = "Apostador",
-                            NormalizedName = "Apostador"
+                            Id = new Guid("238e8ae4-3565-4282-ac78-3f4c46c035e5"),
+                            ConcurrencyStamp = "ea7712c0-24b4-401b-b948-129256d9db46",
+                            Name = "User",
+                            NormalizedName = "USER"
                         },
                         new
                         {
-                            Id = new Guid("7e0e18e6-423b-4e97-bf8e-6d30bff36638"),
-                            ConcurrencyStamp = "05542b26-9f88-445c-b342-abc543e5f4a6",
-                            Name = "Afiliado",
-                            NormalizedName = "Afiliado"
+                            Id = new Guid("57780b66-f464-4950-b35c-8515a8b1513b"),
+                            ConcurrencyStamp = "f39ff057-9a48-4c38-84f4-80b4474bb2b9",
+                            Name = "Afiliate",
+                            NormalizedName = "AFILIATE"
                         });
                 });
 
@@ -190,9 +190,18 @@ namespace Roleta.Persistencia.Migrations
                     b.Property<int>("AccessFailedCount")
                         .HasColumnType("int");
 
+                    b.Property<string>("AfiliateCode")
+                        .HasColumnType("longtext");
+
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken()
                         .HasColumnType("longtext");
+
+                    b.Property<DateTime>("DataCadastro")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<bool>("DemoAcount")
+                        .HasColumnType("tinyint(1)");
 
                     b.Property<string>("Description")
                         .HasColumnType("longtext");
@@ -382,7 +391,9 @@ namespace Roleta.Persistencia.Migrations
                         .HasColumnType("varchar(50)");
 
                     b.Property<decimal>("SaldoDeposito")
-                        .HasColumnType("decimal(65,30)");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("decimal(65,30)")
+                        .HasDefaultValue(0m);
 
                     b.Property<int>("TipoProduto")
                         .HasColumnType("int");

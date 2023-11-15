@@ -1,1 +1,148 @@
-<p>pagamentos works!</p>
+<div class="row align-middle mt-3 px-2">
+  <div class="col-md-6 d-flex text-brand">
+    <h3>PAGAMENTOS</h3>
+  </div>
+  <div class="text-end col-md-6 text-brand">
+    <ol class="breadcrumb float-sm-end">
+      <li class="breadcrumb-item"><a routerLink="/home">Dashboard</a></li>
+      <li class="breadcrumb-item active">Pagamentos</li>
+    </ol>
+  </div>
+</div>
+<div class="container pt-2">
+  <div class="row">
+    <div class="col-xs-1 col-md-4">
+      <div class="card card-dasboard">
+        <div class="card-header text-end">
+          <div class="card-icon bg-orange">
+            <i class="fa-regular fa-circle-up"></i>
+          </div>
+          <p class="card-category m-0">Emitidos</p>
+          <h5>0</h5>
+        </div>
+        <div class="card-footer">
+          <div class="stats">
+            <i class="fas fa-info-circle me-2"></i>
+            <a>Pagamentos Emitidos</a>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-xs-1 col-md-4">
+      <div class="card card-dasboard">
+        <div class="card-header text-end">
+          <div class="card-icon bg-green">
+            <i class="fa-regular fa-circle-down"></i>
+          </div>
+          <p class="card-category m-0">Recebidos</p>
+          <h5>R$ 0,00</h5>
+        </div>
+        <div class="card-footer">
+          <div class="stats">
+            <i class="fas fa-info-circle me-2"></i>
+            <a>Pagamentos Recebidos</a>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-xs-1 col-md-4">
+      <div class="card card-dasboard">
+        <div class="card-header text-end">
+          <div class="card-icon bg-blue">
+            <i class="fas fa-funnel-dollar"></i>
+          </div>
+          <p class="card-category m-0">Conversão</p>
+          <h5>35.2%</h5>
+        </div>
+        <div class="card-footer">
+          <div class="stats">
+            <i class="fas fa-info-circle me-2"></i>
+            <a>Taxa de Conversão</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-md-12">
+      <div class="card card-dasboard">
+        <div class="card-header">
+          <div class="card-Text d-flex bg-purple">
+            <i class="fas fa-file-invoice-dollar"></i>
+            <div class="text-white lh-1 ms-1">
+              <h5 class="card-title mb-0">Cobranças</h5>
+              <p class="card-category m-0">Emitidas e Recebidas Hoje</p>
+            </div>
+          </div>
+        </div>
+        <div class="card-body">
+          <div class="container-fluid">
+            <div class="row">
+
+              <div class="col-md-6 mb-2 d-flex">
+                <div class="form-group">
+                  <label>Afiliado</label>
+                  <select #ddltipoReceita class="form-select" aria-label="Tipo Receita">
+                    <!-- <select #ddltipoReceita [(ngModel)]="tipoReceitaSelected" class="form-select" aria-label="Tipo Receita"> -->
+                    <option value="0">Todas</option>
+                    <!-- <option *ngFor="let item of tiposReceita" [value]="item.id">{{item.nome}}</option> -->
+                  </select>
+                </div>
+                <button class="btn bg-green text-white mt-4 ms-2 d-flex">
+                  <i class="fa fa-search mt-1"></i>
+                  <span class="ms-2 d-none d-sm-block">Filtrar</span>
+                </button>
+              </div>
+
+            </div>
+            <div class="row">
+              <div class="py-3">
+                <table class="table table-hover">
+                  <thead class="text-primary">
+                    <tr>
+                      <th scope="col">Nome</th>
+                      <th scope="col">Tipo</th>
+                      <th scope="col">Calorias</th>
+                      <th scope="col">Editar</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td style="cursor: pointer;">asdasda</td>
+                      <td style="cursor: pointer;">
+                        asdasdasd
+                      </td>
+                      <td>asdasd</td>
+                      <td><a style="cursor: pointer;"><i class="far fa-edit"></i></a></td>
+                    </tr>
+                  </tbody>
+                  <tfoot>
+                    <tr>
+                      <td colspan="4" class="text-center">
+                        <h5 class="text-muted">Nenhuma Receita encontrada</h5>
+                      </td>
+                    </tr>
+                  </tfoot>
+                </table>
+              </div>
+            </div>
+            <div class="row">
+              <div class="d-flex justify-content-center">
+                <!-- <pagination [boundaryLinks]="true"
+                  [totalItems]="pagination.totalItems"
+                  [(ngModel)]="pagination.currentPage"
+                  [itemsPerPage]="pagination.itemsPerPage"
+                  [align]="true"
+                  pageBtnClass="btn"
+                  (pageChanged)="pageChanged($event)"
+                  previousText="Voltar" nextText="Próximo" firstText="&laquo;" lastText="&raquo;">
+                </pagination> -->
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

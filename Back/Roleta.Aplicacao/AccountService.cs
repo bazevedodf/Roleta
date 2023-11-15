@@ -44,6 +44,7 @@ namespace Roleta.Aplicacao
                 var result = await _userManager.CreateAsync(user, userDto.Password);
                 if (result.Succeeded)
                 {
+                    await _userManager.AddToRoleAsync(user, "User");
                     var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
 
                     var retorno = _mapper.Map<UserDto>(user);
@@ -174,6 +175,33 @@ namespace Roleta.Aplicacao
             {
                 throw new Exception($"Erro ao verificar se o e-mail existe. Erro: {ex.Message}");
             }
+        }
+
+        public async Task<bool> CheckRoleAsync(UserDto userDto, string role)
+        {
+            try
+            {
+                var user = _mapper.Map<User>(userDto);
+                var roles = await _userManager.GetRolesAsync(user);
+                if (roles.Contains(role))
+                    return true;
+
+                return false;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Erro ao tentar verificar Password. Erro: {ex.Message}");
+            }
+        }
+
+        public async Task<bool> SetUserRole(UserDto userDto, string roleName)
+        {
+            var user = await _userManager.Users.SingleOrDefaultAsync(user => user.Email.ToLower() == userDto.Email.ToLower());
+            if (user == null) return false;
+
+            var result = await _userManager.AddToRoleAsync(user, roleName);
+
+            return result.Succeeded;
         }
 
         public async Task<UserDto> GetByIdAsync(Guid id, bool includeRole = false)

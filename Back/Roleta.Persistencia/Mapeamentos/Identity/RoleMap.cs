@@ -18,8 +18,8 @@ namespace Roleta.Persistencia.Mapeamentos.Identity
                 new Role()
                 {
                     Id = Guid.NewGuid(),
-                    Name = "Player",
-                    NormalizedName = "PLAYER"
+                    Name = "User",
+                    NormalizedName = "USER"
                 },
                 new Role()
                 {

@@ -127,6 +127,7 @@ static void ConfigureServices(WebApplicationBuilder builder)
 
     builder.Services.AddScoped<ITokenService, TokenService>();
     builder.Services.AddScoped<IAccountService, AccountService>();
+    builder.Services.AddScoped<IUserService, UserService>();
     builder.Services.AddScoped<IProdutoService, ProdutoService>();
     builder.Services.AddScoped<IPagamentoService, PagamentoService>();
     builder.Services.AddScoped<ISaqueService, SaqueService>();    

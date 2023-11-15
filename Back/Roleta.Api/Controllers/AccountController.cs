@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using Roleta.Aplicacao.Dtos.Identity;
 using Roleta.Aplicacao.Extensions;
 using Roleta.Aplicacao.Interface;
+using Roleta.Dominio.Identity;
 using System.Reflection;
 using System.Text;
 
@@ -169,6 +170,38 @@ namespace Roleta.Api.Controllers
                 if (!result.Succeeded) return Unauthorized("Senha inválida");
 
                 var retorno = _mapper.Map<UserDto>(user);
+                retorno.Token = _tokenService.CreateToken(user).Result;
+                return Ok(retorno);
+            }
+            catch (Exception ex)
+            {
+                return this.StatusCode(
+                    StatusCodes.Status500InternalServerError,
+                    $"Erro ao tentar autenticar conta de usuário. Erro: {ex.Message}");
+            }
+        }
+
+        [AllowAnonymous]
+        [HttpPost("AfiliateLogin")]
+        public async Task<IActionResult> AfiliateLogin(LoginDto loginDto)
+        {
+            try
+            {
+                var user = await _accountService.GetByUserLoginAsync(loginDto.Login);
+                if (user == null) return Unauthorized("Usuário ou E-mail inválido");
+
+                if (!await _accountService.CheckRoleAsync(user, "Afiliate") || !await _accountService.CheckRoleAsync(user, "Admin")) 
+                    return BadRequest("Você não tem permissão para logar!");
+
+                var result = await _accountService.CheckPasswordAsync(user, loginDto.Password);
+
+                if (result.IsNotAllowed) return Unauthorized("Confirme seu cadastro no e-mail que te enviamos!");
+
+                if (result.IsLockedOut) return Unauthorized("Você está temporariamente bloqueado, tente em 5 min!");
+
+                if (!result.Succeeded) return Unauthorized("Senha inválida");
+
+                var retorno = _mapper.Map<UserDashBoardDto>(user);
                 retorno.Token = _tokenService.CreateToken(user).Result;
                 return Ok(retorno);
             }

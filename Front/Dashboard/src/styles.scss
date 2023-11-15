@@ -3,3 +3,102 @@
 @import "./node_modules/bootstrap/scss/bootstrap";
 @import "node_modules/ngx-bootstrap/datepicker/bs-datepicker";
 @import "node_modules/@fortawesome/fontawesome-free/css/all.min.css";
+
+html, body {
+  //font-family: Nunito Sans, open-sans,sans-serif;
+  font-family: Poppins,Helvetica,"sans-serif";
+  height: 100%;
+  color: #999;
+  background-color: rgba(203, 203, 210, 0.15);
+  font-size: .875rem;
+  font-weight: 400;
+  line-height: 1.375rem;
+  letter-spacing: .0071428571em;
+}
+
+.text-primary{
+  color: #9c27b0;
+}
+
+.bg-roxo {
+  background: linear-gradient(45deg,#943bea ,#7a45e2,#ab85cf);
+}
+.bg-orange {
+  background:linear-gradient(60deg,#f5c47a,#fb8c00)
+}
+.bg-green {
+  background:linear-gradient(60deg,#43a047,#85ee8a)
+}
+.bg-blue {
+  background:linear-gradient(60deg,#3dbbf5,#036cb3)
+}
+.bg-purple {
+  background: #9368E9;
+  background: -moz-linear-gradient(top, #9368E9 0%, #943bea 100%);
+  background: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #9368E9), color-stop(100%, #943bea));
+  background: -webkit-linear-gradient(top, #9368E9 0%, #943bea 100%);
+  background: -o-linear-gradient(top, #9368E9 0%, #943bea 100%);
+  background: -ms-linear-gradient(top, #9368E9 0%, #943bea 100%);
+  background: linear-gradient(to bottom, #9368E9 0%, #943bea 100%);
+  background-size: 150% 150%;
+}
+
+.card-dasboard {
+  border: 1px solid #eee;
+  border-radius: 4px;
+  background-color: #fff;
+  margin-bottom: 30px;
+  box-shadow: 0 2px 5px 0 rgb(0 0 0 / 14%), 0 4px 5px -5px rgba(50, 53, 50, 0.4);
+  color: #999;
+  font-size: 16px;
+}
+.card-dasboard>.card-header {
+  border-bottom: none;
+  background-color: #fff;
+}
+.card-header, .card-footer {
+  border-top: 1px solid #eee;
+}
+.card-Text {
+  border-radius: 3px;
+  background-color: #999;
+  padding: 15px;
+  margin-top: -20px;
+  box-shadow: 0 4px 20px 0 rgb(0 0 0 / 14%), 0 7px 10px -5px rgba(50, 53, 50, 0.4);
+}
+.card-category {
+  font-size: 14px;
+}
+.card-icon {
+  border-radius: 3px;
+  background-color: #999;
+  padding: 15px;
+  margin-top: -20px;
+  margin-right: 15px;
+  float: left;
+  box-shadow: 0 4px 10px 0 rgb(0 0 0 / 14%), 0 7px 5px -5px rgba(50, 53, 50, 0.4);
+}
+.card-icon>i, .card-Text>i {
+  color: #fff;
+  font-size: 35px;
+  line-height: 40px;
+  width: 40px;
+  height: 40px;
+  text-align: center;
+}
+
+.table {
+  font-size: 14px;
+  th{
+    color: #9c27b0 !important;
+    background-color: var(--bs-card-cap-bg);
+  }
+  td {
+    color: #999;
+  }
+  i {
+    color: #9c27b0;
+  }
+}
+
+

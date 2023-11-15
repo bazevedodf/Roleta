@@ -1,1 +1,228 @@
-<p>home works!</p>
+<div class="container pt-3">
+  <div class="row align-middle px-2">
+    <div class="col-md-6 d-flex text-brand">
+      <h4>Dasboard</h4>
+    </div>
+    <div class="text-end col-md-6 text-brand">
+      <ol class="breadcrumb float-sm-end">
+        <li class="breadcrumb-item"><a routerLink="/home">Dashboard</a></li>
+      </ol>
+    </div>
+  </div>
+
+  <div class="row pt-2">
+    <div class="col-xs-1 col-md-4">
+      <div class="card card-dasboard">
+        <div class="card-header text-end">
+          <div class="card-icon bg-roxo">
+            <i class="fas fa-id-card"></i>
+          </div>
+          <p class="card-category m-0">Cadastros</p>
+          <h5>{{totais.cadastros}}</h5>
+        </div>
+        <div class="card-footer">
+          <div class="stats">
+            <i class="fas fa-info-circle me-2"></i>
+            <a>Total de Cadastros</a>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-xs-1 col-md-4">
+      <div class="card card-dasboard">
+        <div class="card-header text-end">
+          <div class="card-icon bg-green">
+            <i class="fa-regular fa-circle-down"></i>
+          </div>
+          <p class="card-category m-0">Recebidos</p>
+          <h5>{{totais.pagamentos}}</h5>
+        </div>
+        <div class="card-footer">
+          <div class="stats">
+            <i class="fas fa-info-circle me-2"></i>
+            <a>Pagamentos Recebidos</a>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-xs-1 col-md-4">
+      <div class="card card-dasboard">
+        <div class="card-header text-end">
+          <div class="card-icon bg-blue">
+            <i class="fas fa-funnel-dollar"></i>
+          </div>
+          <p class="card-category m-0">Conversão</p>
+          <h5>{{totais.conversao}}</h5>
+        </div>
+        <div class="card-footer">
+          <div class="stats">
+            <i class="fas fa-info-circle me-2"></i>
+            <a>Taxa de Conversão</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-md-6">
+      <div class="card card-dasboard">
+        <div class="card-header">
+          <div class="card-Text d-flex bg-purple">
+            <i class="fas fa-user-check"></i>
+            <div class="text-white lh-1 ms-2">
+              <h5 class="card-title mb-0">Cadastros</h5>
+              <p class="card-category m-0">Novos registros de hoje</p>
+            </div>
+            <h2 class="ms-auto text-white">{{userPagination.totalItems}}</h2>
+          </div>
+        </div>
+        <div class="card-body">
+          <div class="container-fluid">
+            <!-- <div class="row">
+
+              <div class="col-md-6 mb-2 d-flex">
+                <div class="form-group">
+                  <label>Afiliado</label>
+                  <select #ddltipoReceita class="form-select" aria-label="Tipo Receita">
+                    <option value="0">Todas</option>
+                  </select>
+                </div>
+                <button class="btn bg-green text-white mt-4 ms-2 d-flex">
+                  <i class="fa fa-search mt-1"></i>
+                  <span class="ms-2 d-none d-sm-block">Filtrar</span>
+                </button>
+              </div>
+
+            </div> -->
+            <div class="row">
+              <div>
+                <table class="table table-hover">
+                  <thead class="text-primary">
+                    <tr>
+                      <th scope="col">#</th>
+                      <!-- <th scope="col">Nome</th> -->
+                      <th scope="col">Email</th>
+                      <th scope="col">Data</th>
+                    </tr>
+                  </thead>
+                  <tbody *ngIf="users && users.length">
+                    <tr *ngFor="let user of users" style="cursor: pointer;">
+                      <td><a style="cursor: pointer;"><i class="fas fa-id-card"></i></a></td>
+                      <!-- <td style="cursor: pointer;">{{user.firstName}}</td> -->
+                      <td style="cursor: pointer;">{{user.email}}</td>
+                      <td>{{user.dataCadastro | DateTimeFormat}}</td>
+                    </tr>
+                  </tbody>
+                  <tfoot *ngIf="!users.length">
+                    <tr>
+                      <td colspan="4" class="text-center">
+                        <h5 class="text-muted">Nenhuma registro encontrado</h5>
+                      </td>
+                    </tr>
+                  </tfoot>
+                </table>
+              </div>
+            </div>
+            <div class="row">
+              <div class="d-flex justify-content-center">
+                <pagination [boundaryLinks]="true"
+                  [totalItems]="userPagination.totalItems"
+                  [(ngModel)]="userPagination.currentPage"
+                  [itemsPerPage]="userPagination.itemsPerPage"
+                  [align]="true"
+                  pageBtnClass="btn"
+                  (pageChanged)="userPageChanged($event)"
+                  [maxSize]="6"
+                  previousText="Voltar" nextText="Próximo" firstText="&laquo;" lastText="&raquo;">
+                </pagination>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-6">
+      <div class="card card-dasboard">
+        <div class="card-header">
+          <div class="card-Text d-flex bg-purple">
+            <i class="fas fa-file-invoice-dollar"></i>
+            <div class="text-white lh-1 ms-1">
+              <h5 class="card-title mb-0">Cobranças</h5>
+              <p class="card-category m-0">Emitidas e Recebidas Hoje</p>
+            </div>
+            <h2 class="ms-auto text-white">{{pagamentoPagination.totalItems}}</h2>
+          </div>
+        </div>
+        <div class="card-body">
+          <div class="container-fluid">
+            <!-- <div class="row">
+
+              <div class="col-md-6 mb-2 d-flex">
+                <div class="form-group">
+                  <label>Afiliado</label>
+                  <select #ddltipoReceita class="form-select" aria-label="Tipo Receita">
+                    <option value="0">Todas</option>
+                  </select>
+                </div>
+                <button class="btn bg-green text-white mt-4 ms-2 d-flex">
+                  <i class="fa fa-search mt-1"></i>
+                  <span class="ms-2 d-none d-sm-block">Filtrar</span>
+                </button>
+              </div>
+
+            </div> -->
+            <div class="row">
+              <div>
+                <table class="table table-hover">
+                  <thead class="text-primary">
+                    <tr>
+                      <th scope="col">#</th>
+                      <th scope="col">Nome</th>
+                      <th scope="col">CPF</th>
+                      <th scope="col">Data</th>
+                    </tr>
+                  </thead>
+                  <tbody *ngIf="pagamentos && pagamentos.length">
+                    <tr *ngFor="let pagamento of pagamentos">
+                      <td>
+                        <a style="cursor: pointer;">
+                          <i class="fa-solid fa-circle-check" *ngIf="pagamento.status === 'APPROVED'" tooltip="Pagamento Aprovado" style="color: rgb(10, 185, 10);"></i>
+                        </a>
+                      </td>
+                      <td style="cursor: pointer;">{{pagamento.user.email}}</td>
+                      <td style="cursor: pointer;">{{pagamento.cpf}}</td>
+                      <td>{{pagamento.dataCadastro | DateFormat}}</td>
+                    </tr>
+                  </tbody>
+                  <tfoot *ngIf="!users.length">
+                    <tr>
+                      <td colspan="4" class="text-center">
+                        <h5 class="text-muted">Nenhuma registro encontrado</h5>
+                      </td>
+                    </tr>
+                  </tfoot>
+                </table>
+              </div>
+            </div>
+            <div class="row">
+              <div class="d-flex justify-content-center">
+                <pagination [boundaryLinks]="true"
+                  [totalItems]="pagamentoPagination.totalItems"
+                  [(ngModel)]="pagamentoPagination.currentPage"
+                  [itemsPerPage]="pagamentoPagination.itemsPerPage"
+                  [align]="true"
+                  pageBtnClass="btn"
+                  (pageChanged)="pagamentoPageChanged($event)"
+                  [maxSize]="6"
+                  previousText="Voltar" nextText="Próximo" firstText="&laquo;" lastText="&raquo;">
+                </pagination>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

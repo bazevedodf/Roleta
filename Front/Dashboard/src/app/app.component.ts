@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { AccountService } from './Services/account.service';
 
 @Component({
   selector: 'app-root',
@@ -7,4 +8,11 @@ import { Component } from '@angular/core';
 })
 export class AppComponent {
   title = 'Dashboard';
+
+  constructor(private accountService: AccountService){
+  }
+
+  ngOnInit(): void{
+    this.accountService.loggedIn();
+  }
 }

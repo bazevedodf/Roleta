@@ -52,30 +52,36 @@ namespace Roleta.Aplicacao
                 if (freeSpin)
                 {
                     //0.5 tem 4 posicoes
-                    posicoes = new int[] { 1, 2, 3, 4, 7, 8, 9, 10, 11, 13, 14, 15, 16, 17, 18 };
+                    posicoes = new int[] { 1, 2, 3, 4, 4, 7, 8, 8, 9, 9, 10, 11, 13, 13, 14, 15, 16, 17, 18, 18 };
                     //posicoes = new decimal[] { 0.5m, 1, 1.2m, 3, 0.5m, 1, 1.2m, 5, 100, 0.5m, 1, 1.2m, 7, 0.5m, 1, 1.2m, 9, 30 };
                 }
                 else
                 {
-                    //1° passo - verificar o multiplicador e saber o valor maximo que pode ter do sorteio
-                    //2° passo - verificar saldo da casa e ver se está acima de 5k e o valor tem que ser mair que 10% da banca   
-                    //3° passo - se sorteio for vencedor, entao atualizar o saldo total de deposito e o saldo do usuario
-                    //posicoes = new decimal[] { 0.5m, 1, 1.2m, 3, 0.5m, 1, 1.2m, 5, 100, 0.5m, 1, 1.2m, 7, 0.5m, 1, 1.2m, 9, 30 };
-                    //posicoes = new int[] { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18 };
-                    switch (valorAposta)
+                    if (user.DemoAcount)
                     {
-                        case 1: 
-                            posicoes = new int[] { 1, 1, 2, 2, 3, 3, 4, 5, 5, 7, 8, 10, 11, 11, 13, 14, 14, 15, 16, 17 }; 
-                            break;
-                        case 50:
-                            posicoes = new int[] { 1, 1, 1, 2, 2, 2, 3, 5, 5, 5, 6, 6, 7, 10, 10, 10, 11, 11, 12, 14, 14, 14, 15, 15 };
-                            break;
-                        default:
-                            posicoes = new int[] { 1, 1, 1, 2, 2, 2, 3, 5, 5, 5, 6, 6, 7, 10, 10, 10, 11, 11, 12, 14, 14, 14, 15, 15 };
-                            //posicoes = new int[] { 1, 1, 2, 2, 3, 5, 6, 6, 7, 10, 11, 11, 12, 14, 15 };
-                            break;
+                        posicoes = new int[] { 1, 2, 3, 4, 4, 7, 8, 8, 9, 9, 10, 11, 13, 13, 14, 15, 16, 17, 18, 18 };
                     }
-                    
+                    else
+                    {
+                        //1° passo - verificar o multiplicador e saber o valor maximo que pode ter do sorteio
+                        //2° passo - verificar saldo da casa e ver se está acima de 5k e o valor tem que ser mair que 10% da banca   
+                        //3° passo - se sorteio for vencedor, entao atualizar o saldo total de deposito e o saldo do usuario
+                        //posicoes = new decimal[] { 0.5m, 1, 1.2m, 3, 0.5m, 1, 1.2m, 5, 100, 0.5m, 1, 1.2m, 7, 0.5m, 1, 1.2m, 9, 30 };
+                        //posicoes = new int[] { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18 };
+                        switch (valorAposta)
+                        {
+                            case 1:
+                                posicoes = new int[] { 1, 1, 2, 2, 3, 3, 4, 5, 5, 7, 8, 10, 11, 11, 13, 14, 14, 15, 16, 17 };
+                                break;
+                            case 50:
+                                posicoes = new int[] { 1, 1, 1, 2, 2, 2, 3, 5, 5, 5, 6, 6, 7, 10, 10, 10, 11, 11, 12, 14, 14, 14, 15, 15 };
+                                break;
+                            default:
+                                posicoes = new int[] { 1, 1, 1, 2, 2, 2, 3, 5, 5, 5, 6, 6, 7, 10, 10, 10, 11, 11, 12, 14, 14, 14, 15, 15 };
+                                //posicoes = new int[] { 1, 1, 2, 2, 3, 5, 6, 6, 7, 10, 11, 11, 12, 14, 15 };
+                                break;
+                        }
+                    }                    
                 }
 
                 var rnd = new Random();

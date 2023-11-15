@@ -3,7 +3,9 @@ using Roleta.Aplicacao.Dtos;
 using Roleta.Aplicacao.Dtos.Identity;
 using Roleta.Aplicacao.Interface;
 using Roleta.Dominio;
+using Roleta.Persistencia;
 using Roleta.Persistencia.Interface;
+using Roleta.Persistencia.Models;
 using System.Text;
 
 namespace Roleta.Aplicacao
@@ -200,6 +202,19 @@ namespace Roleta.Aplicacao
             }
         }
 
+        public async Task<int> GetAllAproveByParentEmailAsync(string? parentEmail = null)
+        {
+            try
+            {
+                return await _pagamentoPersist.GetAllAproveByParentEmailAsync(parentEmail);
+
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }        
+
         public async Task<PagamentoDto> GetByTransactionIdAsync(string transactionId, bool includeProduto = false)
         {
             try
@@ -208,6 +223,29 @@ namespace Roleta.Aplicacao
                 if (pagamento == null) return null;
 
                 return _mapper.Map<PagamentoDto>(pagamento);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+
+        public async Task<PageList<PagamentoDto>> GetAllByParentEmailAsync(DateTime dataIni, DateTime dataFim, PageParams pageParams)
+        {
+            try
+            {
+                var users = await _pagamentoPersist.GetAllByParentEmailAsync(dataIni, dataFim, pageParams);
+
+                if (users == null) return null;
+
+                var resultado = _mapper.Map<PageList<PagamentoDto>>(users);
+
+                resultado.CurrentPage = users.CurrentPage;
+                resultado.TotalPages = users.TotalPages;
+                resultado.PageSize = users.PageSize;
+                resultado.TotalCount = users.TotalCount;
+
+                return resultado;
             }
             catch (Exception ex)
             {

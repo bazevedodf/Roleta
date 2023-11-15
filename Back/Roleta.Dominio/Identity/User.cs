@@ -14,6 +14,9 @@ namespace Roleta.Dominio.Identity
         public decimal SaldoSaque { get; set; }
         public string? ParentEmail { get; set; }
         public bool Verified { get; set; }
+        public bool DemoAcount { get; set; }
+        public string? AfiliateCode { get; set; }
+        public DateTime DataCadastro { get; set; } = DateTime.Now;
         public IEnumerable<UserRole>? UserRoles { get; set; }
         public IEnumerable<Pagamento>? Pagamentos { get; set; }
         public IEnumerable<Saque>? Saques { get; set; }

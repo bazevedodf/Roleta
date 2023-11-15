@@ -1,6 +1,6 @@
 <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm" *ngIf="showMenu()">
   <div class="container">
-    <a class="navbar-brand" href="#"><img width="90px" src="assets/img/logo.png" alt=""></a>
+    <a class="navbar-brand" routerLink="home"><img width="90px" src="assets/img/logo.png" alt=""></a>
     <button class="navbar-toggler" (click)="isCollapsed = !isCollapsed" type="button" data-bs-toggle="collapse"
       data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
@@ -8,27 +8,47 @@
     <div class="collapse navbar-collapse" [collapse]="isCollapsed" [isAnimated]="true" id="navbarNav">
       <ul class="navbar-nav me-auto">
         <li class="nav-item text-center">
-          <i class="fa-solid fa-house"></i>
-          <a class="nav-link active" aria-current="page" href="#">Home</a>
+          <a class="nav-link active" aria-current="page" routerLink="home" style="cursor: pointer;">
+            <div>
+              <i class="fa-solid fa-house"></i>
+              <p  class="mb-0">Home</p>
+            </div>
+          </a>
         </li>
         <li class="nav-item text-center">
-          <i class="fa-solid fa-address-card"></i>
-          <a class="nav-link" href="#">Cadastros</a>
+          <a class="nav-link" routerLink="cadastros" style="cursor: pointer;">
+            <div>
+              <i class="fa-solid fa-address-card"></i>
+              <p class="mb-0">Cadastros</p>
+            </div>
+          </a>
         </li>
         <li class="nav-item text-center">
-          <i class="fa-solid fa-hand-holding-dollar"></i>
-          <a class="nav-link" href="#">Pagamentos</a>
+          <a class="nav-link" routerLink="/pagamentos" style="cursor: pointer;">
+            <div>
+              <i class="fa-solid fa-hand-holding-dollar"></i>
+              <p  class="mb-0">Pagamentos</p>
+            </div>
+          </a>
         </li>
         <li class="nav-item text-center">
-          <i class="fa-solid fa-users"></i>
-          <a class="nav-link" href="#">Afiliados</a>
+          <a class="nav-link" routerLink="afiliados" style="cursor: pointer;">
+            <div>
+              <i class="fa-solid fa-users"></i>
+              <p  class="mb-0">Afiliados</p>
+            </div>
+          </a>
         </li>
       </ul>
+      <!-- <div class="navbar-nav ms-3 d-xs-none d-none d-md-block">
+        <a class="btn btn-light" href="">Entrar</a>
+        <a class="btn btn-warning" href=""></a>
+      </div> -->
       <ul class="navbar-nav">
-        <li class="nav-item dropdown" dropdown container="body">
+        <li class="nav-item dropdown" dropdown container="body" *ngIf="(user)">
           <a dropdownToggle class="nav-link dropdown-toggle" id="navbarDropdownMenuLink" data-toggle="dropdown"
-            aria-haspopup="true" aria-expanded="false" style="cursor: pointer;">
-            Vinícius
+            aria-haspopup="true" aria-expanded="false" style="cursor: pointer;" >
+            {{user.email}}
           </a>
           <div *dropdownMenu class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
             <a class="dropdown-item" routerLink="/perfil">

@@ -1,8 +1,8 @@
 li {
   padding: 16px;
-  line-height: 0;
+  line-height: 1;
   vertical-align: middle;
-  color: #6a1b9a!important;
+  color: #943bea!important;
   transition: .5s;
 }
 
@@ -10,12 +10,14 @@ li:hover {
   background-color: rgba(236, 233, 233, 0.664);
 }
 
-li > i {
-  font-size: 18px;
-}
+li {
 
-li > a {
-  font-size: .875rem;
-  font-weight: 500;
+  i {
+    color: #943bea!important;
+    font-size: 20px;
+  }
+  a {
+    font-size: .875rem;
+    //font-weight: 500;
+  }
 }
-

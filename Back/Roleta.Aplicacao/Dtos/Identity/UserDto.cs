@@ -22,6 +22,9 @@ namespace Roleta.Aplicacao.Dtos.Identity
         public decimal SaldoDeposito { get; set; } = 0;
         public decimal SaldoSaque { get; set; } = 0;
         public bool Verified { get; set; }
+        public bool DemoAcount { get; set; } = false;
+        public string? AfiliateCode { get; set; }
+        public DateTime DataCadastro { get; set; } = DateTime.Now;
         public string? Token { get; set; }
     }
 }

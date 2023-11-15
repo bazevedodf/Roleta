@@ -1,5 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, AfterViewInit } from '@angular/core';
 import { Router } from '@angular/router';
+import { User } from '@app/Models/Identity/User';
+import { AccountService } from '@app/Services/account.service';
+import { take } from 'rxjs';
 
 @Component({
   selector: 'app-navbar',
@@ -7,13 +10,19 @@ import { Router } from '@angular/router';
   styleUrls: ['./navbar.component.scss']
 })
 export class NavbarComponent implements OnInit {
+
   isCollapsed = true;
+  user = {} as User;
 
-  constructor(private router: Router) {}
+  constructor(public accountService: AccountService,
+              private router: Router) {}
 
-  ngOnInit(): void {}
+  ngOnInit():void {
+    this.user = this.accountService.user;
+  }
 
   logout(): void {
+    this.accountService.logout();
     this.router.navigateByUrl('/login');
   }
 

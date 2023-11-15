@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Roleta.Dominio;
 using Roleta.Persistencia.Interface;
+using Roleta.Persistencia.Models;
 
 namespace Roleta.Persistencia
 {
@@ -25,6 +26,28 @@ namespace Roleta.Persistencia
             IQueryable<Pagamento> query = _context.Pagamentos.Where(x => x.User.Id == userId);
 
             return await query.AsNoTracking().OrderBy(x => x.DataCadastro).ToArrayAsync();
+        }
+
+        public async Task<PageList<Pagamento>> GetAllByParentEmailAsync(DateTime dataIni, DateTime dataFim, PageParams pageParams)
+        {
+            IQueryable<Pagamento> query = _context.Pagamentos.Include(x => x.User)
+                                                  .Where(x => x.DataCadastro >= dataIni 
+                                                           && x.DataCadastro < dataFim
+                                                           && x.User.ParentEmail.ToLower().Contains(pageParams.Term.ToLower()))
+                                                  .OrderBy(x => x.DataCadastro);
+
+            return await PageList<Pagamento>.CreateAsync(query, pageParams.PageNumber, pageParams.pageSize);
+        }
+
+        public async Task<int> GetAllAproveByParentEmailAsync(string? parentEmail = null)
+        {
+            var query = _context.Pagamentos.Join(_context.Users, pg => pg.UserId, us => us.Id, (pg, us) => new { pg, us });
+
+            if (string.IsNullOrEmpty(parentEmail))
+                return await query.CountAsync(_ => _.pg.Status == "APPROVED");
+            else
+                return await query.Where(_ => _.pg.Status == "APPROVED" && _.us.ParentEmail.ToLower() == parentEmail.ToLower())
+                                  .Select(x => x.pg.UserId).Distinct().CountAsync();
         }
 
         public async Task<Pagamento[]> GetAllByStatusAsync(string status)
