@@ -1,6 +1,6 @@
 import { Component, OnInit, AfterViewInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { User } from '@app/Models/Identity/User';
+import { UserDash } from '@app/Models/Identity/UserDash';
 import { AccountService } from '@app/Services/account.service';
 import { take } from 'rxjs';
 
@@ -12,7 +12,7 @@ import { take } from 'rxjs';
 export class NavbarComponent implements OnInit {
 
   isCollapsed = true;
-  user = {} as User;
+  user = {} as UserDash;
 
   constructor(public accountService: AccountService,
               private router: Router) {}

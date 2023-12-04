@@ -49,6 +49,8 @@ namespace Roleta.Persistencia
         {
             IQueryable<User> query = _context.Users.Where(x => x.UserName.ToLower() == userLogin.ToLower() || 
                                                                x.Email.ToLower() == userLogin.ToLower());
+            query = query.Include(x => x.Carteira);
+
             if (includeRole)
                 query = query.Include(x => x.UserRoles)
                              .ThenInclude(x => x.Role);
@@ -80,16 +82,27 @@ namespace Roleta.Persistencia
             return await query.AsNoTracking().FirstOrDefaultAsync();
         }
 
-        public async Task<PageList<User>> GetAllByParentEmailDateAsync(DateTime dataIni, DateTime dataFim, PageParams pageParams, bool includePagamentos = false)
+        public async Task<PageList<User>> GetAllByParentEmailDateAsync(PageParams pageParams, bool includePagamentos = false)
         {
-            IQueryable<User> query = _context.Users.Where(x => x.DataCadastro >= dataIni 
-                                                            && x.DataCadastro < dataFim
-                                                            && x.ParentEmail.ToLower().Contains(pageParams.Term.ToLower()));
+            IQueryable<User> query = _context.Users;
+            if (!string.IsNullOrEmpty(pageParams.Term))
+            {
+                query = query.Where(x => x.ParentEmail.ToLower().Contains(pageParams.ParentEmail.ToLower())
+                                        && (x.Email.ToLower().Contains(pageParams.Term.ToLower()) 
+                                        || x.FirstName.ToLower().Contains(pageParams.Term.ToLower())));
+            }
+            else
+            {
+                query = query.Where(x => x.DataCadastro >= pageParams.DataIni
+                                        && x.DataCadastro < pageParams.DataFim);
+            }
+
+            query = query.Include(x => x.Carteira);
 
             if (includePagamentos)
                 query = query.Include(x => x.Pagamentos);
 
-            query = query.OrderBy(x => x.DataCadastro);
+            query = query.OrderByDescending(x => x.DataCadastro).AsNoTracking();
 
             return await PageList<User>.CreateAsync(query, pageParams.PageNumber, pageParams.pageSize);
         }

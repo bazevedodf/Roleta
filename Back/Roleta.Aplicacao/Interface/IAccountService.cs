@@ -13,7 +13,7 @@ namespace Roleta.Aplicacao.Interface
 
         Task<UserDto> GetByIdAsync(Guid id, bool includeRole = false);
         Task<UserGameDto> GetUserGameAsync(string userLogin, bool includeDados = false);
-        Task<UserDto> GetByUserLoginAsync(string userLogin);
+        Task<UserDto> GetByUserLoginAsync(string userLogin, bool includeRole = false);
         Task<SignInResult> CheckPasswordAsync(UserDto userDto, string password);
         Task<IdentityResult> ConfirmEmailAsync(UserDto userDto, string token);
         Task<IdentityResult> ResetPasswordAsync(UserDto userDto, string token, string newPassword);

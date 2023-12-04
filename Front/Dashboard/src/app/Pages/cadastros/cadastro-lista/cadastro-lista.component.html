@@ -1,0 +1,123 @@
+<div class="row align-middle mt-3 px-2">
+  <div class="col-md-6 d-flex text-brand">
+    <h3>CADASTROS</h3>
+  </div>
+  <div class="text-end col-md-6 text-brand">
+    <ol class="breadcrumb float-sm-end">
+      <li class="breadcrumb-item"><a routerLink="/home">Dashboard</a></li>
+      <li class="breadcrumb-item active">Cadastros</li>
+    </ol>
+  </div>
+</div>
+<div class="row mt-3">
+  <div class="col-md-12">
+    <div class="card card-dasboard">
+      <div class="card-header">
+        <div class="card-Text d-flex bg-purple">
+          <i class="fas fa-user-check"></i>
+          <div class="text-white lh-1 ms-2">
+            <h5 class="card-title mb-0">Cadastros</h5>
+            <p class="card-category m-0">Listar Registros de Usuários</p>
+          </div>
+          <h2 class="ms-auto text-white">{{userPagination.totalItems}}</h2>
+        </div>
+      </div>
+      <div class="card-body">
+        <div class="container-fluid">
+
+          <div class="row">
+            <div class="col-md-2">
+              <div class="form-group">
+                <label>Data Inicial</label>
+                <input type="text"
+                  placeholder="Daterangepicker"
+                  class="form-control"
+                  [(ngModel)]="dtIni"
+                   bsDatepicker [bsConfig]="bsConfig">
+              </div>
+            </div>
+            <div class="col-md-2">
+              <div class="form-group">
+                <label>Data Final</label>
+                <input type="text"
+                  placeholder="Daterangepicker"
+                  class="form-control"
+                  [(ngModel)]="dtFim"
+                  bsDatepicker [bsConfig]="{ isAnimated: true, adaptivePosition: true }">
+              </div>
+            </div>
+          </div>
+
+          <div class="row mt-3">
+            <div class="col-md-6">
+              <label for="nome">Nome/E-Mail</label>
+              <input type="text" id="nome" class="form-control" [(ngModel)]="paramName">
+            </div>
+            <div class="col-md-1 me-0">
+              <button class="btn bg-green text-white mt-4 d-flex" (click)="carregarUsers();">
+                <i class="fa fa-search mt-1"></i>
+                <span class="ms-2 d-none d-sm-block">Filtrar</span>
+              </button>
+            </div>
+          </div>
+
+          <div class="row mt-3">
+            <div>
+              <table class="table table-hover">
+                <thead class="text-primary">
+                  <tr>
+                    <th scope="col">#</th>
+                    <!-- <th scope="col">Nome</th> -->
+                    <th scope="col">Email</th>
+                    <th scope="col">Data</th>
+                  </tr>
+                </thead>
+                <tbody *ngIf="users && users.length">
+                  <tr *ngFor="let user of users" style="cursor: pointer;" (click)="selectUser(user.email);">
+                    <td><a style="cursor: pointer;"><i class="fas fa-id-card"></i></a></td>
+                    <!-- <td style="cursor: pointer;">{{user.firstName}}</td> -->
+                    <td style="cursor: pointer;">{{user.email}}</td>
+                    <td>{{user.dataCadastro | DateTimeFormat}}</td>
+                  </tr>
+                </tbody>
+                <tfoot *ngIf="!users.length">
+                  <tr>
+                    <td colspan="4" class="text-center">
+                      <h5 class="text-muted">Nenhuma registro encontrado</h5>
+                    </td>
+                  </tr>
+                </tfoot>
+              </table>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="d-flex justify-content-center">
+              <pagination [boundaryLinks]="true"
+                [totalItems]="userPagination.totalItems"
+                [(ngModel)]="userPagination.currentPage"
+                [itemsPerPage]="userPagination.itemsPerPage"
+                [align]="true"
+                pageBtnClass="btn"
+                (pageChanged)="userPageChanged($event)"
+                [maxSize]="6"
+                previousText="Voltar" nextText="Próximo" firstText="&laquo;" lastText="&raquo;">
+              </pagination>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<ng-template #template>
+  <div class="modal-header">
+    <h4 class="modal-title pull-left">Modal</h4>
+    <button type="button" class="btn-close close pull-right" aria-label="Close" (click)="modalRef?.hide()">
+      <span aria-hidden="true" class="visually-hidden">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    This is a modal.
+  </div>
+</ng-template>

@@ -17,6 +17,10 @@ namespace Roleta.Persistencia
 
         }
 
+        public DbSet<RoletaSorte> Roletas { get; set; }
+        public DbSet<TransacaoRoleta> TransacoesRoleta { get; set; }
+        public DbSet<Carteira> Carteiras { get; set; }
+        public DbSet<Transacao> Transacoes{ get; set; }
         public DbSet<Produto> Produtos { get; set; }
         public DbSet<Pagamento> Pagamentos { get; set; }
         public DbSet<GiroRoleta> GirosRoleta { get; set; }
@@ -32,6 +36,10 @@ namespace Roleta.Persistencia
 
 
             //Aplication
+            modelBuilder.ApplyConfiguration(new RoletaSorteMap());
+            modelBuilder.ApplyConfiguration(new TransacaoRoletaMap());
+            modelBuilder.ApplyConfiguration(new CarteiraMap());
+            modelBuilder.ApplyConfiguration(new TransacaoMap());
             modelBuilder.ApplyConfiguration(new ProdutoMap());
             modelBuilder.ApplyConfiguration(new PagamentoMap());
             modelBuilder.ApplyConfiguration(new SaqueMap());

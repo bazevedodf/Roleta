@@ -6,7 +6,7 @@ import {
   HttpInterceptor
 } from '@angular/common/http';
 import { Observable, take } from 'rxjs';
-import { User } from '@app/Models/Identity/User';
+import { UserDash } from '@app/Models/Identity/UserDash';
 import { AccountService } from '@app/Services/account.service';
 
 @Injectable()
@@ -15,9 +15,9 @@ export class JwtInterceptor implements HttpInterceptor {
   constructor(private accountService: AccountService) {}
 
   intercept(request: HttpRequest<unknown>, next: HttpHandler): Observable<HttpEvent<unknown>> {
-    let currentUser!: User;
+    let currentUser!: UserDash;
 
-    this.accountService.currentUser$.pipe(take(1)).subscribe((user:User) => {
+    this.accountService.currentUser$.pipe(take(1)).subscribe((user:UserDash) => {
       currentUser = user;
 
       if(currentUser){

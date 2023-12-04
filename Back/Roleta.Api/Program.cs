@@ -128,6 +128,7 @@ static void ConfigureServices(WebApplicationBuilder builder)
     builder.Services.AddScoped<ITokenService, TokenService>();
     builder.Services.AddScoped<IAccountService, AccountService>();
     builder.Services.AddScoped<IUserService, UserService>();
+    builder.Services.AddScoped<ICarteiraService, CarteiraService>();
     builder.Services.AddScoped<IProdutoService, ProdutoService>();
     builder.Services.AddScoped<IPagamentoService, PagamentoService>();
     builder.Services.AddScoped<ISaqueService, SaqueService>();    
@@ -135,6 +136,10 @@ static void ConfigureServices(WebApplicationBuilder builder)
 
     builder.Services.AddScoped<IUserPersist, UserPersist>();
     builder.Services.AddScoped<IProdutoPersist, ProdutoPersist>();
+    builder.Services.AddScoped<ICarteiraPersist, CarteiraPersist>();
+    builder.Services.AddScoped<ITransacaoPersist, TransacaoPersist>();
+    builder.Services.AddScoped<ITransacaoRoletaPersist, TransacaoRoletaPersist>();
+    builder.Services.AddScoped<IRoletaPersist, RoletaPersist>();
     builder.Services.AddScoped<IPagamentoPersist, PagamentoPersist>();
     builder.Services.AddScoped<ISaquePersist, SaquePersist>();
     builder.Services.AddScoped<IGiroRoletaPersist, GiroRoletaPersist>();

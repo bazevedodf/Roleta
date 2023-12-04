@@ -78,7 +78,6 @@ namespace Roleta.Aplicacao
             }
         }
 
-
         public async Task<PagamentoDto> AddAsync(PagamentoDto model)
         {
             try
@@ -230,11 +229,11 @@ namespace Roleta.Aplicacao
             }
         }
 
-        public async Task<PageList<PagamentoDto>> GetAllByParentEmailAsync(DateTime dataIni, DateTime dataFim, PageParams pageParams)
+        public async Task<PageList<PagamentoDto>> GetAllByParentEmailAsync(PageParams pageParams)
         {
             try
             {
-                var users = await _pagamentoPersist.GetAllByParentEmailAsync(dataIni, dataFim, pageParams);
+                var users = await _pagamentoPersist.GetAllByParentEmailAsync(pageParams);
 
                 if (users == null) return null;
 

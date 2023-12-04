@@ -1,6 +1,5 @@
 ﻿using AutoMapper;
 using Roleta.Aplicacao.Dtos;
-using Roleta.Aplicacao.Dtos.Identity;
 using Roleta.Aplicacao.Interface;
 using Roleta.Dominio;
 using Roleta.Persistencia.Interface;
@@ -9,121 +8,87 @@ namespace Roleta.Aplicacao
 {
     public class RoletaService : IRoletaService
     {
-        private readonly IAccountService _accountService;
-        private readonly IGiroRoletaPersist _giroRoletaPersist;
+        private readonly IRoletaPersist _roletaPersist;
+        private readonly ITransacaoRoletaPersist _transacaoRoletaPersist;
+        private readonly ICarteiraService _carteiraService;
+        private readonly IUserService _userService;
         private readonly IMapper _mapper;
 
-        public RoletaService(IAccountService accountService, IGiroRoletaPersist giroRoletaPersist, IMapper mapper)
+        public RoletaService(IRoletaPersist roletaPersist,
+                             ITransacaoRoletaPersist transacaoRoletaPersist,
+                             ICarteiraService carteiraService,
+                             IUserService userService,
+                             IMapper mapper)
         {
-            _accountService = accountService;
-            _giroRoletaPersist = giroRoletaPersist;
+            _roletaPersist = roletaPersist;
+            _transacaoRoletaPersist = transacaoRoletaPersist;
+            _carteiraService = carteiraService;
+            _userService = userService;
             _mapper = mapper;
         }
 
 
-        public async Task<GiroRoletaDto> GirarRoleta(int valorAposta, bool freeSpin = false, UserDto? user = null)
+        public async Task<GiroRoletaDto> GirarRoleta(int valorAposta, bool freeSpin = false, UserGameDto? user = null)
         {
             try
             {
-                int[] posicoes;
-                int posicaoSorteada;
-                decimal multiplicador;
-                UserGameDto userGame;
-                //1 = 0
-                //2 = 0.5m
-                //3 = 1.2m
-                //4 = 3
-                //5 = 0
-                //6 = 0.5m
-                //7 = 1.2m
-                //8 = 5
-                //9 = 100
-                //10 = 0
-                //11 = 0.5m
-                //12 = 1.2m
-                //13 = 7
-                //14 = 0
-                //15 = 0.5m
-                //16 = 1.2m
-                //17 = 9
-                //18 = 30
+                List<ItemRoletaDto> posicoes = new List<ItemRoletaDto>()
+                {
+                    new ItemRoletaDto { Id = 1, Multiplicador = 0 },
+                    new ItemRoletaDto { Id = 2, Multiplicador = 0.5M },
+                    new ItemRoletaDto { Id = 3, Multiplicador = 1.2M },
+                    new ItemRoletaDto { Id = 4, Multiplicador = 3 },
+                    new ItemRoletaDto { Id = 5, Multiplicador = 0 },
+                    new ItemRoletaDto { Id = 6, Multiplicador = 0.5M },
+                    new ItemRoletaDto { Id = 7, Multiplicador = 1.2M },
+                    new ItemRoletaDto { Id = 8, Multiplicador = 5 },
+                    new ItemRoletaDto { Id = 9, Multiplicador = 100 },
+                    new ItemRoletaDto { Id = 10, Multiplicador = 0 },
+                    new ItemRoletaDto { Id = 11, Multiplicador = 0.5M },
+                    new ItemRoletaDto { Id = 12, Multiplicador = 1.2M },
+                    new ItemRoletaDto { Id = 13, Multiplicador = 7 },
+                    new ItemRoletaDto { Id = 14, Multiplicador = 0 },
+                    new ItemRoletaDto { Id = 15, Multiplicador = 0.5M },
+                    new ItemRoletaDto { Id = 16, Multiplicador = 1.2M },
+                    new ItemRoletaDto { Id = 17, Multiplicador = 9 },
+                    new ItemRoletaDto { Id = 18, Multiplicador = 20 }
+                };
 
+                GiroRoletaDto giro;
+                decimal MaiorMultiplicadorPossivel = 0;
 
                 if (freeSpin)
                 {
-                    //0.5 tem 4 posicoes
-                    posicoes = new int[] { 1, 2, 3, 4, 4, 7, 8, 8, 9, 9, 10, 11, 13, 13, 14, 15, 16, 17, 18, 18 };
-                    //posicoes = new decimal[] { 0.5m, 1, 1.2m, 3, 0.5m, 1, 1.2m, 5, 100, 0.5m, 1, 1.2m, 7, 0.5m, 1, 1.2m, 9, 30 };
+                    giro = Sorteio(posicoes, valorAposta);
+                    return giro;
                 }
-                else
+                
+                if (user.DemoAcount)
                 {
-                    if (user.DemoAcount)
-                    {
-                        posicoes = new int[] { 1, 2, 3, 4, 4, 7, 8, 8, 9, 9, 10, 11, 13, 13, 14, 15, 16, 17, 18, 18 };
-                    }
-                    else
-                    {
-                        //1° passo - verificar o multiplicador e saber o valor maximo que pode ter do sorteio
-                        //2° passo - verificar saldo da casa e ver se está acima de 5k e o valor tem que ser mair que 10% da banca   
-                        //3° passo - se sorteio for vencedor, entao atualizar o saldo total de deposito e o saldo do usuario
-                        //posicoes = new decimal[] { 0.5m, 1, 1.2m, 3, 0.5m, 1, 1.2m, 5, 100, 0.5m, 1, 1.2m, 7, 0.5m, 1, 1.2m, 9, 30 };
-                        //posicoes = new int[] { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18 };
-                        switch (valorAposta)
-                        {
-                            case 1:
-                                posicoes = new int[] { 1, 1, 2, 2, 3, 3, 4, 5, 5, 7, 8, 10, 11, 11, 13, 14, 14, 15, 16, 17 };
-                                break;
-                            case 50:
-                                posicoes = new int[] { 1, 1, 1, 2, 2, 2, 3, 5, 5, 5, 6, 6, 7, 10, 10, 10, 11, 11, 12, 14, 14, 14, 15, 15 };
-                                break;
-                            default:
-                                posicoes = new int[] { 1, 1, 1, 2, 2, 2, 3, 5, 5, 5, 6, 6, 7, 10, 10, 10, 11, 11, 12, 14, 14, 14, 15, 15 };
-                                //posicoes = new int[] { 1, 1, 2, 2, 3, 5, 6, 6, 7, 10, 11, 11, 12, 14, 15 };
-                                break;
-                        }
-                    }                    
+                    posicoes = posicoes.FindAll(x => x.Multiplicador > 1);                    
+                    giro = Sorteio(posicoes, valorAposta);
+                    
+                    if (!await ProcessaGiro(giro, user))
+                        throw new Exception("Erro ao processar o giro");
+                    
+                    return giro;
                 }
 
-                var rnd = new Random();
-                var r = rnd.Next(posicoes.Length);
-                posicaoSorteada = (posicoes[r]);
+                var roleta = await GetByIdAsync(1);
+                
+                //Valor máximo que pode ser pago
+                var valorPremiacaoMaxima = (roleta.SaldoBanca / 100) * roleta.PremiacaoMaxima;
 
-                switch (posicaoSorteada)
-                {
-                    case (1): multiplicador = 0; break;
-                    case (2): multiplicador = 0.5m; break;
-                    case (3): multiplicador = 1.2m; break;
-                    case (4): multiplicador = 3; break;
-                    case (5): multiplicador = 0; break;
-                    case (6): multiplicador = 0.5m; break;
-                    case (7): multiplicador = 1.2m; break;
-                    case (8): multiplicador = 5; break;
-                    case (9): multiplicador = 100; break;
-                    case (10): multiplicador = 0; break;
-                    case (11): multiplicador = 0.5m; break;
-                    case (12): multiplicador = 1.2m; break;
-                    case (13): multiplicador = 7m; break;
-                    case (14): multiplicador = 0; break;
-                    case (15): multiplicador = 0.5m; break;
-                    case (16): multiplicador = 1.2m; break;
-                    case (17): multiplicador = 9; break;
-                    case (18): multiplicador = 30; break;
-                    default: multiplicador = 0; break;
-                }
+                // Multiplicador maximo permitido para essa rodada
+                if (valorPremiacaoMaxima != 0)
+                    MaiorMultiplicadorPossivel = valorPremiacaoMaxima / valorAposta;
 
-                GiroRoletaDto giro = new GiroRoletaDto()
-                {
-                    ValorAposta = valorAposta,
-                    Posicao = posicaoSorteada,
-                    Multiplicador = multiplicador,
-                    UserId = user?.Id
-                };
+                posicoes = posicoes.FindAll(x => x.Multiplicador <= MaiorMultiplicadorPossivel);
 
-                if (!freeSpin)
-                {
-                    giro = await AddAsync(giro);
-                    //giro.Posicao = posicaoSorteada;
-                }
+                giro = Sorteio(posicoes, valorAposta);
+
+                if (!await ProcessaGiro(giro, user, roleta))
+                    throw new Exception("Erro ao processar o giro");
 
                 return giro;
                 
@@ -134,18 +99,195 @@ namespace Roleta.Aplicacao
             }
         }
 
-        public async Task<GiroRoletaDto> AddAsync(GiroRoletaDto model)
+        private async Task<bool> ProcessaGiro(GiroRoletaDto giro, UserGameDto user, RoletaSorteDto roleta = null)
         {
             try
             {
-                var giroRoleta = _mapper.Map<GiroRoleta>(model);
-
-                _giroRoletaPersist.Add(giroRoleta);
-                if (await _giroRoletaPersist.SaveChangeAsync())
+                if (user.DemoAcount)
                 {
-                    var retorno = await _giroRoletaPersist.GetByIdAsync(giroRoleta.Id);
-                    return _mapper.Map<GiroRoletaDto>(retorno);
+                    if (giro.Multiplicador > 0)
+                    {
+                        user.Carteira.SaldoDemo += giro.ValorAposta * giro.Multiplicador;
+                        await _userService.UpdateUserGame(user);
+                    }
+                    return true;
                 }
+
+                double valorAposta = giro.ValorAposta;
+                double valorPremio = valorAposta * (double)giro.Multiplicador;
+                double valorPerda = valorAposta - valorPremio;
+
+                //Debito do valor da aposta do Jogador
+                var debitoUser = new Transacao()
+                {
+                    Tipo = "Giro Roleta",
+                    valor = decimal.Negate((decimal)valorAposta),
+                    Data = DateTime.Now,
+                    CarteiraId = user.Carteira.Id
+                };
+                debitoUser = await _carteiraService.AddTransacaoAsync(debitoUser);
+                user.Carteira.SaldoAtual += debitoUser.valor;
+
+                if (valorPremio > 0)
+                {
+                    var debitoRoleta = new TransacaoRoleta()
+                    {
+                        valor = decimal.Negate((decimal)valorPremio),
+                        Descricao = "Pagamento Giro",
+                        Data = DateTime.Now,
+                        RoletaId = roleta.Id,
+                        TransacaoId = debitoUser.Id                        
+                    };
+                    debitoRoleta = await AddTransacaoRoleta(debitoRoleta);
+                    roleta.SaldoBanca += debitoRoleta.valor;
+
+                    var creditoPremio = new Transacao()
+                    {
+                        valor = (decimal)valorPremio,
+                        Tipo = "Prêmio Roleta",
+                        Data = DateTime.Now,
+                        CarteiraId = user.Carteira.Id
+                    };
+                    creditoPremio = await _carteiraService.AddTransacaoAsync(creditoPremio);
+
+                    user.Carteira.SaldoAtual += creditoPremio.valor;
+                }
+
+                //double valorBanca = valorAposta;
+
+                if (valorPerda > 0)
+                {
+                    double valorBanca = valorPerda * ((double)roleta.PercentualBanca / 100);
+                    valorPerda -= valorBanca;
+
+                    //credito para a banca
+                    var creditoBanca = new TransacaoRoleta()
+                    {
+                        valor = (decimal)valorBanca,
+                        Descricao = "Divisao Banca",
+                        Data = DateTime.Now,
+                        TransacaoId = debitoUser.Id,
+                        RoletaId = roleta.Id
+                    };
+                    creditoBanca = await AddTransacaoRoleta(creditoBanca);
+                    roleta.SaldoBanca += creditoBanca.valor;
+
+
+                    //verifica se tem afiliado e paga
+                    if (user.ParentEmail != null)
+                    {
+                        var Afiliado = await _userService.GetUserGameByEmailAsync(user.ParentEmail);
+                        if (Afiliado != null && Afiliado.isAfiliate && !Afiliado.isBlocked)
+                        {
+                            double comissaoAfiliado = valorPerda * ((double)Afiliado.Comissao / 100);
+
+                            //credito para o afiliado
+                            var creditoAfiliado = new Transacao()
+                            {
+                                Tipo = "Comissão",
+                                valor = (decimal)comissaoAfiliado,
+                                Data = DateTime.Now,
+                                CarteiraId = Afiliado.Carteira.Id,
+                                TransactionId = debitoUser.Id.ToString()
+                            };
+                            creditoAfiliado = await _carteiraService.AddTransacaoAsync(creditoAfiliado);
+                            Afiliado.Carteira.SaldoAtual += creditoAfiliado.valor;
+
+                            Afiliado = await _userService.UpdateUserGame(Afiliado);
+
+                            if (Afiliado != null)
+                                valorPerda -= comissaoAfiliado;
+                        }
+                    }
+
+                    //credito para os lucros da casa
+                    var creditoLucro = new TransacaoRoleta()
+                    {
+                        valor = (decimal)valorPerda,
+                        Descricao = "Divisao Lucro",
+                        Data = DateTime.Now,
+                        TransacaoId = debitoUser.Id,
+                        RoletaId = roleta.Id
+                    };
+                    creditoLucro = await AddTransacaoRoleta(creditoLucro);
+                    roleta.SaldoLucro += creditoLucro.valor;
+                }
+                else
+                {
+                    //credito para banca
+                    var creditoBanca = new TransacaoRoleta()
+                    {
+                        valor = (decimal)valorAposta,
+                        Descricao = "Divisao Banca",
+                        Data = DateTime.Now,
+                        TransacaoId = debitoUser.Id,
+                        RoletaId = roleta.Id
+                    };
+                    creditoBanca = await AddTransacaoRoleta(creditoBanca);
+                    roleta.SaldoBanca += creditoBanca.valor;
+                }
+
+                user.Carteira.DataAtualizacao = DateTime.Now;
+                user = await _userService.UpdateUserGame(user);
+
+                roleta = await UpdateAsync(roleta);
+
+                return true;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+
+        private GiroRoletaDto Sorteio(List<ItemRoletaDto> posicoes, int valorAposta)
+        {
+            var rnd = new Random();
+            var r = rnd.Next(0,posicoes.Count);
+            var posicaoSorteada = posicoes[r];
+
+            return new GiroRoletaDto()
+            {
+                ValorAposta = valorAposta,
+                Posicao = posicaoSorteada.Id,
+                Multiplicador = posicaoSorteada.Multiplicador,
+            };
+        }
+
+        private async Task<TransacaoRoleta> AddTransacaoRoleta(TransacaoRoleta transacao)
+        {
+            try
+            {
+                _transacaoRoletaPersist.Add(transacao);
+                if (await _transacaoRoletaPersist.SaveChangeAsync())
+                {
+                    var retorno = await _transacaoRoletaPersist.GetByIdAsync(transacao.Id);
+                    return retorno;
+                }
+                return null;
+            }
+            catch (Exception)
+            {
+                throw new Exception("Erro na Transação da Roleta");
+            }
+        }
+
+        private async Task<RoletaSorteDto> UpdateAsync(RoletaSorteDto model)
+        {
+            try
+            {
+                var roleta = await _roletaPersist.GetByIdAsync(model.Id);
+                if (roleta == null) return null;
+
+                _mapper.Map(model, roleta);
+
+                _roletaPersist.Update(roleta);
+                if (await _roletaPersist.SaveChangeAsync())
+                {
+                    var retorno = await _roletaPersist.GetByIdAsync(roleta.Id);
+                    return _mapper.Map<RoletaSorteDto>(retorno);
+                }
+
                 return null;
             }
             catch (Exception ex)
@@ -154,22 +296,15 @@ namespace Roleta.Aplicacao
             }
         }
 
-        public async Task<GiroRoletaDto> UpdateAsync(GiroRoletaDto model)
+        public async Task<RoletaSorteDto> GetByIdAsync(int roletaId, bool includeTransacoes = false)
         {
             try
             {
-                var giroRoleta = await _giroRoletaPersist.GetByIdAsync(model.Id);
-                if (giroRoleta == null) return null;
+                var roleta = await _roletaPersist.GetByIdAsync(roletaId, includeTransacoes);
+                if (roleta == null) return null;
 
-                _mapper.Map(model, giroRoleta);
-                _giroRoletaPersist.Update(giroRoleta);
-                if (await _giroRoletaPersist.SaveChangeAsync())
-                {
-                    var retorno = await _giroRoletaPersist.GetByIdAsync(giroRoleta.Id);
-                    return _mapper.Map<GiroRoletaDto>(retorno);
-                }
-
-                return null;
+                var retorno = _mapper.Map<RoletaSorteDto>(roleta);
+                return retorno;
             }
             catch (Exception ex)
             {
@@ -177,36 +312,79 @@ namespace Roleta.Aplicacao
             }
         }
 
-        public async Task<bool> DeleteAsync(int id)
-        {
-            try
-            {
-                var giroRoleta = await _giroRoletaPersist.GetByIdAsync(id);
-                if (giroRoleta == null) throw new Exception("Giro da roleta não encontrado");
+        //public async Task<GiroRoletaDto> AddAsync(GiroRoletaDto model)
+        //{
+        //    try
+        //    {
+        //        var giroRoleta = _mapper.Map<GiroRoleta>(model);
 
-                _giroRoletaPersist.Delete(giroRoleta);
-                return await _giroRoletaPersist.SaveChangeAsync();
-            }
-            catch (Exception ex)
-            {
-                throw new Exception(ex.Message);
-            }
-        }
+        //        _giroRoletaPersist.Add(giroRoleta);
+        //        if (await _giroRoletaPersist.SaveChangeAsync())
+        //        {
+        //            var retorno = await _giroRoletaPersist.GetByIdAsync(giroRoleta.Id);
+        //            return _mapper.Map<GiroRoletaDto>(retorno);
+        //        }
+        //        return null;
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        throw new Exception(ex.Message);
+        //    }
+        //}
 
-        public async Task<GiroRoletaDto> GetByIdAsync(int id)
-        {
-            try
-            {
-                var geiroRoleta = await _giroRoletaPersist.GetByIdAsync(id);
-                if (geiroRoleta == null) return null;
+        //public async Task<GiroRoletaDto> UpdateAsync(GiroRoletaDto model)
+        //{
+        //    try
+        //    {
+        //        var giroRoleta = await _giroRoletaPersist.GetByIdAsync(model.Id);
+        //        if (giroRoleta == null) return null;
 
-                return _mapper.Map<GiroRoletaDto>(geiroRoleta);
-            }
-            catch (Exception ex)
-            {
-                throw new Exception(ex.Message);
-            }
-        }
+        //        _mapper.Map(model, giroRoleta);
+        //        _giroRoletaPersist.Update(giroRoleta);
+        //        if (await _giroRoletaPersist.SaveChangeAsync())
+        //        {
+        //            var retorno = await _giroRoletaPersist.GetByIdAsync(giroRoleta.Id);
+        //            return _mapper.Map<GiroRoletaDto>(retorno);
+        //        }
+
+        //        return null;
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        throw new Exception(ex.Message);
+        //    }
+        //}
+
+        //public async Task<bool> DeleteAsync(int id)
+        //{
+        //    try
+        //    {
+        //        var giroRoleta = await _giroRoletaPersist.GetByIdAsync(id);
+        //        if (giroRoleta == null) throw new Exception("Giro da roleta não encontrado");
+
+        //        _giroRoletaPersist.Delete(giroRoleta);
+        //        return await _giroRoletaPersist.SaveChangeAsync();
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        throw new Exception(ex.Message);
+        //    }
+        //}
+
+        //public async Task<GiroRoletaDto> GetGiroByIdAsync(int id)
+        //{
+        //    try
+        //    {
+        //        var geiroRoleta = await _giroRoletaPersist.GetByIdAsync(id);
+        //        if (geiroRoleta == null) return null;
+
+        //        return _mapper.Map<GiroRoletaDto>(geiroRoleta);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        throw new Exception(ex.Message);
+        //    }
+        //}
 
     }
 }

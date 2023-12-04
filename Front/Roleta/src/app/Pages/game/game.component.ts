@@ -62,7 +62,7 @@ export class GameComponent implements OnInit {
     { "id": 15, "text": "0.5x", "fillStyle": "#006633", "textFillStyle": "white", "textFontSize": "22"},
     { "id": 16, "text": "1.2x", "fillStyle": "#ffcc00", "textFillStyle": "white", "textFontSize": "22"},
     { "id": 17, "text": "9x", "fillStyle": "#ff6600", "textFillStyle": "white", "textFontSize": "22"},
-    { "id": 18, "text": "30x", "fillStyle": "#fff", "textFillStyle": "black", "textFontSize": "22"}
+    { "id": 18, "text": "20x", "fillStyle": "#fff", "textFillStyle": "black", "textFontSize": "22"}
 
 /*  0 vermelho
     0.5 preto
@@ -196,7 +196,7 @@ export class GameComponent implements OnInit {
       this.btnPressionado = true
 
     if (!this.freeBet){
-      if (this.user.saldoDeposito < 1)
+      if (this.user.saldoDeposito < 5)
       {
         this.setAlertBox("Saldo Insuficiente!", "Você não possue saldo suficiente para fazer uma nova aposta, tente depositar ou converter seu lucro em saldo. Menu -> Saque -> Converter Lucros");
         this.btnPressionado = false;

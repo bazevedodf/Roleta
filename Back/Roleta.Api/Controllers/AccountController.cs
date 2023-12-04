@@ -187,10 +187,10 @@ namespace Roleta.Api.Controllers
         {
             try
             {
-                var user = await _accountService.GetByUserLoginAsync(loginDto.Login);
+                var user = await _accountService.GetByUserLoginAsync(loginDto.Login, true);
                 if (user == null) return Unauthorized("Usuário ou E-mail inválido");
 
-                if (!await _accountService.CheckRoleAsync(user, "Afiliate") || !await _accountService.CheckRoleAsync(user, "Admin")) 
+                if (await _accountService.CheckRoleAsync(user, "USER")) 
                     return BadRequest("Você não tem permissão para logar!");
 
                 var result = await _accountService.CheckPasswordAsync(user, loginDto.Password);

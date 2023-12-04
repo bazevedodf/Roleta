@@ -1,4 +1,4 @@
-import { User } from "./Identity/User";
+import { UserDash } from "./Identity/UserDash";
 
 export interface Pagamento {
   id : number;
@@ -11,5 +11,5 @@ export interface Pagamento {
   status : string;
   dataStatus : Date;
   dataCadastro : Date;
-  user: User;
+  user: UserDash;
 }

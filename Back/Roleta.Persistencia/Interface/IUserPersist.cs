@@ -11,6 +11,6 @@ namespace Roleta.Persistencia.Interface
         Task<User> GetByUserLoginAsync(string userLogin, bool includeRole = false);
         Task<User> GetUserGameAsync(string userLogin, bool icludeDados = false);
         Task<User[]> GetAllByParentEmailAsync(string parentEmail, bool includeRole = false);
-        Task<PageList<User>> GetAllByParentEmailDateAsync(DateTime dataIni, DateTime dataFim, PageParams pageParams, bool includePagamentos = false);
+        Task<PageList<User>> GetAllByParentEmailDateAsync(PageParams pageParams, bool includePagamentos = false);
     }
 }

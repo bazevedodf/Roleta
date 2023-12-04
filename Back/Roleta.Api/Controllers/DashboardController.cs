@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
+using Roleta.Aplicacao.Dtos.Identity;
 using Roleta.Aplicacao.Extensions;
 using Roleta.Aplicacao.Interface;
 using Roleta.Persistencia.Models;
@@ -68,7 +69,7 @@ namespace Roleta.Api.Controllers
         }
 
         [HttpGet("GetUsers")]
-        public async Task<IActionResult> GetUsers([FromQuery]PageParams pageParams) //, DateTime dataIni, DateTime dataFim
+        public async Task<IActionResult> GetUsers([FromQuery]PageParams pageParams)
         {
             try
             {
@@ -77,11 +78,10 @@ namespace Roleta.Api.Controllers
 
                 if (!await _accountService.CheckRoleAsync(userDto, "Admin"))
                 {
-                    pageParams.Term = userDto.Email;
+                    pageParams.ParentEmail = userDto.Email;
                 }
-                var dtIni = DateTime.Now.Date;
-                var dtFim = DateTime.Now.AddDays(1).Date;
-                var users = await _userService.GetAllByParentEmailDateAsync(dtIni, dtFim, pageParams);
+
+                var users = await _userService.GetAllByParentEmailDateAsync(pageParams);
                 if (users == null) return NoContent();
 
                 Response.AddPagination("PaginationUser", users.CurrentPage, users.PageSize, users.TotalCount, users.TotalPages);
@@ -93,7 +93,7 @@ namespace Roleta.Api.Controllers
             {
                 return this.StatusCode(
                     StatusCodes.Status500InternalServerError,
-                    $"Erro ao tentar recuperar dados. Erro: {ex.Message}");
+                    $"Erro ao tentar buscar Usuário(s). Erro: {ex.Message}");
             }
         }
 
@@ -109,9 +109,8 @@ namespace Roleta.Api.Controllers
                 {
                     pageParams.Term = userDto.Email;
                 }
-                var dtIni = DateTime.Now.Date;
-                var dtFim = DateTime.Now.AddDays(1).Date;
-                var users = await _pagamentoService.GetAllByParentEmailAsync(dtIni, dtFim, pageParams);
+
+                var users = await _pagamentoService.GetAllByParentEmailAsync(pageParams);
                 if (users == null) return NoContent();
 
                 Response.AddPagination("PaginationPag", users.CurrentPage, users.PageSize, users.TotalCount, users.TotalPages);
@@ -124,6 +123,43 @@ namespace Roleta.Api.Controllers
                 return this.StatusCode(
                     StatusCodes.Status500InternalServerError,
                     $"Erro ao tentar recuperar dados. Erro: {ex.Message}");
+            }
+        }
+
+        [Authorize(Roles = "Admin")]
+        [HttpGet("GetUser")]
+        public async Task<IActionResult> GetUserByEmail(string email)
+        {
+            try
+            {
+                var user = await _userService.GetByUserLoginAsync(email, true);
+                if (user == null) return BadRequest();
+
+                return Ok(user);
+            }
+            catch (Exception ex)
+            {
+                return this.StatusCode(
+                    StatusCodes.Status500InternalServerError,
+                    $"Erro ao tentar recuperar usuário. Erro: {ex.Message}");
+            }
+        }
+
+        [Authorize(Roles = "Admin")]
+        [HttpPut("PutUser")]
+        public async Task<IActionResult> PutUser(UserUpdateDashDto model)
+        {
+            try
+            {
+                var user = await _userService.UpdateUserDashBoard(model);
+                if (user == null) return NoContent();
+
+                return Ok(user);
+            }
+            catch (Exception ex)
+            {
+                return this.StatusCode(StatusCodes.Status500InternalServerError,
+                    $"Erro ao tentar atualizar Usuário. Erro: {ex.Message}");
             }
         }
     }

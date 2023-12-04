@@ -5,6 +5,7 @@ using Microsoft.IdentityModel.Tokens;
 using Roleta.Aplicacao.Dtos;
 using Roleta.Aplicacao.Dtos.Identity;
 using Roleta.Aplicacao.Interface;
+using Roleta.Dominio;
 using Roleta.Dominio.Identity;
 using Roleta.Persistencia.Interface;
 
@@ -45,6 +46,10 @@ namespace Roleta.Aplicacao
                 if (result.Succeeded)
                 {
                     await _userManager.AddToRoleAsync(user, "User");
+
+                    user.Carteira = new Carteira{UserId = user.Id};
+                    await _userManager.UpdateAsync(user);
+
                     var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
 
                     var retorno = _mapper.Map<UserDto>(user);
@@ -220,11 +225,11 @@ namespace Roleta.Aplicacao
             }
         }
 
-        public async Task<UserDto> GetByUserLoginAsync(string userLogin)
+        public async Task<UserDto> GetByUserLoginAsync(string userLogin, bool includeRole = false)
         {
             try
             {
-                var user = await _userPersist.GetByUserLoginAsync(userLogin);
+                var user = await _userPersist.GetByUserLoginAsync(userLogin, includeRole);
                 if (user == null) return null;
 
                 var retorno = _mapper.Map<UserDto>(user);

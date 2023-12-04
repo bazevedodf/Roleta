@@ -1,0 +1,176 @@
+<div class="row align-middle mt-3 px-2">
+  <div class="col-md-6 d-flex text-brand">
+    <h3>CADASTROS</h3>
+  </div>
+  <div class="text-end col-md-6 text-brand">
+    <ol class="breadcrumb float-sm-end">
+      <li class="breadcrumb-item"><a routerLink="/home">Dashboard</a></li>
+      <li class="breadcrumb-item active">Cadastros</li>
+    </ol>
+  </div>
+</div>
+<div class="row mt-3">
+  <div class="col-md-12">
+    <div class="card card-dasboard">
+      <div class="card-header">
+        <div class="card-Text d-flex bg-purple">
+          <i class="fa-solid fa-id-card"></i>
+          <div class="text-white lh-1 ms-2">
+            <h5 class="card-title mb-0">Cadastro</h5>
+            <p class="card-category m-0">Detalhes do Usuários</p>
+          </div>
+        </div>
+      </div>
+      <div class="card-body">
+        <div class="card rouded shadow-sm">
+          <form [formGroup]="form">
+            <!-- {{this.userSelected | json}} -->
+            <div class="p-3">
+              <div class="row mb-3">
+
+                <div class="container">
+                  <div class="card">
+                    <div class="card-header">
+                      <h5 class="card-title text-body-secondary">Afiliação</h5>
+                    </div>
+                    <div class="card-body">
+
+                      <div class="row mb-2">
+                        <div class="col-md-4 d-flex">
+                          <div class="form-check mt-3 me-3">
+                            <input type="checkbox"
+                              id="isBlocked"
+                              class="form-check-input mt-0"
+                              formControlName="isAfiliate"
+                              [(ngModel)]="userSelected.isAfiliate">
+                            <label class="form-check-label"  for="flexCheckChecked">
+                              Afiliado
+                            </label>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div class="row">
+                        <div class="col-md-4 my-2 d-flex">
+                          <div>
+                            <label>Link de Afiliado</label>
+                            <input type="datetime" class="form-control bg-body-secondary" formControlName="afiliateCode" [(ngModel)]="userSelected.afiliateCode" readonly>
+                          </div>
+                          <div class="ms-1 mt-4 ms-3">
+                            <button class="btn btn-success btn-sm">
+                              Copiar
+                            </button>
+                          </div>
+                        </div>
+
+                        <div class="col-md-3 my-2">
+                          <label>Comissão (% <small>Sobre a Perda</small>)</label>
+                          <input type="number" class="form-control" readonly formControlName="comissao" [(ngModel)]="userSelected.comissao">
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-md-4 my-2 ">
+                  <div style="width: 300px;">
+                    <label>Data Cadastro</label>
+                    <input type="datetime" readonly value="{{userSelected.dataCadastro | DateTimeFormat}}" class="form-control bg-body-secondary">
+                  </div>
+                </div>
+                <div class="col-md-4 d-flex">
+                  <div class="form-check mt-4">
+                    <input type="checkbox"
+                      id="demoAcount"
+                      class="form-check-input mt-0"
+                      formControlName="demoAcount"
+                      [(ngModel)]="userSelected.demoAcount">
+                    <label class="form-check-label" for="demoAcount">
+                      Conta Demo
+                    </label>
+                  </div>
+                  <div class="form-check mt-4 ms-5">
+                    <input type="checkbox"
+                      id="isBlocked"
+                      class="form-check-input mt-0"
+                      formControlName="isBlocked"
+                      [(ngModel)]="userSelected.isBlocked">
+                    <label class="form-check-label" for="isBlocked">
+                      Bloqueado
+                    </label>
+                  </div>
+                </div>
+                <div class="col-md-4">
+                  <label>Saldo</label>
+                  <input type="text"
+                    formControlName="saldoAtual"
+                    [(ngModel)]="carteira.saldoAtual"
+                    class="form-control">
+                </div>
+              </div>
+              <div class="row mb-3">
+                <div class="col-md-4 my-2">
+                  <label>Nome</label>
+                  <input type="text" class="form-control" formControlName="firstName" [(ngModel)]="userSelected.firstName">
+                </div>
+                <div class="col-md-4 my-2">
+                  <label>Sobre Nome</label>
+                  <input type="text" class="form-control" formControlName="lastName" [(ngModel)]="userSelected.lastName">
+                </div>
+
+                <div class="col-md-4 my-2">
+                  <label>E-Mail</label>
+                  <input type="text" class="form-control" formControlName="email" [(ngModel)]="userSelected.email">
+                </div>
+              </div>
+
+              <div class="row">
+
+                <div class="col-md-4 my-2">
+                  <label>CPF</label>
+                  <input type="text"
+                    class="form-control"
+                    formControlName="cpf"
+                    [showMaskTyped]="true"
+                    [dropSpecialCharacters]="true"
+                    mask="000.000.000-00"
+                    [(ngModel)]="userSelected.cpf" >
+                </div>
+
+                <div class="col-md-4 my-2">
+                  <label>Chave PIX</label>
+                  <input type="text" formControlName="chavePix" [(ngModel)]="userSelected.chavePix" class="form-control">
+                </div>
+
+                <div class="col-md-4 my-2">
+                  <label>Celular (Watsapp)</label>
+                  <input type="tel"
+                    formControlName="phoneNumber"
+                    [(ngModel)]="userSelected.phoneNumber"
+                    class="form-control"
+                    [showMaskTyped]="true"
+                    [dropSpecialCharacters]="true"
+                    mask="(00) 00000-0000">
+                </div>
+
+              </div>
+
+            </div>
+            <div class="card-footer">
+              <div class="d-flex my-2">
+                <button class="btn btn-outline-secondary mr-auto border" (click)="btnCancelar()">
+                  Cancelar Alteração
+                </button>
+                <button class="btn btn-success ms-auto" [disabled]="!form.valid || form.pristine" (click)="salvarUser()">
+                  <!-- <span class="spinner-border spinner-border-sm mr-1"></span> -->
+                  Salvar Dados
+                </button>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

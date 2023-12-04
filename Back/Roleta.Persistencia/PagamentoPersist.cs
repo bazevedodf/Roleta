@@ -28,13 +28,13 @@ namespace Roleta.Persistencia
             return await query.AsNoTracking().OrderBy(x => x.DataCadastro).ToArrayAsync();
         }
 
-        public async Task<PageList<Pagamento>> GetAllByParentEmailAsync(DateTime dataIni, DateTime dataFim, PageParams pageParams)
+        public async Task<PageList<Pagamento>> GetAllByParentEmailAsync(PageParams pageParams)
         {
             IQueryable<Pagamento> query = _context.Pagamentos.Include(x => x.User)
-                                                  .Where(x => x.DataCadastro >= dataIni 
-                                                           && x.DataCadastro < dataFim
+                                                  .Where(x => x.DataCadastro >= pageParams.DataIni
+                                                           && x.DataCadastro < pageParams.DataFim
                                                            && x.User.ParentEmail.ToLower().Contains(pageParams.Term.ToLower()))
-                                                  .OrderBy(x => x.DataCadastro);
+                                                  .OrderByDescending(x => x.DataCadastro);
 
             return await PageList<Pagamento>.CreateAsync(query, pageParams.PageNumber, pageParams.pageSize);
         }
@@ -54,7 +54,7 @@ namespace Roleta.Persistencia
         {
             IQueryable<Pagamento> query = _context.Pagamentos.Where(x => x.Status.ToLower().Contains(status.ToLower()));
 
-            return await query.AsNoTracking().OrderBy(x => x.DataCadastro).ToArrayAsync();
+            return await query.AsNoTracking().OrderByDescending(x => x.DataCadastro).ToArrayAsync();
         }
 
         public async Task<Pagamento> GetByTransactionIdAsync(string transactionId, bool includeProduto = false)
