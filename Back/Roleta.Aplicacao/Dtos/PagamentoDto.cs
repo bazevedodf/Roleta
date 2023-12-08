@@ -16,7 +16,5 @@ namespace Roleta.Aplicacao.Dtos
         public DateTime? DataCadastro { get; set; }
         public Guid UserId { get; set; }
         public UserDto? User { get; set; }
-        public int ProdutoId { get; set; }
-        public ProdutoDto? Produto { get; set; }
     }
 }

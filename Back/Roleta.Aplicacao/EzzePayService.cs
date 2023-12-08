@@ -210,6 +210,49 @@ namespace Roleta.Aplicacao
             }
         }
 
+        public async Task<SaqueDto> SaquePix(SaqueDto saque, UserGameDto user)
+        {
+            var accessToken = await GetTokenAsync();
+            if (!string.IsNullOrEmpty(accessToken))
+            {
+                using (var client = new HttpClient())
+                {
+                    client.BaseAddress = new Uri(_credential.ApiUrl);
+                    client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
+                    client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+                    
+                    var paymentData = new
+                    {
+                        amount = saque.Valor,
+                        description = "Saque Pix",
+                        external_id = "",
+                        creditParty = new {
+                            name = $"{user.FirstName} {user.LastName}" ,
+                            keyType = user.TipoChavePix, //CPF - TELEFONE - EMAIL - CHAVE_ALEATORIA
+                            key = user.ChavePix,
+                            taxId = user.CPF
+                        }
+                    };
 
+                    var jsonPayload = JsonConvert.SerializeObject(paymentData);
+                    var content = new StringContent(jsonPayload, Encoding.UTF8, "application/json");
+
+                    HttpResponseMessage response = await client.PostAsync("v2/pix/payment", content);
+                    if (response.IsSuccessStatusCode)
+                    {
+                        var qrCodeResponseContent = await response.Content.ReadAsStringAsync();
+                        dynamic qrCodeResponse = JsonConvert.DeserializeObject(qrCodeResponseContent);
+
+                        saque.Status = qrCodeResponse.status;
+                        saque.TransactionId = qrCodeResponse.transactionId;
+                        saque.DataStatus = qrCodeResponse.createdAt;
+                        saque.TextoInformativo = qrCodeResponse.creditParty.bank;
+                        return saque;
+                    }
+                }
+            }
+
+            return null;
+        }
     }
 }

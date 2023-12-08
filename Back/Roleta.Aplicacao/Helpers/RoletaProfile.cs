@@ -13,6 +13,7 @@ namespace ActionCoins.Aplicacao.Helpers
             CreateMap<User, UserDto>().ReverseMap();
             CreateMap<User, LoginDto>().ReverseMap();
             CreateMap<User, UserGameDto>().ReverseMap();
+            CreateMap<UserDto, UserGameDto>().ReverseMap();
             CreateMap<User, UserDashBoardDto>().ReverseMap();
             CreateMap<UserDto, UserDashBoardDto>().ReverseMap();
             CreateMap<User, UserUpdateDashDto>().ReverseMap(); 

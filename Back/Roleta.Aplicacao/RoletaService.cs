@@ -272,7 +272,7 @@ namespace Roleta.Aplicacao
             }
         }
 
-        private async Task<RoletaSorteDto> UpdateAsync(RoletaSorteDto model)
+        public async Task<RoletaSorteDto> UpdateAsync(RoletaSorteDto model)
         {
             try
             {

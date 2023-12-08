@@ -16,6 +16,7 @@ namespace Roleta.Dominio.Identity
         public bool isAfiliate { get; set; } = false;
         public string? AfiliateCode { get; set; }
         public string? CPF { get; set; }
+        public string? TipoChavePix{ get; set; }
         public string? ChavePix { get; set; }
         public int Comissao { get; set; }
         public bool isBlocked { get; set; } = false;

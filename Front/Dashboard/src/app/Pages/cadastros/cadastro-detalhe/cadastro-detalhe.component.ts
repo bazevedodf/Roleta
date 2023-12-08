@@ -53,6 +53,7 @@ export class CadastroDetalheComponent implements OnInit{
       comissao: ['25'],
       isBlocked :  [false],
       demoAcount :  [false],
+      saldoDemo :  [0],
       saldoAtual :  [0],
     });
   }

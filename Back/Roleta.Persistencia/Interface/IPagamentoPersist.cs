@@ -9,7 +9,7 @@ namespace Roleta.Persistencia.Interface
         Task<Pagamento[]> GetAllByUserIdAsync(Guid userId);
         Task<Pagamento[]> GetAllByStatusAsync(string status);
         Task<int> GetAllAproveByParentEmailAsync(string? parentEmail = null);
-        Task<PageList<Pagamento>> GetAllByParentEmailAsync(PageParams pageParams);
-        Task<Pagamento> GetByTransactionIdAsync(string transactionId, bool includeProduto = false);
+        Task<Pagamento> GetByTransactionIdAsync(string transactionId);
+        Task<PageList<Pagamento>> GetAllByParentEmailAsync(PageParams pageParams, bool somentePagos = false);
     }
 }

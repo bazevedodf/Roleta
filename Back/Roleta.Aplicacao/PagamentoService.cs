@@ -1,43 +1,43 @@
 ﻿using AutoMapper;
 using Roleta.Aplicacao.Dtos;
-using Roleta.Aplicacao.Dtos.Identity;
 using Roleta.Aplicacao.Interface;
 using Roleta.Dominio;
-using Roleta.Persistencia;
 using Roleta.Persistencia.Interface;
 using Roleta.Persistencia.Models;
-using System.Text;
 
 namespace Roleta.Aplicacao
 {
     public class PagamentoService : IPagamentoService
     {
         private readonly IPagamentoPersist _pagamentoPersist;
-        private readonly IAccountService _accountService;
+        private readonly IUserService _userService;
+        private readonly ICarteiraService _carteiraService;
         private readonly IEmailService _emailService;
         private readonly IEzzePayService _ezzePayService;
         private readonly IMapper _mapper;
 
         public PagamentoService(IPagamentoPersist pagamentoPersist,
-                                IAccountService accountService,
+                                IUserService userService,
+                                ICarteiraService carteiraService,
                                 IEzzePayService ezzePayService,
                                 IEmailService emailService,
                                 IMapper mapper)
         {
             _pagamentoPersist = pagamentoPersist;
-            _accountService = accountService;
+            _userService = userService;
+            _carteiraService = carteiraService;
             _ezzePayService = ezzePayService;
             _emailService = emailService;
             _mapper = mapper;
         }
         
-        public async Task<PagamentoDto> ConfirmarPagamento(string transactionId)
+        public async Task<PagamentoDto> ConsultaDepositoPix(string transactionId)
         {
             try
             {
                 //Status dos QRCodes
                 //PENDING - APPROVED - EXPIRED - RETURNED - ERROR
-                var pagamento = await _pagamentoPersist.GetByTransactionIdAsync(transactionId, true);
+                var pagamento = await GetByTransactionIdAsync(transactionId);
                 if (pagamento != null)
                 {
                     if (pagamento.Status == "PENDING")
@@ -50,20 +50,11 @@ namespace Roleta.Aplicacao
 
                         pagamento.Status = retornoPix.Status;
                         pagamento.DataStatus = DateTime.Now;
-                        if (await IsUpdateAsync(pagamento))
-                        {
-                            var retorno = _mapper.Map<PagamentoDto>(pagamento);
-                            if (retornoPix.Status == "APPROVED")
-                            {
-                                var user = await _accountService.GetByIdAsync(pagamento.UserId);
-                                if (user != null)
-                                {
-                                    user.SaldoDeposito += pagamento.Produto.SaldoDeposito;
-                                    await _emailService.ConfirmarPagamento(user, retorno);
-                                }                                
-                            }
 
-                            return retorno;
+                        var retorno = await ConfirmarDepositoPix(pagamento);
+                        if (retorno != null)
+                        {
+                            await _emailService.ConfirmarPagamento(retorno.User, retorno);
                         }
                     }
 
@@ -71,6 +62,40 @@ namespace Roleta.Aplicacao
                 }
 
                 return null;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+
+        public async Task<PagamentoDto> ConfirmarDepositoPix(PagamentoDto pagamento)
+        {
+            try
+            {
+                if (pagamento.Status == "APPROVED")
+                {
+                    var user = await _userService.GetByIdAsync(pagamento.UserId);
+                    var trasacaoUser = new Transacao()
+                    {
+                        CarteiraId = user.Carteira.Id,
+                        valor = pagamento.Valor,
+                        TransactionId = pagamento.TransactionId,
+                        Tipo = "Deposito Pix"
+                    };
+                    //user.Carteira.Transacoes.Append(trasacaoUser);
+                    var returnTransacao = await _carteiraService.AddTransacaoAsync(trasacaoUser);
+                    if (returnTransacao == null) return null;
+                    
+                    user.Carteira.SaldoAtual += pagamento.Valor;
+                    user.Carteira.DataAtualizacao = DateTime.Now;
+                    var retornoUser = await _userService.UpdateUserGame(user);
+                    if (retornoUser == null) return null;
+                }
+
+                var retorno = await UpdateAsync(pagamento);
+
+                return retorno != null ? retorno : null;
             }
             catch (Exception ex)
             {
@@ -91,25 +116,6 @@ namespace Roleta.Aplicacao
                     return _mapper.Map<PagamentoDto>(retorno);
                 }
                 return null;
-            }
-            catch (Exception ex)
-            {
-                throw new Exception(ex.Message);
-            }
-        }
-
-        public async Task<bool> IsUpdateAsync(Pagamento pagamento)
-        {
-            try
-            {
-                if (pagamento == null) return false;
-                _pagamentoPersist.Update(pagamento);
-                if (await _pagamentoPersist.SaveChangeAsync())
-                {
-                    return true;
-                }
-
-                return false;
             }
             catch (Exception ex)
             {
@@ -214,11 +220,11 @@ namespace Roleta.Aplicacao
             }
         }        
 
-        public async Task<PagamentoDto> GetByTransactionIdAsync(string transactionId, bool includeProduto = false)
+        public async Task<PagamentoDto> GetByTransactionIdAsync(string transactionId)
         {
             try
             {
-                var pagamento = await _pagamentoPersist.GetByTransactionIdAsync(transactionId, includeProduto);
+                var pagamento = await _pagamentoPersist.GetByTransactionIdAsync(transactionId);
                 if (pagamento == null) return null;
 
                 return _mapper.Map<PagamentoDto>(pagamento);
@@ -229,11 +235,11 @@ namespace Roleta.Aplicacao
             }
         }
 
-        public async Task<PageList<PagamentoDto>> GetAllByParentEmailAsync(PageParams pageParams)
+        public async Task<PageList<PagamentoDto>> GetAllByParentEmailAsync(PageParams pageParams, bool somentePagos = false)
         {
             try
             {
-                var users = await _pagamentoPersist.GetAllByParentEmailAsync(pageParams);
+                var users = await _pagamentoPersist.GetAllByParentEmailAsync(pageParams, somentePagos);
 
                 if (users == null) return null;
 

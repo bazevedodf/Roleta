@@ -110,7 +110,7 @@ namespace Roleta.Api.Controllers
                     pageParams.Term = userDto.Email;
                 }
 
-                var users = await _pagamentoService.GetAllByParentEmailAsync(pageParams);
+                var users = await _pagamentoService.GetAllByParentEmailAsync(pageParams, true);
                 if (users == null) return NoContent();
 
                 Response.AddPagination("PaginationPag", users.CurrentPage, users.PageSize, users.TotalCount, users.TotalPages);

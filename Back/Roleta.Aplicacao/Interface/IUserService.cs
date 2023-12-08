@@ -10,6 +10,7 @@ namespace Roleta.Aplicacao.Interface
         Task<UserDashBoardDto> UpdateUserDashBoard(UserUpdateDashDto model, bool includeRole = false);
 
         Task<int> GetCountByParentEmail(string? parentEmail = null);
+        Task<UserGameDto> GetByIdAsync(Guid userId);
         Task<UserGameDto> GetUserGameByLoginAsync(string userLogin);
         Task<UserGameDto> GetUserGameByEmailAsync(string email, bool includeRole = false);
         Task<UserDashBoardDto> GetByUserLoginAsync(string userLogin, bool includeRole = false);

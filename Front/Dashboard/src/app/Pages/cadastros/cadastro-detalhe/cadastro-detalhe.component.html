@@ -73,22 +73,10 @@
                 </div>
               </div>
               <div class="row">
-                <div class="col-md-4 my-2 ">
+                <div class="col-md-4 my-2 d-flex">
                   <div style="width: 300px;">
                     <label>Data Cadastro</label>
                     <input type="datetime" readonly value="{{userSelected.dataCadastro | DateTimeFormat}}" class="form-control bg-body-secondary">
-                  </div>
-                </div>
-                <div class="col-md-4 d-flex">
-                  <div class="form-check mt-4">
-                    <input type="checkbox"
-                      id="demoAcount"
-                      class="form-check-input mt-0"
-                      formControlName="demoAcount"
-                      [(ngModel)]="userSelected.demoAcount">
-                    <label class="form-check-label" for="demoAcount">
-                      Conta Demo
-                    </label>
                   </div>
                   <div class="form-check mt-4 ms-5">
                     <input type="checkbox"
@@ -101,12 +89,37 @@
                     </label>
                   </div>
                 </div>
-                <div class="col-md-4">
-                  <label>Saldo</label>
+                <div class="col-md-4 my-2 d-flex">
+                  <div class="form-check mt-4">
+                    <input type="checkbox"
+                      id="demoAcount"
+                      class="form-check-input mt-0"
+                      formControlName="demoAcount"
+                      [(ngModel)]="userSelected.demoAcount">
+                    <label class="form-check-label" for="demoAcount">
+                      Conta Demo
+                    </label>
+                  </div>
+                  <div class="form-check">
+                    <label>Saldo Demo</label>
+                    <input type="text"
+                      currencyMask
+                      [options]="{ prefix: 'R$ ', thousands: '.', decimal: ',', align: 'left' }"
+                      [ngClass]="{'bg-body-secondary' : !userSelected.demoAcount}"
+                      [readonly]="!userSelected.demoAcount"
+                      formControlName="saldoDemo"
+                      [(ngModel)]="carteira.saldoDemo"
+                      class="form-control">
+                  </div>
+                </div>
+                <div class="col-md-2 my-2">
+                  <label>Saldo Atual</label>
                   <input type="text"
+                    currencyMask
                     formControlName="saldoAtual"
-                    [(ngModel)]="carteira.saldoAtual"
-                    class="form-control">
+                    [options]="{ prefix: 'R$ ', thousands: '.', decimal: ',', align: 'left' }"
+                    [value]="carteira.saldoAtual | currency: 'BRL'"
+                    class="form-control bg-body-secondary" readonly>
                 </div>
               </div>
               <div class="row mb-3">

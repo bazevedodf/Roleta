@@ -11,6 +11,7 @@ namespace Roleta.Aplicacao.Dtos
         public string Email { get; set; }
         public string? PhoneNumber { get; set; }
         public string? CPF { get; set; }
+        public string? TipoChavePix { get; set; }
         public string? ChavePix { get; set; }
         //public int FreeSpin { get; set; }
         //public decimal SaldoDeposito { get; set; }

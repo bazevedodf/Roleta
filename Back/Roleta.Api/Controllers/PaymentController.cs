@@ -1,14 +1,13 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Primitives;
+using Newtonsoft.Json;
 using Roleta.Aplicacao.Dtos;
 using Roleta.Aplicacao.Extensions;
 using Roleta.Aplicacao.Interface;
-using Newtonsoft.Json;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Cors;
-using Roleta.Aplicacao;
-using System.Text;
+using Roleta.Dominio;
 
 namespace Roleta.Api.Controllers
 {
@@ -17,27 +16,33 @@ namespace Roleta.Api.Controllers
     [Route("api/[controller]")]
     public class PaymentController : ControllerBase
     {
-        private readonly IAccountService _accountService;
-        private readonly IProdutoService _produtoService;
+        //private readonly IAccountService _accountService;
+        private readonly IUserService _userService;
+        private readonly IPagamentoService _pagamentoService;
+        private readonly ISaqueService _saqueService;
         private readonly IEzzePayService _ezzePayService;
         private readonly IEmailService _emailService;
-        private readonly IPagamentoService _pagamentoService;
+        private readonly IMapper _mapper;
+        
 
-        public PaymentController(IAccountService accountService, 
-                                 IProdutoService produtoService,
+        public PaymentController(IUserService userService,
+                                 IPagamentoService pagamentoService,
+                                 ISaqueService saqueService,
                                  IEzzePayService ezzePayService,
                                  IEmailService emailService,
-                                 IPagamentoService pagamentoService)
+                                 IMapper mapper)
         {
-            _accountService = accountService;
-            _produtoService = produtoService;
+            _userService = userService;
+            _pagamentoService = pagamentoService;
+            _saqueService = saqueService;
             _ezzePayService = ezzePayService;
             _emailService = emailService;
-            _pagamentoService = pagamentoService;
+            _mapper = mapper;
+            
         }
 
         [EnableCors("BetBrazil")]
-        [HttpPost("GetPix")]
+        [HttpPost("GetDepositPix")]
         public async Task<IActionResult> GerarQRCodePix(DepositoDto deposito)
         {
             try
@@ -47,13 +52,12 @@ namespace Roleta.Api.Controllers
                 //if (user == null)
                 //    return BadRequest("Você não possue permissão para essa operação");
 
-                var produto = await _produtoService.GetByIdAsync(deposito.ProdutoId);
-                if (produto == null) return BadRequest("Não foi possivel encontrar o produto!");
+                if (deposito.Valor < 10) return BadRequest("Não foi possivel gerar o pix!");
 
                 DadosPixDto dados = new DadosPixDto()
                 {
-                    Amount = produto.Valor,
-                    PayerQuestion = produto.Nome,
+                    Amount = deposito.Valor,
+                    PayerQuestion = "Roleta Pro",
                     PayerName = deposito.Nome,
                     PayerDocument = deposito.CPF
                 };
@@ -67,12 +71,11 @@ namespace Roleta.Api.Controllers
                     TransactionId = retornoPix.TransactionId,
                     QrCode = retornoPix.QRCode, //@"data:image/jpeg;base64, iVBORw0KGgoAAAANSUhEUgAAAjoAAAI6AQMAAAAUhnCDAAAABlBMVEX///8AAABVwtN+AAAACXBIWXMAAA7EAAAOxAGVKw4bAAAEKklEQVR4nO2aQY6lMAxEI/0DcCSuniNxACT3ELucAD1SL2Ykt/S8oIEkL72gkrLzWyMIgiAIgiAI4v+ERZyt7cfHWtvMxp31q7W36268+9PF7LjebRrUAQEqC/KH7eo1aFf/no/tAo3hdk2zj+HbeRsLCFBJ0BZt8dVvQywDPkTwCcVMbk4DCNBvAI1eQyxxabH4q+GCHdEFEKBfA7KIATKb7kVwk48BBOg3gLJt3O12Ll3Dv5tJRU8BAQJUFZTCcJ386KJBgACVBa1IZZzjborF73aN/MtwQIBKgeTBzX25d7UcmTEeo59MDyBAhUE+clHHR4NG5dCyJv7mvv0RIECFQKoN7s4I4yI5PHxMzBX+HRCgqqAY7j7GYlGPSrjU0dUv/M4hUXVAgKqC4tP/QQJ6dXax5NlmAwSoLMh/YiKvHueYehdy8DijYXU+gADVBUXuqQ5nLO8OmtVxDV/E0gEBKgsyaSK8zSGuW/LpciQWHQi9qzWAABUC9ZYSMbPb4j8bTk2oyqFHBwSoLGgMT2Ss9q4YXVo27F5feTAAASoI6lkltCyeeAVlOxeJzCXfH2f1BRCgoiA5dK+bbPNIXjtA1s69Ju4Xe1XYAQEqBJrlcC3+wVimaUnLhrdEAAGqBWp3hqWZmUnpUn0ZXexchwECVBEk95IMex3Oa2uY28DF2B4SAQSoFGiu4stIL7Jssum9TTNjq9UBBKgsSIw144wa4tTJdOj+7kzFAAJUFKSDS0lktO1meY4Z1cRl8R+dQ0qAAJUF2SwLTtC0NSrBzIMe7/dy/oAAFQOFj2nP0Bp/U1FkoSEgQIDKghZz7tysoGSyOeZKKc3aOSBAdUHKM9OzpDCaDnpWsVi4HP1QBRCgqiAvfdstu1x6eWaac+lMX/8EIEBFQeo1u2pkFF6ubaDFkY+y0G93EUCAioGuq3twM4E0wxiZyFCHmx57pqKAAFUCXbFKpOWJ5khPlXb6ur8fepc7ACBAJUHLkt/01Q9u2HQLOXjnrou3dkCA6oLcrnxiPfcsVLmnZWE8Ki3KR5WtAgJUFBTJZtLsuF36DamS4urfAQGqCdqPpg9+CzPjj7t2AKnjc3foz0MiQIDKgWTJzyZhhCWfI8PqtDmDfZfTAgJUBmQSRl9yz5l2BvwmpW9tDSBAlUCWx5VRSPRI/z6nWQyOogMCVBW0IL3SMsLrK5phhG8Shyotcy8ABKgiSF97rudbGJzF6vTk7kMY+a4DAlQW5A+uhE/+ZCrKKLPB1/0cvuoJEKCSoM10OC+nonU/tKMlP1b70NSz5gIIUFFQfPrLZT3RXB2NmanWCAhQeZCv9lFL0aFO3EX4iDgQyo0DEKCSoPFHSpgS0RnPRMauEO9eqSggQKVAEedyFzY9k9Lx6Iv/lp1fEgEEqBKIIAiCIAiCIIh/GV8kQUs8NzKVTQAAAABJRU5ErkJggg==",
                     QrCodeText = retornoPix.QRCodeText, //@"00020101021226790014br.gov.bcb.pix2557brcode.starkinfra.com/v2/2bc98df7201643f8a203d9615e5ab17b5204000053039865802BR5925Ezzepay Solucoes de Pagam6008Brasilia62070503***6304CA83",
-                    Valor = produto.Valor,
+                    Valor = deposito.Valor,
                     Status = retornoPix.Status,
                     DataStatus = DateTime.Now,
                     DataCadastro = DateTime.Now,
                     UserId = userId,
-                    ProdutoId = produto.Id,
                 };
 
                 var retornoPg = await _pagamentoService.AddAsync(pagamento);
@@ -103,29 +106,12 @@ namespace Roleta.Api.Controllers
         {
             try
             {
-                var userDto = await _accountService.GetByUserLoginAsync(User.GetUserName());
+                //var userDto = await _accountService.GetByUserLoginAsync(User.GetUserName());
+                var userDto = await _userService.GetByUserLoginAsync(User.GetUserName());
                 if (userDto == null) return Unauthorized("Usuário inválido");
 
-                var pagamento = await _pagamentoService.ConfirmarPagamento(transactionId);
+                var pagamento = await _pagamentoService.ConsultaDepositoPix(transactionId);
                 if (pagamento == null) return BadRequest("Transação não encontrada");
-
-                //var retornoPix = await _ezzePayService.ConsultaPixAsync(transactionId);
-                //if (retornoPix == null) return BadRequest("Transação não encontrada no gateway");
-
-                //if(pagamento.Status != retornoPix.Status)
-                //{
-                //    //Status dos QRCodes
-                //    //PENDING - APPROVED - EXPIRED - RETURNED - ERROR
-                //    if (retornoPix.Status == "APPROVED" && pagamento.Status == "PENDING")
-                //    {
-                //        userDto.SaldoDeposito += pagamento.Produto.SaldoDeposito;
-                //        userDto = await _accountService.UpdateUserAsync(userDto);
-                //    }
-
-                //    pagamento.Status = retornoPix.Status;
-                //    pagamento.DataStatus = DateTime.Now;
-                //    pagamento = await _pagamentoService.UpdateAsync(pagamento);
-                //}
 
                 return Ok(pagamento);
             }
@@ -165,52 +151,68 @@ namespace Roleta.Api.Controllers
                             var json = JsonConvert.DeserializeObject<dynamic>(requestPayload);
                             if (json != null)
                             {
+                                string transactionType = json.requestBody.transactionType;
                                 string transactionId = json.requestBody.transactionId;
-                                var pagamento = await _pagamentoService.GetByTransactionIdAsync(transactionId);
-                                if (pagamento != null)
+                                
+                                //Depositos via PIX
+                                if (transactionType == "EXPIRED" || transactionType == "RECEIVEPIX")
                                 {
                                     //Status dos QRCodes
                                     //PENDING - APPROVED - EXPIRED - RETURNED - ERROR
-                                    string transactionType = json.requestBody.transactionType;
-                                    if (transactionType == "PAYMENT")
+                                    var pagamento = await _pagamentoService.GetByTransactionIdAsync(transactionId);
+                                    if (pagamento != null)
                                     {
-                                        //metodo para fazer pagamentos
-                                        //if (json.requestBody.statusCode.statusId == "2")
-                                        //{
-                                        //    pagamento.Status = "APPROVED";
-                                        //}
-                                        //else
-                                        //{
-                                        //    pagamento.Status = "ERROR";
-                                        //}
-                                        //pagamento.User.SaldoDeposito -= pagamento.Valor;
-                                        
-                                        //if (pagamento != null)
-                                        //{
-                                        //    pagamento.User.SaldoDeposito += pagamento.Valor;
-                                        //    await _accountService.UpdateUserAsync();
-                                        //}
+                                        if (transactionType == "EXPIRED")
+                                        {
+                                            pagamento.Status = "EXPIRED";
+                                            pagamento.DataStatus = DateTime.Now;
+                                            var retorno = await _pagamentoService.UpdateAsync(pagamento);
+                                        }
+                                        if (transactionType == "RECEIVEPIX")
+                                        {
+                                            pagamento.Status = "APPROVED";
+                                            pagamento.DataStatus = DateTime.Now;
+                                            var retorno = await _pagamentoService.ConfirmarDepositoPix(pagamento);
+                                            if (retorno != null)
+                                            {
+                                                await _emailService.ConfirmarPagamento(retorno.User, retorno);
+                                            }
+                                        }
                                     }
+                                }
 
-                                    if (transactionType == "PAYMENT_CANCELLED")
+                                //Saques via PIX
+                                if (transactionType == "PAYMENT_CANCELLED" || transactionType == "PAYMENT")
+                                {
+                                    var saque = await _saqueService.GetByTransactionIdAsync(transactionId);
+                                    if (saque != null)
                                     {
-                                        pagamento.Status = "EXPIRED";
-                                    }
+                                        //Status dos Saques
+                                        //PROCESSING - PEND_CONFIRM - CONFIRMED - ERROR - CANCELED - RETURNED
+                                        if (transactionType == "PAYMENT_CANCELLED")
+                                        {
+                                            saque.Status = "PAYMENT_CANCELLED";
+                                            var retorno = await _saqueService.UpdateAsync(saque);
+                                        }
 
-                                    if (transactionType == "RECEIVEPIX")
-                                    {
-                                        pagamento.Status = "APPROVED";
-                                    }
+                                        if (transactionType == "PAYMENT")
+                                        {
+                                            string statusId = json.requestBody.statusCode.statusId;
+                                            if (statusId == "3")
+                                            {
+                                                saque.Status = "ERROR";
+                                                saque.DataStatus = DateTime.Now;
+                                            }
 
-                                    pagamento.DataStatus = DateTime.Now;
-                                    var retorno = await _pagamentoService.UpdateAsync(pagamento);
-                                    if (retorno != null)
-                                    {
-                                        var user = await _accountService.GetByIdAsync(retorno.UserId);
-                                        user.SaldoDeposito += retorno.Produto.SaldoDeposito;
-                                        await _accountService.UpdateUserAsync(user);
-                                        await _emailService.ConfirmarPagamento(user, retorno);
-                                    }
+                                            if (statusId == "2")
+                                            {
+                                                saque.Status = "PAYMENT";
+                                                saque.DataStatus = DateTime.Now;
+                                            }
+
+                                            var retorno = await _saqueService.ConfirmarSaquePix(saque);
+                                        }
+                                    }                                    
                                 }
                             }
 

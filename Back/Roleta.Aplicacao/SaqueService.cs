@@ -2,19 +2,109 @@
 using Roleta.Aplicacao.Dtos;
 using Roleta.Aplicacao.Interface;
 using Roleta.Dominio;
+using Roleta.Persistencia;
 using Roleta.Persistencia.Interface;
+using System.Linq;
 
 namespace Roleta.Aplicacao
 {
     public class SaqueService : ISaqueService
     {
         private readonly ISaquePersist _saquePersist;
+        private readonly IEzzePayService _ezzePayService;
+        private readonly IUserService _userService;
+        private readonly ICarteiraService _carteiraService;
         private readonly IMapper _mapper;
 
-        public SaqueService(ISaquePersist saquePersist, IMapper mapper)
+        public SaqueService(ISaquePersist saquePersist,
+                            IEzzePayService ezzePayService,
+                            IUserService userService,
+                            ICarteiraService carteiraService,
+                            IMapper mapper)
         {
             _saquePersist = saquePersist;
+            _ezzePayService = ezzePayService;
+            _userService = userService;
+            _carteiraService = carteiraService;
             _mapper = mapper;
+        }
+
+        public async Task<SaqueDto> SolicitarSaquePix(UserGameDto user, decimal valor)
+        {
+            try
+            {
+                SaqueDto saque = new SaqueDto()
+                {
+                    UserId = user.Id,
+                    Valor = valor,
+                    Status = "PROCESSING"
+                };
+
+                saque = await _ezzePayService.SaquePix(saque, user);
+                if (saque != null)
+                {
+                    var retornoSaque = await AddAsync(saque);
+                    if (retornoSaque == null) return null;
+
+                    var trasacaoUser = new Transacao()
+                    {
+                        CarteiraId = user.Carteira.Id,
+                        valor = decimal.Negate(valor),
+                        TransactionId = retornoSaque.TransactionId,
+                        Tipo = "Saque Pix",
+                        Data = retornoSaque.DataStatus
+                    };
+
+                    var returnTransacao = await _carteiraService.AddTransacaoAsync(trasacaoUser);
+                    if (returnTransacao == null) return null;
+
+                    user.Carteira.SaldoAtual -= retornoSaque.Valor;
+                    user.Carteira.DataAtualizacao = DateTime.Now;
+                    await _userService.UpdateUserGame(user);
+                    
+                    return retornoSaque;
+                }
+                
+                return null;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+
+        public async Task<SaqueDto> ConfirmarSaquePix(SaqueDto saque)
+        {
+            try
+            {
+               
+                if (saque.Status == "ERROR")
+                {
+                    var user = await _userService.GetByIdAsync(saque.UserId);
+                    var trasacaoUser = new Transacao()
+                    {
+                        CarteiraId = saque.User.Carteira.Id,
+                        valor = saque.Valor,
+                        TransactionId = saque.TransactionId,
+                        Tipo = "Extorno Saque",
+                        Data = DateTime.Now
+                    };
+
+                    var returnTransacao = await _carteiraService.AddTransacaoAsync(trasacaoUser);
+
+                    saque.User.Carteira.SaldoAtual += saque.Valor;
+                    saque.User.Carteira.DataAtualizacao = DateTime.Now;
+                    await _userService.UpdateUserGame(saque.User);
+                }
+
+                var retorno = await UpdateAsync(saque);
+
+                return retorno != null ? retorno : null;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
         }
 
         public async Task<SaqueDto> AddAsync(SaqueDto model)

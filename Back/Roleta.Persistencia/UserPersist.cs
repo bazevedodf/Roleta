@@ -38,6 +38,8 @@ namespace Roleta.Persistencia
         {
             IQueryable<User> query = _context.Users.Where(x => x.Id == id);
 
+            query = query.Include(x => x.Carteira);
+
             if (includeRole)
                 query = query.Include(x => x.UserRoles)
                              .ThenInclude(x => x.Role);

@@ -39,9 +39,9 @@ namespace Roleta.Persistencia.Mapeamentos
                 .WithMany(x => x.Pagamentos)
                 .HasConstraintName("FK_User_Pagamento");
 
-            builder.HasOne(x => x.Produto)
-                .WithMany()
-                .HasConstraintName("FK_Produto_pagamento");
+            //builder.HasOne(x => x.Produto)
+            //    .WithMany()
+            //    .HasConstraintName("FK_Produto_pagamento");
 
             //Index
             builder.HasIndex(x => x.TransactionId)

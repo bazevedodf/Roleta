@@ -8,6 +8,7 @@
         public string Email { get; set; }
         public string? PhoneNumber { get; set; }
         public string? CPF { get; set; }
+        public string? TipoChavePix { get; set; }
         public string? ChavePix { get; set; }
         public int Comissao { get; set; } = 25;
         public bool Verified { get; set; }

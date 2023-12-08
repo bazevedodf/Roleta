@@ -6,6 +6,7 @@ using Roleta.Aplicacao;
 using Roleta.Aplicacao.Dtos;
 using Roleta.Aplicacao.Extensions;
 using Roleta.Aplicacao.Interface;
+using Roleta.Dominio;
 
 namespace Roleta.Api.Controllers
 {
@@ -127,33 +128,23 @@ namespace Roleta.Api.Controllers
                 var user = await _userService.GetUserGameByLoginAsync(login);
                 if (user == null) return Unauthorized("Usuário inválido");
 
+                if (user.DemoAcount) return Unauthorized("Não é possivel fazer saques nessa conta!");
+
+                if (user.isAfiliate) return Unauthorized("Não é possivel fazer saques nessa conta!");
+
                 var roleta = await _roletaService.GetByIdAsync(1);
 
                 if (valor < roleta.ValorSaque)
                     return this.StatusCode(StatusCodes.Status403Forbidden, 
                             $"O valor mínimo de saque é de {roleta.ValorSaque.ToString("C")}.");
 
-                if (user.Carteira.SaldoAtual < roleta.ValorSaque) 
+                if (user.Carteira.SaldoAtual < valor) 
                     return this.StatusCode(StatusCodes.Status403Forbidden,
-                                $"O seu saldo de saque é inferior ao valor mínimo de {roleta.ValorSaque.ToString("{0:C}")}.");
+                                $"Saldo insuficiente.");
 
-                SaqueDto saque = new SaqueDto()
-                {
-                    UserId = user.Id,
-                    Valor = valor,
-                    Status = "Pendente"
-                };
+                var retorno = await _saqueService.SolicitarSaquePix(user, valor);
 
-                var retorno = await _saqueService.AddAsync(saque);
                 if (retorno == null) return BadRequest("Erro ao solicitar o Saque");
-
-                //userDto.SaldoSaque -= valor;
-                //var userRetorno = await _accountService.UpdateUserAsync(userDto);
-                //if (userRetorno == null)
-                //{
-                //    await _saqueService.DeleteAsync(retorno.Id);
-                //    return BadRequest("Erro ao atualizar saldo, para finalizar o saque.");
-                //}
 
                 return Ok(retorno);
             }

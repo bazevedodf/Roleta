@@ -17,6 +17,7 @@ namespace Roleta.Persistencia
         public async Task<Pagamento> GetByIdAsync(int id)
         {
             IQueryable<Pagamento> query = _context.Pagamentos.Where(x => x.Id == id);
+            query = query.Include(x => x.User);
 
             return await query.AsNoTracking().FirstOrDefaultAsync();
         }
@@ -28,15 +29,16 @@ namespace Roleta.Persistencia
             return await query.AsNoTracking().OrderBy(x => x.DataCadastro).ToArrayAsync();
         }
 
-        public async Task<PageList<Pagamento>> GetAllByParentEmailAsync(PageParams pageParams)
+        public async Task<PageList<Pagamento>> GetAllByParentEmailAsync(PageParams pageParams, bool somentePagos = false)
         {
             IQueryable<Pagamento> query = _context.Pagamentos.Include(x => x.User)
                                                   .Where(x => x.DataCadastro >= pageParams.DataIni
                                                            && x.DataCadastro < pageParams.DataFim
-                                                           && x.User.ParentEmail.ToLower().Contains(pageParams.Term.ToLower()))
-                                                  .OrderByDescending(x => x.DataCadastro);
+                                                           && x.User.ParentEmail.ToLower().Contains(pageParams.Term.ToLower()));
+            if (somentePagos)
+                query = query.Where(x => x.Status.ToUpper() == "APPROVED");
 
-            return await PageList<Pagamento>.CreateAsync(query, pageParams.PageNumber, pageParams.pageSize);
+            return await PageList<Pagamento>.CreateAsync(query.OrderByDescending(x => x.DataCadastro), pageParams.PageNumber, pageParams.pageSize);
         }
 
         public async Task<int> GetAllAproveByParentEmailAsync(string? parentEmail = null)
@@ -57,14 +59,9 @@ namespace Roleta.Persistencia
             return await query.AsNoTracking().OrderByDescending(x => x.DataCadastro).ToArrayAsync();
         }
 
-        public async Task<Pagamento> GetByTransactionIdAsync(string transactionId, bool includeProduto = false)
+        public async Task<Pagamento> GetByTransactionIdAsync(string transactionId)
         {
             IQueryable<Pagamento> query = _context.Pagamentos.Where(x => x.TransactionId == transactionId);
-
-            if (includeProduto)
-            {
-                query = query.Include(x => x.Produto);
-            }
 
             return await query.AsNoTracking().FirstOrDefaultAsync();
         }

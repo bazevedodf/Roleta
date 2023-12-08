@@ -131,7 +131,7 @@ static void ConfigureServices(WebApplicationBuilder builder)
     builder.Services.AddScoped<ICarteiraService, CarteiraService>();
     builder.Services.AddScoped<IProdutoService, ProdutoService>();
     builder.Services.AddScoped<IPagamentoService, PagamentoService>();
-    builder.Services.AddScoped<ISaqueService, SaqueService>();    
+    builder.Services.AddTransient<ISaqueService, SaqueService>();    
     builder.Services.AddScoped<IRoletaService, RoletaService>();
 
     builder.Services.AddScoped<IUserPersist, UserPersist>();

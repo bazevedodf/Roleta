@@ -26,6 +26,7 @@ namespace Roleta.Aplicacao
                 var user = await _userPersist.GetByUserLoginAsync(model.Email, includeRole);
                 if (user == null) return null;
 
+                model.Carteira.SaldoAtual = user.Carteira.SaldoAtual;
                 _mapper.Map(model, user);
 
                 if(string.IsNullOrEmpty(user.AfiliateCode) && user.isAfiliate)
@@ -133,6 +134,20 @@ namespace Roleta.Aplicacao
                 resultado.TotalCount = users.TotalCount;
 
                 return resultado;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Erro ao consultar usuários. Erro: {ex.Message}");
+            }
+        }
+
+        public async Task<UserGameDto> GetByIdAsync(Guid userId)
+        {
+            try
+            {
+                var result = await _userPersist.GetByIdAsync(userId);
+
+                return _mapper.Map<UserGameDto>(result);
             }
             catch (Exception ex)
             {

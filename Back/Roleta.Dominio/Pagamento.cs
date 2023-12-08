@@ -1,5 +1,4 @@
-﻿using Roleta.Dominio.Enums;
-using Roleta.Dominio.Identity;
+﻿using Roleta.Dominio.Identity;
 
 namespace Roleta.Dominio
 {
@@ -17,7 +16,7 @@ namespace Roleta.Dominio
         public DateTime DataCadastro { get; set; }
         public Guid UserId { get; set; }
         public User? User { get; set; }
-        public int ProdutoId { get; set; }
-        public Produto? Produto { get; set; }
+        //public int ProdutoId { get; set; }
+        //public Produto? Produto { get; set; }
     }
 }

@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Roleta.Persistencia;
 
@@ -10,9 +11,10 @@ using Roleta.Persistencia;
 namespace Roleta.Persistencia.Migrations
 {
     [DbContext(typeof(RoletaContext))]
-    partial class RoletaContextModelSnapshot : ModelSnapshot
+    [Migration("20231207202857_Alterando User_TipoChavePix")]
+    partial class AlterandoUser_TipoChavePix
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
