@@ -7,7 +7,6 @@ import { Pix } from '@app/model/Pix';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { ToastrService } from 'ngx-toastr';
 import { RoletaService } from '@app/Services/roleta.service';
-import { Produto } from '@app/model/Produto';
 
 @Component({
   selector: 'app-deposit',
@@ -33,35 +32,13 @@ export class DepositComponent  implements OnInit, OnDestroy {
               private spinner: NgxSpinnerService){}
 
   ngOnInit(): void {
-    this.getPlanos();
     this.renderer.addClass(document.querySelector('body'), "bg-01");
     this.Validacao();
-  }
-
-  private getPlanos(){
-    this.spinner.show();
-    this.roletaService.GetOfertas().subscribe({
-      next: (result: Produto[]) => {
-        this.planos = [
-          { classe: 'option1', titulo: result[0]?.nome, valor: result[0]?.valor, id: result[0]?.id},
-          { classe: 'option2', titulo: result[1]?.nome, valor: result[1]?.valor, id: result[1]?.id},
-          { classe: 'option3', titulo: result[2]?.nome, valor: result[2]?.valor, id: result[2]?.id},
-        ];
-      },
-      error: (error: any) => {
-        if (error.status == 401){
-          this.toastr.error(error.error, "Erro!");
-        }
-        else
-          this.toastr.error("Erro de conexão, tente mais tarde!.","Erro!");
-      }
-    }).add(() => {this.spinner.hide()});
   }
 
   public GerarPix(): void{
     this.spinner.show();
     this.dadosPix = {... this.form.value}
-    console.log(this.dadosPix);
     this.paymentService.gerarPix(this.dadosPix).subscribe({
       next:(result: Pix) => {
         this.PixDeposit = result;
@@ -90,8 +67,6 @@ export class DepositComponent  implements OnInit, OnDestroy {
     setTimeout(function(){
       btn.innerHTML = contentBtn;
     }, 2000)
-    //this.toastr.success('Código PIX copiado', 'Sucesso!');
-
   }
 
   public validaCSS(campo: FormControl | AbstractControl): any {
@@ -99,15 +74,10 @@ export class DepositComponent  implements OnInit, OnDestroy {
   }
 
   private Validacao(): void {
-
-    /* const formOptions: AbstractControlOptions = {
-      validators: ValidatorField.ComparaCampos("password", "confirmPassword"),
-    }; */
-
     this.form = this.fb.group({
       nome: ['', [Validators.required]],
       cpf: ['', [Validators.required, Validators.minLength(11), Validators.maxLength(11)]],
-      produtoId: ['2', Validators.required],
+      valor: ['', Validators.required],
     });
   }
 

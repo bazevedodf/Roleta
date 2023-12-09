@@ -18,18 +18,21 @@ namespace Roleta.Api.Controllers
     public class AccountController : ControllerBase
     {
         private readonly IAccountService _accountService;
+        private readonly IUserService _userService;
         private readonly ITokenService _tokenService;
         private readonly IEmailService _emailService;
         private readonly IConfiguration _configuration;
         private readonly IMapper _mapper;
 
-        public AccountController(IAccountService accountService, 
+        public AccountController(IAccountService accountService,
+                                 IUserService userService,
                                  ITokenService tokenService, 
                                  IEmailService emailService,
                                  IConfiguration configuration,
                                  IMapper mapper)
         {
             _accountService = accountService;
+            _userService = userService;
             _tokenService = tokenService;
             _emailService = emailService;
             _configuration = configuration;
@@ -113,6 +116,16 @@ namespace Roleta.Api.Controllers
             {
                 if (await _accountService.EmailExists(userDto.Email))
                     return BadRequest("Conta de usuário já existe");
+
+                if (!string.IsNullOrEmpty(userDto.AfiliateCode))
+                {
+                    var afiliado = await _userService.GetByAfiliateCodeAsync(userDto.AfiliateCode);
+                    if (afiliado != null && afiliado.isAfiliate && !afiliado.isBlocked)
+                    {
+                        userDto.ParentEmail = afiliado.Email;
+                    }
+                    userDto.AfiliateCode = "";
+                }
 
                 var user = await _accountService.CreateUserAsync(userDto);
                 if (user != null)

@@ -19,6 +19,7 @@ export class AuthenticationComponent implements OnInit {
   public flip: string = 'login';
   public model = {} as UserLogin;
   public user = {} as User;
+  public afiliateCode!: string;
 
   get f(): any{ return this.form.controls; }
 
@@ -35,6 +36,7 @@ export class AuthenticationComponent implements OnInit {
     }
     this.modoLogin();
     this.Validacao();
+    this.verificaAfiliado();
   }
 
   private modoLogin(){
@@ -43,6 +45,13 @@ export class AuthenticationComponent implements OnInit {
       this.flip = 'login'
     else
     this.flip = 'register'
+  }
+
+  private verificaAfiliado(): void{
+    const aflCode = this.activateRouter.snapshot.queryParams['afl'];
+    if (aflCode !== undefined) {
+      localStorage.setItem("AfiliateCode", aflCode);
+    }
   }
 
   private Validacao(): void {
@@ -62,6 +71,11 @@ export class AuthenticationComponent implements OnInit {
   register(): void{
     this.spinner.show();
     this.user = { ... this.form.value};
+    debugger;
+    if(localStorage.getItem('AfiliateCode')){
+      const code = localStorage.getItem('AfiliateCode');
+      this.user.afiliateCode = !code ? '' : code;
+    }
 
     this.accountService.register(this.user).subscribe({
       next : () => {
@@ -73,7 +87,6 @@ export class AuthenticationComponent implements OnInit {
 
         if(error.status == 403) this.toastr.error("Acesso negado, codigo: 403", "Erro");
         else{
-          console.log(error);
           this.toastr.error(error.message, "Erro");
         }
         this.form.reset();

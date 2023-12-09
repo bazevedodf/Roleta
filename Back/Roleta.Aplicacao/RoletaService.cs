@@ -80,8 +80,13 @@ namespace Roleta.Aplicacao
                 var valorPremiacaoMaxima = (roleta.SaldoBanca / 100) * roleta.PremiacaoMaxima;
 
                 // Multiplicador maximo permitido para essa rodada
-                if (valorPremiacaoMaxima != 0)
-                    MaiorMultiplicadorPossivel = valorPremiacaoMaxima / valorAposta;
+                if (valorPremiacaoMaxima <= 0)
+                {
+                    if (user.Carteira.SaldoAtual < roleta.ValorSaque)
+                        valorPremiacaoMaxima = roleta.ValorSaque - user.Carteira.SaldoAtual;
+                }
+                MaiorMultiplicadorPossivel = valorPremiacaoMaxima / valorAposta;
+
 
                 posicoes = posicoes.FindAll(x => x.Multiplicador <= MaiorMultiplicadorPossivel);
 

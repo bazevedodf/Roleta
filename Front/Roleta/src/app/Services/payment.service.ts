@@ -15,7 +15,7 @@ export class PaymentService {
   constructor(private http: HttpClient) { }
 
   public gerarPix(model: DadosPix): Observable<any>{
-    return this.http.post(`${this.baseUrl}/GetPix`, model);
+    return this.http.post(`${this.baseUrl}/GetDepositPix`, model);
   }
 
   /* public consultarPix(transacao: string): Observable<any>{

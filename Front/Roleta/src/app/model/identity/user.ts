@@ -5,9 +5,7 @@ export interface User {
   firstName: string;
   lastName: string;
   phoneNumber: string;
-  freeSpin: number;
-  saldoDeposito: number;
-  saldoSaque: number;
   verified: boolean;
+  afiliateCode: string;
   token: string;
 }

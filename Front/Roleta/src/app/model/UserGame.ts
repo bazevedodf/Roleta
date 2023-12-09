@@ -1,4 +1,4 @@
-import { GiroRoleta } from "./GiroRoleta";
+import { Carteira } from "./Carteira";
 import { Pagamento } from "./Pagamento";
 import { Saque } from "./Saque";
 
@@ -7,11 +7,16 @@ export interface UserGame {
   lastName: string;
   userName: string;
   email: string;
-  freeSpin: number;
-  saldoDeposito: number;
-  saldoSaque: number;
+  phoneNumber: string;
+  cPF: string;
+  tipoChavePix: string;
+  chavePix: string;
+  isAfiliate: boolean;
+  demoAcount: boolean;
+  parentEmail: string;
+  dataCadastro: Date;
   verified: boolean;
+  carteira: Carteira;
   pagamentos: Pagamento[];
-  girosRoleta: GiroRoleta[];
   saques: Saque[];
 }

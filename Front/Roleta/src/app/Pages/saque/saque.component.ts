@@ -18,6 +18,7 @@ export class SaqueComponent implements OnInit, OnDestroy{
   public user = {} as UserGame;
   public viewForm : boolean = false;
   public form!: FormGroup;
+  public valorSaque: number = 0;
 
   get f(): any{ return this.form.controls; }
 
@@ -30,10 +31,10 @@ export class SaqueComponent implements OnInit, OnDestroy{
   }
 
   ngOnInit(): void {
+    this.GetUserData();
+    this.getValorSaque();
     this.Validacao();
     this.renderer.addClass(document.querySelector('body'), "bg-01");
-    this.GetUserData();
-
   }
 
   public showForm(): void{
@@ -50,9 +51,22 @@ export class SaqueComponent implements OnInit, OnDestroy{
     };
 
     this.form = this.fb.group({
-      valor: ['', [Validators.required, Validators.min(100)]],
-      saldo: [this.user.saldoSaque, [Validators.required]]
+      valor: ['', [Validators.required, Validators.min(this.valorSaque)]],
+      saldo: [this.user.carteira?.saldoAtual, [Validators.required]]
     }, formOptions);
+  }
+
+  public getValorSaque(){
+    this.roletaService.GetRoleta().subscribe({
+      next:(result: any) => {
+        if (result){
+          this.valorSaque = result.valorSaque;
+        }
+      },
+      error:(error: any) =>{
+        this.toastr.error("Erro de conexão, tente mais tarde!","Erro!");
+      }
+    });
   }
 
   public GetUserData(): void{
@@ -62,7 +76,6 @@ export class SaqueComponent implements OnInit, OnDestroy{
           this.user = result;
           this.Validacao();
           this.accountService.setUserGame(result);
-          console.log(this.user);
         }
       },
       error:(error: any) =>{
@@ -70,7 +83,7 @@ export class SaqueComponent implements OnInit, OnDestroy{
           this.toastr.error(error.error, "Erro!");
         }
         else
-          this.toastr.error("Erro de conexão, tente mais tarde!.","Erro!");
+          this.toastr.error("Erro de conexão, tente mais tarde!","Erro!");
       }
     });
   }

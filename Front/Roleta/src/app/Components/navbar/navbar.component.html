@@ -5,11 +5,8 @@
     </a>
     <div *ngIf="userLogado" class="d-xs-block d-md-none ms-auto">
       <div class="d-flex">
-        <div class="me-3">
-          <img width="20px" src="assets/img/depositar.png" alt="Saldo"> {{ (userGame.saldoDeposito !== 0 ? userGame.saldoDeposito : 0)  | currency:'BRL'}}
-        </div>
         <div class="me-2">
-          <img width="18px" src="assets/img/money-bag.png" alt="Saldo"> {{ (userGame.saldoSaque !== 0 ? userGame.saldoSaque : 0) | currency:'BRL' }}
+          <img width="18px" src="assets/img/money-bag.png" alt="Saldo"> {{ getSaldo() | currency:'BRL' }}
         </div>
       </div>
     </div>
@@ -44,30 +41,27 @@
           <a class="nav-link" routerLink="/home">Home</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" routerLink="/authentication">Contato</a>
+          <a class="nav-link" routerLink="/home">Contato</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" routerLink="/authentication">Suporte</a>
+          <a class="nav-link" routerLink="/home">Suporte</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link d-md-none" routerLink="/authentication/register">Cadastrar</a>
+          <a class="nav-link d-md-none" routerLink="/user/register">Cadastrar</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link d-md-none" routerLink="/authentication">Login</a>
+          <a class="nav-link d-md-none" routerLink="/user">Login</a>
         </li>
       </ul>
       <div *ngIf="!userLogado" class="navbar-nav d-xs-none d-none d-md-block ms-auto">
-        <a class="btn btn_nav ms-2" routerLink="/authentication">Logar</a>
-        <a class="btn btn_nav ms-2" routerLink="/authentication/register">Cadastrar</a>
+        <a class="btn btn_nav ms-2" routerLink="/user">Logar</a>
+        <a class="btn btn_nav ms-2" routerLink="/user/register">Cadastrar</a>
       </div>
     </div>
     <div *ngIf="userLogado" class="d-xs-none d-none d-md-block ms-auto">
       <div class="d-flex">
-        <div class="me-5">
-          <img width="20px" src="assets/img/depositar.png" alt="Saldo"> {{ (userGame.saldoDeposito !== 0 ? userGame.saldoDeposito : 0)  | currency:'BRL'}}
-        </div>
         <div>
-          <img width="18px" src="assets/img/money-bag.png" alt="Lucro"> {{ (userGame.saldoSaque !== 0 ? userGame.saldoSaque : 0) | currency:'BRL' }}
+          <img width="18px" src="assets/img/money-bag.png" alt="Lucro"> {{ getSaldo() | currency:'BRL' }}
         </div>
       </div>
     </div>

@@ -16,6 +16,7 @@ export class NavbarComponent implements OnInit {
 
   constructor(private accountService: AccountService,
               private router: Router){
+
   }
 
   ngOnInit(): void {
@@ -28,6 +29,13 @@ export class NavbarComponent implements OnInit {
         console.log(error);
       }
     });
+  }
+
+  public getSaldo(): number{
+    if(this.userGame.demoAcount)
+      return this.userGame?.carteira?.saldoDemo;
+    else
+      return this.userGame?.carteira?.saldoAtual;;
   }
 
   public logout(): void{

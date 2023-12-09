@@ -7,6 +7,7 @@ namespace Roleta.Persistencia.Interface
     {
         Task<User[]> GetAllAsync(bool includeRole = false);
         Task<User> GetByIdAsync(Guid id, bool includeRole = false);
+        Task<User> GetByAfiliateCodeAsync(string afiliateCode);
         Task<int> GetCountByParentEmail(string? parentEmail = null);
         Task<User> GetByUserLoginAsync(string userLogin, bool includeRole = false);
         Task<User> GetUserGameAsync(string userLogin, bool icludeDados = false);

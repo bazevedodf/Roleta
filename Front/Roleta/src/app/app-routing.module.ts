@@ -12,9 +12,9 @@ import { PoliticaDePrivacidadeComponent } from './Pages/politica-de-privacidade/
 
 const routes: Routes = [
   { path: 'home', component: HomeComponent },
-  { path: 'authentication', component: AuthenticationComponent},
-  { path: 'authentication/:tp', component: AuthenticationComponent},
-  { path: 'game', component: GameComponent, canActivate:[AuthGuard] },
+  { path: 'user', component: AuthenticationComponent},
+  { path: 'user/:tp', component: AuthenticationComponent},
+    { path: 'game', component: GameComponent, canActivate:[AuthGuard] },
   { path: 'deposit', component: DepositComponent, canActivate:[AuthGuard] },
   { path: 'saque', component: SaqueComponent, canActivate:[AuthGuard] },
   { path: 'termos-de-uso', component: TermosDeUsoComponent },

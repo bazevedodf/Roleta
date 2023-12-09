@@ -82,14 +82,6 @@ export class AccountService {
       includeDados : incDados
     }
     return this.http.get<UserGame>(this.baseUrl + 'GetUserGame', {params}).pipe(take(1));
-    /* return this.http.get<UserGame>(this.baseUrl + 'GetUserGame').pipe(
-      take(1), map((response:UserGame) => {
-        const usergame = response;
-        if(usergame){
-          this.setUserGame(usergame);
-        }
-      })
-    ); */
   }
 
   public loggedIn(): boolean {

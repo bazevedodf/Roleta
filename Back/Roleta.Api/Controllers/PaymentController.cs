@@ -198,18 +198,8 @@ namespace Roleta.Api.Controllers
                                         if (transactionType == "PAYMENT")
                                         {
                                             string statusId = json.requestBody.statusCode.statusId;
-                                            if (statusId == "3")
-                                            {
-                                                saque.Status = "ERROR";
-                                                saque.DataStatus = DateTime.Now;
-                                            }
-
-                                            if (statusId == "2")
-                                            {
-                                                saque.Status = "PAYMENT";
-                                                saque.DataStatus = DateTime.Now;
-                                            }
-
+                                            saque.Status = statusId == "2" ? "PAYMENT" : "ERROR";
+                                            saque.DataStatus = DateTime.Now;
                                             var retorno = await _saqueService.ConfirmarSaquePix(saque);
                                         }
                                     }                                    

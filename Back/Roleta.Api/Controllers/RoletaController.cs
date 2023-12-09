@@ -156,23 +156,23 @@ namespace Roleta.Api.Controllers
             }
         }
 
-        //[HttpGet("GetOfertas")]
-        //public async Task<IActionResult> GetOfertas()
-        //{
-        //    try
-        //    {
-        //        var ofertas = await _produtoService.GetAllAsync();
-        //        if (ofertas.Length == 0) return NoContent();
-                
-        //        return Ok(ofertas);
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        return this.StatusCode(
-        //            StatusCodes.Status500InternalServerError,
-        //            $"Erro ao tentar recuperar conta de usuário. Erro: {ex.Message}");
-        //    }
-        //}
+        [HttpGet]
+        public async Task<IActionResult> GetValorSaque()
+        {
+            try
+            {
+                var roleta = await _roletaService.GetByIdAsync(1);
+                if (roleta == null) return NoContent();
+
+                return Ok(new { valorSaque = roleta.ValorSaque });
+            }
+            catch (Exception ex)
+            {
+                return this.StatusCode(
+                    StatusCodes.Status500InternalServerError,
+                    $"Erro ao tentar recuperar dados da Roleta. Erro: {ex.Message}");
+            }
+        }
 
         //[HttpGet("GetOferta/{id:int}")]
         //public async Task<IActionResult> GetOferta(int id)

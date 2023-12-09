@@ -13,9 +13,6 @@ namespace Roleta.Aplicacao.Dtos
         public string? CPF { get; set; }
         public string? TipoChavePix { get; set; }
         public string? ChavePix { get; set; }
-        //public int FreeSpin { get; set; }
-        //public decimal SaldoDeposito { get; set; }
-        //public decimal SaldoSaque { get; set; }
         public bool isAfiliate { get; set; } = false;
         public int Comissao { get; set; }
         public bool isBlocked { get; set; } = false;
@@ -26,6 +23,5 @@ namespace Roleta.Aplicacao.Dtos
         public CarteiraDto Carteira { get; set; }
         public IEnumerable<Pagamento>? Pagamentos { get; set; }
         public IEnumerable<Saque>? Saques{ get; set; }
-        //public IEnumerable<GiroRoleta>? GirosRoleta { get; set; }
     }
 }

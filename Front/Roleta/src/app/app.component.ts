@@ -1,5 +1,4 @@
 import { Component } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'app-root',
@@ -9,14 +8,6 @@ import { ActivatedRoute } from '@angular/router';
 export class AppComponent {
   title = 'Roleta';
 
-  constructor(private activatedRouter: ActivatedRoute){
-  }
-
-  private verificaLink(): void{
-    debugger;
-    const afiliateCode = this.activatedRouter.snapshot.paramMap.get('afl');
-    if (afiliateCode) {
-      console.log("Afiliado: "+ afiliateCode);
-    }
+  constructor(){
   }
 }

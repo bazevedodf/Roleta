@@ -80,16 +80,16 @@ export class GameComponent implements OnInit {
   }
 
   ngOnInit(): void{
-    this.GetUserData();
+    this.GetUserData(false);
     this.observablePagamentos(10000);
   }
 
-  public async GetUserData(): Promise<void>{
-    await this.accountService.getUserLogado(true).subscribe({
+  public async GetUserData(includeDados: boolean): Promise<void>{
+    await this.accountService.getUserLogado(includeDados).subscribe({
       next:(result: UserGame) => {
         if (result){
           if (!this.user){
-            if (result.saldoDeposito === 0)
+            if (result.carteira.saldoAtual === 0)
               this.showDialog = true;
             else{
               this.freeBet = false;
@@ -116,7 +116,6 @@ export class GameComponent implements OnInit {
     if (!this.novoObservable){
       this.novoObservable = interval(secunds);
       this.novoObservable.subscribe(vezes => {
-        console.log(vezes);
         this.verificarPagamentos();
       })
     }
@@ -126,28 +125,10 @@ export class GameComponent implements OnInit {
     this.user.pagamentos.forEach(pag => {
       //PENDING - APPROVED - EXPIRED - RETURNED - ERROR
       if(pag.status === "PENDING"){
-        console.log(pag.transactionId + ": Pendente");
-        this.GetUserData();
-        //this.consultaPix(pag.transactionId);
+        this.GetUserData(false);
       }
     });
   }
-/*
-  public consultaPix(transactionId: string): void{
-    this.paymentService.consultarPix(transactionId).subscribe({
-      next:(result: Pix) => {
-        if(result.status !== "PENDING")
-          this.GetUserData();
-      },
-      error:(error: any) =>{
-        if (error.status == 401){
-          this.toastr.error(error.error, "Erro!");
-        }
-        else
-          this.toastr.error("Erro de conexão, tente mais tarde!.","Erro!");
-      }
-    });
-  } */
 
   public before(): void{
     //console.log('before');
@@ -156,13 +137,13 @@ export class GameComponent implements OnInit {
   public after(): void{
     this.valorPremio = this.valorAposta * this.GiroRoleta.multiplicador;
     if (!this.freeBet){
-      this.user.saldoDeposito -= this.valorAposta;
-      this.user.saldoSaque += this.valorPremio;
+      this.user.carteira.saldoAtual -= this.valorAposta;
+      this.user.carteira.saldoAtual += this.valorPremio;
       this.tituloResult = "Você multiplicou por "+ this.GiroRoleta.multiplicador + "x";
       this.showResult = true;
     }
     else{
-      if(this.user.saldoDeposito > 0){
+      if(this.user.carteira.saldoAtual > 0){
         this.freeBet = false
         this.setAlertBox("","Você possue saldo, é hora de multiplicar");
       }
@@ -196,14 +177,14 @@ export class GameComponent implements OnInit {
       this.btnPressionado = true
 
     if (!this.freeBet){
-      if (this.user.saldoDeposito < 5)
+      if (this.user.carteira.saldoAtual < 5)
       {
         this.setAlertBox("Saldo Insuficiente!", "Você não possue saldo suficiente para fazer uma nova aposta, tente depositar ou converter seu lucro em saldo. Menu -> Saque -> Converter Lucros");
         this.btnPressionado = false;
         return;
       }
 
-      if (this.user.saldoDeposito < this.valorAposta)
+      if (this.user.carteira.saldoAtual < this.valorAposta)
       {
         this.setAlertBox("Saldo Insuficiente!", "Você está tentando apostar um valor superior ao seu saldo de jogo.");
         this.btnPressionado = false;

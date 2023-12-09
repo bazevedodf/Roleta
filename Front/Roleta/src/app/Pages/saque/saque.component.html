@@ -6,8 +6,8 @@
       <div class="row text-start">
         <div class="text-center lh-1">
           <h5>LUCRO</h5>
-          <h1>{{(!user ? 0 : user.saldoSaque) | currency:'BRL'}}</h1>
-          <p>Valor mínimo para saque é de R$ 100,00</p>
+          <h1>{{(!user.carteira ? 0 : user.carteira.saldoAtual) | currency:'BRL'}}</h1>
+          <p>Valor mínimo para saque é de {{valorSaque | currency:'BRL'}}</p>
           <div class="text-center mt-3" *ngIf="!viewForm">
             <button class="btn button-small ms-3 mb-3" (click)="viewForm = !viewForm" >Solicitar Saque</button>
           </div>
@@ -19,7 +19,7 @@
             <div class="d-flex">
               <div class="input-group mb-3">
                 <span class="input-group-text">R$</span>
-                <input type="number" formControlName="valor" [ngClass]="validaCSS(f.valor)" class="form-control" placeholder="100" aria-label="Total (Somente em Reais)">
+                <input type="number" formControlName="valor" [ngClass]="validaCSS(f.valor)" class="form-control" aria-label="Total (Somente em Reais)">
                 <input type="hidden" formControlName="saldo" class="form-control">
                 <span class="input-group-text">,00</span>
                 <div *ngIf="f.valor.errors?.required && f.valor.touched" class="invalid-feedback text-start">Valor é obrigatório</div>

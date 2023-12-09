@@ -155,6 +155,20 @@ namespace Roleta.Aplicacao
             }
         }
 
+        public async Task<UserGameDto> GetByAfiliateCodeAsync(string afiliateCode)
+        {
+            try
+            {
+                var result = await _userPersist.GetByAfiliateCodeAsync(afiliateCode);
+
+                return _mapper.Map<UserGameDto>(result);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Erro ao consultar usuários. Erro: {ex.Message}");
+            }
+        }
+
         public async Task<UserGameDto> GetUserGameByLoginAsync(string userLogin)
         {
             try

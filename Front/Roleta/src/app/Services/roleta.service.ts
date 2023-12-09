@@ -29,12 +29,12 @@ export class RoletaService {
     return this.http.get(`${this.baseUrl}/Saque`, {params}).pipe(take(1));
   }
 
-  public GetOfertas(): Observable<any>{
-    return this.http.get(`${this.baseUrl}/GetOfertas`).pipe(take(1));
-  }
-
   public GetItens(): Observable<any> {
     return this.http.get(`${this.baseUrl}/ItensRoleta`).pipe(take(1));
+  }
+
+  public GetRoleta(): Observable<any> {
+    return this.http.get(this.baseUrl).pipe(take(1));
   }
 
 }

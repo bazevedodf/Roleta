@@ -47,6 +47,15 @@ namespace Roleta.Persistencia
             return await query.AsNoTracking().FirstOrDefaultAsync();
         }
 
+        public async Task<User> GetByAfiliateCodeAsync(string afiliateCode)
+        {
+            IQueryable<User> query = _context.Users.Where(x => x.AfiliateCode == afiliateCode);
+
+            query = query.Include(x => x.Carteira);
+
+            return await query.AsNoTracking().FirstOrDefaultAsync();
+        }
+
         public async Task<User> GetByUserLoginAsync(string userLogin, bool includeRole = false)
         {
             IQueryable<User> query = _context.Users.Where(x => x.UserName.ToLower() == userLogin.ToLower() || 
@@ -74,11 +83,12 @@ namespace Roleta.Persistencia
         {
             IQueryable<User> query = _context.Users.Where(x => x.UserName.ToLower() == userLogin.ToLower() ||
                                                                x.Email.ToLower() == userLogin.ToLower());
+            query = query.Include(x => x.Carteira);
+
             if (icludeDados)
             {
                 query = query.Include(x => x.Pagamentos);
                 query = query.Include(x => x.Saques);
-                query = query.Include(x => x.GirosRoleta);
             }                
 
             return await query.AsNoTracking().FirstOrDefaultAsync();

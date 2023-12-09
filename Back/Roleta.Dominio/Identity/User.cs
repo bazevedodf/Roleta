@@ -26,6 +26,6 @@ namespace Roleta.Dominio.Identity
         public IEnumerable<UserRole>? UserRoles { get; set; }
         public IEnumerable<Pagamento>? Pagamentos { get; set; }
         public IEnumerable<Saque>? Saques { get; set; }
-        public IEnumerable<GiroRoleta>? GirosRoleta { get; set; }
+        //public IEnumerable<GiroRoleta>? GirosRoleta { get; set; }
     }
 }

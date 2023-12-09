@@ -54,23 +54,57 @@
             <div *ngIf="f.cpf.errors?.required && f.cpf.touched" class="invalid-feedback text-start">CPF é obrigatório</div>
           </div>
           <div class="row">
-            <div class="col-xs-12 col-md-4 text-center" *ngFor="let item of planos">
+            <h5 class="text-center mt-2 mb-3">Selecione um valor para deposito</h5>
+            <div class="col-3">
               <label class="option_item">
-                <input type="radio" name="produtoId" formControlName="produtoId" value="{{item.id}}" class="checkbox">
-                <div class="option_inner align-items-center" [ngClass]="item.classe">
+                <input type="radio" name="valor" formControlName="valor" value="30" class="checkbox">
+                <div class="option_inner align-items-center option2">
                   <div class="tickmark"></div>
-                  <div class="icon align-items-center"><img src="assets/img/option-value.png" width="50px" alt=""></div>
-                  <div class="name fw-bold lh-1">
-                    <ng-container >
-                      Crédito de <br>
-                      {{item.titulo}}<br>
-                      <!-- 50,00 + <b>(25,00 BÔNUS)</b><br> -->
-                      <small style="font-size: 10px;">Valor: R$ {{item.valor}},00</small>
-                    </ng-container>
+                  <div class="name fw-bold lh-1 text-end">
+                    R$ 30,00
                   </div>
                 </div>
               </label>
             </div>
+
+            <div class="col-3">
+              <label class="option_item">
+                <input type="radio" name="valor" formControlName="valor" value="50" class="checkbox">
+                <div class="option_inner align-items-center option2">
+                  <div class="tickmark"></div>
+                  <div class="name fw-bold lh-1 text-end">
+                    R$ 50,00
+                  </div>
+                </div>
+              </label>
+            </div>
+
+            <div class="col-3">
+              <label class="option_item">
+                <input type="radio" name="valor" formControlName="valor" value="100" class="checkbox">
+                <div class="option_inner align-items-center option2">
+                  <div class="tickmark"></div>
+                  <div class="name fw-bold lh-1 text-end">
+                    R$ 100,00
+                  </div>
+                </div>
+              </label>
+            </div>
+
+            <div class="col-3">
+              <label class="option_item">
+                <input type="radio" name="valor" formControlName="valor" value="200" class="checkbox">
+                <div class="option_inner align-items-center option2">
+                  <div class="tickmark"></div>
+                  <div class="name fw-bold lh-1 text-end">
+                    R$ 200,00
+                  </div>
+                </div>
+              </label>
+            </div>
+
+          </div>
+          <div class="row">
             <div class="text-center"><button class="btn button" [ngClass]="{'disabled': !form.valid}" (click)="GerarPix()">Gerar Código PIX</button></div>
           </div>
         </form>
