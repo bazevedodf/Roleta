@@ -17,7 +17,7 @@ const routes: Routes = [
     children: [
       { path: 'home', component: HomeComponent, canActivate: [AuthGuard] },
       { path: 'home/:afl', component: HomeComponent, canActivate: [AuthGuard] },
-      { path: 'pagamentos', component: PagamentosComponent, canActivate: [AuthGuard, AuthRoleGuard], data:{ role: 'Afiliate' } },
+      { path: 'depositos', component: PagamentosComponent, canActivate: [AuthGuard, AuthRoleGuard], data:{ role: 'Admin' } },
       { path: 'cadastros', component: CadastrosComponent, canActivate: [AuthGuard, AuthRoleGuard], data:{ role: 'Admin' },
         children: [
           { path: 'detalhe/:email', component: CadastroDetalheComponent },

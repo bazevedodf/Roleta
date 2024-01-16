@@ -2,9 +2,7 @@
 using Roleta.Aplicacao.Dtos;
 using Roleta.Aplicacao.Interface;
 using Roleta.Dominio;
-using Roleta.Persistencia;
 using Roleta.Persistencia.Interface;
-using System.Linq;
 
 namespace Roleta.Aplicacao
 {
@@ -29,20 +27,21 @@ namespace Roleta.Aplicacao
             _mapper = mapper;
         }
 
-        public async Task<SaqueDto> SolicitarSaquePix(UserGameDto user, decimal valor)
+        public async Task<SaqueDto> SolicitarSaquePix(UserGameDto user, decimal valor, decimal taxaSaque)
         {
             try
             {
                 SaqueDto saque = new SaqueDto()
                 {
                     UserId = user.Id,
-                    Valor = valor,
+                    Valor = valor - taxaSaque,
                     Status = "PROCESSING"
                 };
 
                 saque = await _ezzePayService.SaquePix(saque, user);
                 if (saque != null)
                 {
+                    saque.Valor += taxaSaque;
                     var retornoSaque = await AddAsync(saque);
                     if (retornoSaque == null) return null;
 

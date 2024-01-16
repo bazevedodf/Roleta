@@ -20,7 +20,7 @@ namespace Roleta.Persistencia.Mapeamentos
                 .IsRequired();
             builder.Property(x => x.valor);
             builder.Property(x => x.Data)
-                   .HasDefaultValueSql("NOW()")
+                   .HasDefaultValue(DateTime.Now)
                    .IsRequired();
             builder.Property(x => x.TransactionId)
                 .HasMaxLength(30);

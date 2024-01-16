@@ -2,11 +2,8 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
-using Roleta.Aplicacao;
-using Roleta.Aplicacao.Dtos;
 using Roleta.Aplicacao.Extensions;
 using Roleta.Aplicacao.Interface;
-using Roleta.Dominio;
 
 namespace Roleta.Api.Controllers
 {
@@ -15,19 +12,16 @@ namespace Roleta.Api.Controllers
     [Route("api/[controller]")]
     public class RoletaController : ControllerBase
     {
-        private readonly IProdutoService _produtoService;
         private readonly IUserService _userService;
         private readonly IRoletaService _roletaService;
         private readonly ISaqueService _saqueService;
         private readonly IMapper _mapper;
 
-        public RoletaController(IProdutoService produtoService, 
-                                IUserService userService, 
+        public RoletaController(IUserService userService, 
                                 IRoletaService roletaService,
                                 ISaqueService saqueService,
                                 IMapper mapper)
         {
-            _produtoService = produtoService;
             _userService = userService;
             _roletaService = roletaService;
             _saqueService = saqueService;
@@ -76,6 +70,14 @@ namespace Roleta.Api.Controllers
         {
             try
             {
+                var login = User.GetUserName();
+                if (login == null) return Unauthorized("Usuário inválido");
+
+                var user = await _userService.GetUserGameByLoginAsync(login);
+                if (user == null) return Unauthorized("Usuário inválido");
+
+                if (user.isBlocked) return Unauthorized("Usuário Bloqueado, procure o suporte!");
+
                 if (freeSpin)
                 {
                     var giro = await _roletaService.GirarRoleta(valorAposta, freeSpin);
@@ -84,20 +86,23 @@ namespace Roleta.Api.Controllers
                 }
                 else
                 {
-                    var login = User.GetUserName();
-                    if (login == null) return Unauthorized("Usuário inválido");
+                    if (user.DemoAcount)
+                    {
+                        if (user.Carteira.SaldoDemo == 0)
+                            return this.StatusCode(StatusCodes.Status406NotAcceptable, $"Você não possue saldo para jogar!");
+
+                        if (valorAposta > user.Carteira.SaldoDemo)
+                            return this.StatusCode(StatusCodes.Status406NotAcceptable, $"Sua aposta não pode ser superior ao saldo de jogo!");
+                    }
+                    else
+                    {
+                        if (user.Carteira.SaldoAtual == 0)
+                            return this.StatusCode(StatusCodes.Status406NotAcceptable, $"Você não possue saldo para jogar!");
+
+                        if (valorAposta > user.Carteira.SaldoAtual)
+                            return this.StatusCode(StatusCodes.Status406NotAcceptable, $"Sua aposta não pode ser superior ao saldo de jogo!");
+                    }
                     
-                    var user = await _userService.GetUserGameByLoginAsync(login);
-                    if (user == null) return Unauthorized("Usuário inválido");
-                    
-                    if (user.isBlocked) return Unauthorized("Usuário Bloqueado, procure o suporte!");
-
-                    if (user.Carteira.SaldoAtual == 0)
-                        return this.StatusCode(StatusCodes.Status406NotAcceptable, $"Você não possue saldo para jogar!");
-
-                    if (valorAposta > user.Carteira.SaldoAtual)
-                        return this.StatusCode(StatusCodes.Status406NotAcceptable, $"Sua aposta não pode ser superior ao saldo de jogo!");
-
                     var giro = await _roletaService.GirarRoleta(valorAposta, freeSpin, user);
 
                     //user.SaldoDeposito -= giro.ValorAposta;
@@ -134,15 +139,25 @@ namespace Roleta.Api.Controllers
 
                 var roleta = await _roletaService.GetByIdAsync(1);
 
-                if (valor < roleta.ValorSaque)
+                if (valor < roleta.ValorMinimoSaque)
                     return this.StatusCode(StatusCodes.Status403Forbidden, 
-                            $"O valor mínimo de saque é de {roleta.ValorSaque.ToString("C")}.");
+                            $"O valor mínimo de saque é de {roleta.ValorMinimoSaque.ToString("C")}.");
+
+                if (valor > roleta.ValorMaximoSaque)
+                    return this.StatusCode(StatusCodes.Status403Forbidden,
+                            $"O valor diário máximo para saque é de {roleta.ValorMaximoSaque.ToString("C")}.");
 
                 if (user.Carteira.SaldoAtual < valor) 
                     return this.StatusCode(StatusCodes.Status403Forbidden,
                                 $"Saldo insuficiente.");
 
-                var retorno = await _saqueService.SolicitarSaquePix(user, valor);
+                if (string.IsNullOrEmpty(user.TipoChavePix) || string.IsNullOrEmpty(user.ChavePix))
+                {
+                    return this.StatusCode(StatusCodes.Status403Forbidden,
+                                $"Chave Pix Inválida.");
+                }
+                
+                var retorno = await _saqueService.SolicitarSaquePix(user, valor, roleta.TaxaSaque);
 
                 if (retorno == null) return BadRequest("Erro ao solicitar o Saque");
 
@@ -164,7 +179,10 @@ namespace Roleta.Api.Controllers
                 var roleta = await _roletaService.GetByIdAsync(1);
                 if (roleta == null) return NoContent();
 
-                return Ok(new { valorSaque = roleta.ValorSaque });
+                return Ok(new { 
+                    valorMinimoSaque = roleta.ValorMinimoSaque, 
+                    valorMaximoSaque = roleta.ValorMaximoSaque 
+                });
             }
             catch (Exception ex)
             {

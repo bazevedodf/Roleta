@@ -34,7 +34,7 @@ namespace Roleta.Persistencia
             IQueryable<Pagamento> query = _context.Pagamentos.Include(x => x.User)
                                                   .Where(x => x.DataCadastro >= pageParams.DataIni
                                                            && x.DataCadastro < pageParams.DataFim
-                                                           && x.User.ParentEmail.ToLower().Contains(pageParams.Term.ToLower()));
+                                                           && x.User.ParentEmail.ToLower().Contains(pageParams.ParentEmail.ToLower()));
             if (somentePagos)
                 query = query.Where(x => x.Status.ToUpper() == "APPROVED");
 

@@ -1,11 +1,9 @@
-import { ActivatedRoute } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable, take, map, ReplaySubject } from 'rxjs';
 import { JwtHelperService } from '@auth0/angular-jwt';
 import { environment } from '@environments/environment';
 import { UserDash } from '@app/Models/Identity/UserDash';
-import { NgIf } from '@angular/common';
 
 @Injectable({
   providedIn: 'root'

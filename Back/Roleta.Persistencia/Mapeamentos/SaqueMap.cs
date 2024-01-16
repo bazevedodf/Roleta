@@ -24,7 +24,7 @@ namespace Roleta.Persistencia.Mapeamentos
             builder.Property(x => x.DataStatus);
             builder.Property(x => x.DataCadastro)
                 .IsRequired()
-                .HasDefaultValueSql("NOW()");
+                .HasDefaultValue(DateTime.Now);
 
             //Relacionamento
             builder.HasOne(x => x.User)

@@ -15,7 +15,7 @@
             </div>
           </a>
         </li>
-        <li class="nav-item text-center">
+        <li *ngIf="verificaRole('Admin')" class="nav-item text-center">
           <a class="nav-link" routerLink="cadastros" style="cursor: pointer;">
             <div>
               <i class="fa-solid fa-address-card"></i>
@@ -23,15 +23,15 @@
             </div>
           </a>
         </li>
-        <li class="nav-item text-center">
+        <li *ngIf="verificaRole('Admin')" class="nav-item text-center">
           <a class="nav-link" routerLink="/pagamentos" style="cursor: pointer;">
             <div>
               <i class="fa-solid fa-hand-holding-dollar"></i>
-              <p  class="mb-0">Pagamentos</p>
+              <p  class="mb-0">Depositos</p>
             </div>
           </a>
         </li>
-        <li class="nav-item text-center">
+        <li *ngIf="verificaRole('Admin')" class="nav-item text-center">
           <a class="nav-link" routerLink="afiliados" style="cursor: pointer;">
             <div>
               <i class="fa-solid fa-users"></i>
@@ -40,12 +40,12 @@
           </a>
         </li>
       </ul>
-      <!-- <div class="navbar-nav ms-3 d-xs-none d-none d-md-block">
+      <!-- <div *ngIf="(accountService.currentUser$ | async) === null" class="navbar-nav ms-3 d-xs-none d-none d-md-block">
         <a class="btn btn-light" href="">Entrar</a>
         <a class="btn btn-warning" href=""></a>
       </div> -->
-      <ul class="navbar-nav">
-        <li class="nav-item dropdown" dropdown container="body" *ngIf="(user)">
+      <ul class="navbar-nav" *ngIf="(accountService.user) !== null">
+        <li class="nav-item dropdown" dropdown container="body" *ngIf="(accountService.user) as user">
           <a dropdownToggle class="nav-link dropdown-toggle" id="navbarDropdownMenuLink" data-toggle="dropdown"
             aria-haspopup="true" aria-expanded="false" style="cursor: pointer;" >
             {{user.email}}

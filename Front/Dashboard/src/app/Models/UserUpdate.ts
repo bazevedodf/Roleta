@@ -7,6 +7,7 @@ export interface UserUpdate {
   email: string;
   cpf: string;
   chavePix: string;
+  tipoChavePix: string;
   phoneNumber: string;
   isAfiliate : boolean;
   afiliateCode : string;

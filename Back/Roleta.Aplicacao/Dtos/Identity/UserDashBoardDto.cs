@@ -1,4 +1,6 @@
-﻿namespace Roleta.Aplicacao.Dtos.Identity
+﻿using Roleta.Dominio.Identity;
+
+namespace Roleta.Aplicacao.Dtos.Identity
 {
     public class UserDashBoardDto
     {
@@ -21,6 +23,7 @@
         public DateTime DataCadastro { get; set; } = DateTime.Now;
         public string? Token { get; set; }
         public CarteiraDto? Carteira { get; set; }
+        public IEnumerable<Role> Roles { get; set; }
         public IEnumerable<PagamentoDto>? Pagamentos { get; set; }
     }
 }

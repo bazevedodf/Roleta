@@ -45,9 +45,10 @@ export class CadastroDetalheComponent implements OnInit{
       email: ['', [Validators.required, Validators.email]],
       firstName: ['', [Validators.minLength(3), Validators.maxLength(80)]],
       lastName: ['', [Validators.minLength(3), Validators.maxLength(80)]],
-      phoneNumber: ['', [Validators.minLength(15)]],
+      phoneNumber: ['', [Validators.minLength(11)]],
       cpf: ['', Validators.maxLength(11)],
-      chavePix: [''],
+      chavePix: ['' ],
+      tipoChavePix: ['CPF'],
       isAfiliate :  [false],
       afiliateCode : ['',],
       comissao: ['25'],
@@ -80,7 +81,6 @@ export class CadastroDetalheComponent implements OnInit{
   public salvarUser(): void {
     this.spinner.show();
     if (this.form.valid) {
-      debugger;
       this.userSelected = {
         id: this.userSelected.id,
         carteira: this.carteira,

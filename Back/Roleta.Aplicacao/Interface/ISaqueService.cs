@@ -5,7 +5,7 @@ namespace Roleta.Aplicacao.Interface
     public interface ISaqueService
     {
         Task<SaqueDto> ConfirmarSaquePix(SaqueDto saque);
-        Task<SaqueDto> SolicitarSaquePix(UserGameDto user, decimal valor);
+        Task<SaqueDto> SolicitarSaquePix(UserGameDto user, decimal valor, decimal taxaSaque);
         Task<SaqueDto> AddAsync(SaqueDto model);
         Task<SaqueDto> UpdateAsync(SaqueDto model);
         Task<bool> DeleteAsync(int id);

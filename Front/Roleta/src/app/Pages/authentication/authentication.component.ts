@@ -71,7 +71,6 @@ export class AuthenticationComponent implements OnInit {
   register(): void{
     this.spinner.show();
     this.user = { ... this.form.value};
-    debugger;
     if(localStorage.getItem('AfiliateCode')){
       const code = localStorage.getItem('AfiliateCode');
       this.user.afiliateCode = !code ? '' : code;

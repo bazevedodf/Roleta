@@ -6,6 +6,7 @@ import { JwtHelperService } from "@auth0/angular-jwt";
 import { environment } from '@environments/environment';
 import { User } from '@app/model/identity/user';
 import { UserGame } from '@app/model/UserGame';
+import { UserUpdate } from '@app/model/identity/UserUpdate';
 
 @Injectable({
   providedIn: 'root'
@@ -75,6 +76,12 @@ export class AccountService {
       return usergame;
     }
     return null;
+  }
+
+  public putUserGame(userGame: UserUpdate): Observable<UserUpdate> {
+    return this.http
+      .put<UserUpdate>(`${this.baseUrl}PutUserGame`, userGame)
+      .pipe(take(1));
   }
 
   public getUserLogado(incDados: boolean): Observable<any> {

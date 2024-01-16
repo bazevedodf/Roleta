@@ -7,7 +7,7 @@
         <div class="text-center lh-1">
           <h5>LUCRO</h5>
           <h1>{{(!user.carteira ? 0 : user.carteira.saldoAtual) | currency:'BRL'}}</h1>
-          <p>Valor mínimo para saque é de {{valorSaque | currency:'BRL'}}</p>
+          <p>Valor mínimo para saque é de {{valorMinimoSaque | currency:'BRL'}}</p>
           <div class="text-center mt-3" *ngIf="!viewForm">
             <button class="btn button-small ms-3 mb-3" (click)="viewForm = !viewForm" >Solicitar Saque</button>
           </div>
@@ -24,6 +24,7 @@
                 <span class="input-group-text">,00</span>
                 <div *ngIf="f.valor.errors?.required && f.valor.touched" class="invalid-feedback text-start">Valor é obrigatório</div>
                 <div *ngIf="f.valor.errors?.min" class="invalid-feedback text-start">Valor inferior ao mínimo permitido</div>
+                <div *ngIf="f.valor.errors?.max" class="invalid-feedback text-start">Valor superior ao máximo permitido</div>
                 <div *ngIf="f.valor.errors?.withoutBalance" class="invalid-feedback text-start">Saldo insuficiente</div>
               </div>
               <div class="ms-2">
@@ -69,6 +70,6 @@
     </div>
   </div>
   <p >
-    <small class="text-white fw-bold">As solicitações de saques passam por uma verificação de segurança, e pode demorar até 72 horas para serem confirmadas.</small>
+    <small class="text-white fw-bold">As solicitações de saques passam por uma verificação de segurança, e pode demorar até 72 horas para serem confirmadas. É cobrado uma taxa de cambio de R$ 5,00 por saque.</small>
   </p>
 </div>

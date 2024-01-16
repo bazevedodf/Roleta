@@ -15,7 +15,7 @@
         public bool isAfiliate { get; set; } = false;
         public string? AfiliateCode { get; set; }
         public bool isBlocked { get; set; } = false;
-        bool DemoAcount { get; set; } = false;
+        public bool DemoAcount { get; set; } = false;
         public DateTime DataCadastro { get; set; } = DateTime.Now;
         public CarteiraDto? Carteira { get; set; }
     }

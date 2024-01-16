@@ -22,10 +22,18 @@ namespace Roleta.Persistencia.Mapeamentos
                 .HasDefaultValue(0);
             builder.Property(x => x.SaldoLucro)
                 .HasDefaultValue(0);
-            builder.Property(x => x.ValorSaque)
+            builder.Property(x => x.ValorMinimoSaque)
+                .HasDefaultValue(0);
+            builder.Property(x => x.ValorMaximoSaque)
                 .HasDefaultValue(0);
             builder.Property(x => x.PercentualBanca)
                 .HasDefaultValue(60);
+            builder.Property(x => x.TaxaPerda)
+                .HasDefaultValue(10);
+            builder.Property(x => x.ContagemPerda)
+                .HasDefaultValue(0);
+            builder.Property(x => x.TaxaSaque)
+                .HasDefaultValue(0);
 
             builder.HasData(
                 new RoletaSorte()
@@ -35,8 +43,10 @@ namespace Roleta.Persistencia.Mapeamentos
                     SaldoBanca = 0,
                     PremiacaoMaxima = 10,
                     SaldoLucro = 0,
-                    ValorSaque= 50,
-                    PercentualBanca= 60,
+                    ValorMinimoSaque = 50,
+                    ValorMaximoSaque = 500,
+                    PercentualBanca = 60,
+                    TaxaSaque = 5
                 }
             );
         }

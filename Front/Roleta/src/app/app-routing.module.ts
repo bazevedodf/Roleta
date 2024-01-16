@@ -9,6 +9,7 @@ import { AuthGuard } from './guard/auth.guard';
 import { SaqueComponent } from './Pages/saque/saque.component';
 import { TermosDeUsoComponent } from './Pages/termos-de-uso/termos-de-uso.component';
 import { PoliticaDePrivacidadeComponent } from './Pages/politica-de-privacidade/politica-de-privacidade.component';
+import { PerfilComponent } from './Pages/perfil/perfil.component';
 
 const routes: Routes = [
   { path: 'home', component: HomeComponent },
@@ -17,6 +18,7 @@ const routes: Routes = [
     { path: 'game', component: GameComponent, canActivate:[AuthGuard] },
   { path: 'deposit', component: DepositComponent, canActivate:[AuthGuard] },
   { path: 'saque', component: SaqueComponent, canActivate:[AuthGuard] },
+  { path: 'perfil', component: PerfilComponent, canActivate:[AuthGuard] },
   { path: 'termos-de-uso', component: TermosDeUsoComponent },
   { path: 'politica-de-privacidade', component: PoliticaDePrivacidadeComponent },
   { path: 'roleta', component: RoletaComponent },

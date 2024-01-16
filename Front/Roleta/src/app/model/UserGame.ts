@@ -8,7 +8,7 @@ export interface UserGame {
   userName: string;
   email: string;
   phoneNumber: string;
-  cPF: string;
+  cpf: string;
   tipoChavePix: string;
   chavePix: string;
   isAfiliate: boolean;

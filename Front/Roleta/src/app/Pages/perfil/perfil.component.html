@@ -1,0 +1,130 @@
+<app-navbar></app-navbar>
+<div class="container mt-4 text-center">
+  <h1 class="text-uppercase">Perfil</h1>
+  <form [formGroup]="form" (ngSubmit)="SalvarDados();" >
+
+    <div class="card">
+      <div class="card-body">
+        <div class="row text-start">
+          <div class="col-md-6 col-xs-12">
+            <h5 class="text-white fw-bold">Dados Pessoais</h5>
+            <div class="form-group mt-2">
+              <label>Nome</label>
+              <input type="text"
+                formControlName="firstName"
+                [(ngModel)]="user.firstName"
+                [ngClass]="validaCSS(f.firstName)"
+                class="form-control capitalize"
+                maxlength="80" />
+              <div *ngIf="f.firstName.errors?.required && f.firstName.touched" class="invalid-feedback">Campo nome é obrigatório.</div>
+            </div>
+            <div class="form-group mt-2">
+              <label>Sobrenome</label>
+              <input type="text"
+                formControlName="lastName"
+                [(ngModel)]="user.lastName"
+                [ngClass]="validaCSS(f.lastName)"
+                class="form-control capitalize"
+                maxlength="80" />
+              <div *ngIf="f.lastName.errors?.required && f.lastName.touched" class="invalid-feedback">Campo nome é obrigatório.</div>
+            </div>
+            <div class="form-group mt-2">
+              <label for="">E-Mail</label>
+              <input type="text"
+                  formControlName="email"
+                  [ngModel]="user.email"
+                  [ngClass]="validaCSS(f.email)"
+                  class="form-control"
+                  readonly
+                  maxlength="60" />
+                <div *ngIf="f.email.errors?.required && f.email.touched" class="invalid-feedback">E-mail é obrigatório.</div>
+                <div *ngIf="f.email.errors?.email && f.email.touched" class="invalid-feedback">E-mail é inválido.</div>
+            </div>
+            <div class="form-group mt-2">
+              <label for="">CPF</label>
+              <input type="text"
+                  formControlName="cpf"
+                  [(ngModel)]="user.cpf"
+                  [ngClass]="validaCSS(f.cPF)"
+                  class="form-control"
+                  mask="000.000.000-00" />
+                <!-- <div *ngIf="f.cpfcnpj.errors?.required && f.cpfcnpj.touched" class="invalid-feedback">CPF/CNPJ é obrigatório.</div> -->
+            </div>
+            <div class="form-group mt-2">
+              <label for="celular">CELULAR COM DDD</label><br>
+              <input type="text" class="form-control" autocomplete="off"
+                formControlName="phoneNumber"
+                [(ngModel)]="user.phoneNumber"
+                [ngClass]="validaCSS(f.phoneNumbe)"
+                [showMaskTyped]="false"
+                [dropSpecialCharacters]="true"
+                mask="(00) 00000-0000">
+              <!-- <div *ngIf="f.celular.errors?.required && f.celular.touched" class="invalid-feedback">Celular é obrigatório.</div> -->
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="card mt-3">
+      <div class="card-body">
+        <div class="row text-start">
+          <div class="col-md-6 col-xs-12">
+            <h5 class="text-white fw-bold">Informações Bancárias</h5>
+            <p >
+              <small class="text-white fw-bold">Preencha corretamente sua chave pix, para evitar problemas no momento do saque.</small>
+            </p>
+            <div class="form-group mt-3">
+              <div class="col-md-4 d-flex">
+                <div class="form-check mt-2 me-4">
+                  <input class="form-check-input"
+                    formControlName="tipoChavePix"
+                    [(ngModel)]="user.tipoChavePix"
+                    type="radio" value="CPF" name="tipoChavePix" id="TipoChavePix1">
+                  <label class="form-check-label" for="TipoChavePix1">
+                    CPF
+                  </label>
+                </div>
+                <div class="form-check mt-2 me-4">
+                  <input class="form-check-input"
+                    formControlName="tipoChavePix"
+                    [(ngModel)]="user.tipoChavePix"
+                    type="radio" value="TELEFONE" name="tipoChavePix" id="TipoChavePix2">
+                  <label class="form-check-label" for="TipoChavePix2">
+                    Celular
+                  </label>
+                </div>
+                <div class="form-check mt-2">
+                  <input class="form-check-input"
+                    formControlName="tipoChavePix"
+                    [(ngModel)]="user.tipoChavePix"
+                    type="radio" value="EMAIL" name="tipoChavePix" id="TipoChavePix3">
+                  <label class="form-check-label" for="TipoChavePix3">
+                    E-Mail
+                  </label>
+                </div>
+              </div>
+            </div>
+            <div class="form-group mt-3">
+              <!-- <p>Form Valid: {{form.status | json}}</p> -->
+              <label>Chave Pix</label>
+              <input type="text"
+                formControlName="chavePix"
+                [(ngModel)]="user.chavePix"
+                [ngClass]="validaCSS(f.chavePix)"
+                class="form-control capitalize"
+                [mask]="switchMask()"
+                maxlength="80" />
+                <!-- <div *ngIf="f.nome.errors?.required && f.nome.touched" class="invalid-feedback">Campo nome é obrigatório.</div> -->
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <p >
+      <small class="text-white fw-bold">Mantenha o acesso a essas inforamções seguras, para evitar que outras pessoas tenham acesso a sua conta.</small>
+    </p>
+    <div class="text-center my-3">
+      <button class="btn button-small mb-3" [disabled]="form.invalid" id="submit" type="submit">Gravar</button>
+    </div>
+  </form>
+</div>

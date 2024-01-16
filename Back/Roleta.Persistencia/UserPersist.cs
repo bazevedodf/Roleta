@@ -97,11 +97,31 @@ namespace Roleta.Persistencia
         public async Task<PageList<User>> GetAllByParentEmailDateAsync(PageParams pageParams, bool includePagamentos = false)
         {
             IQueryable<User> query = _context.Users;
+            if (!string.IsNullOrEmpty(pageParams.ParentEmail))
+            {
+                query = query.Where(x => x.ParentEmail.ToLower().Contains(pageParams.ParentEmail.ToLower()));
+            }
+
+            query = query.Where(x => x.DataCadastro >= pageParams.DataIni
+                                        && x.DataCadastro < pageParams.DataFim);
+
+            query = query.Include(x => x.Carteira);
+
+            if (includePagamentos)
+                query = query.Include(x => x.Pagamentos);
+
+            query = query.OrderByDescending(x => x.DataCadastro).AsNoTracking();
+
+            return await PageList<User>.CreateAsync(query, pageParams.PageNumber, pageParams.pageSize);
+        }
+
+        public async Task<PageList<User>> GetAllByNomeDataAsync(PageParams pageParams, bool includePagamentos = false)
+        {
+            IQueryable<User> query = _context.Users;
             if (!string.IsNullOrEmpty(pageParams.Term))
             {
-                query = query.Where(x => x.ParentEmail.ToLower().Contains(pageParams.ParentEmail.ToLower())
-                                        && (x.Email.ToLower().Contains(pageParams.Term.ToLower()) 
-                                        || x.FirstName.ToLower().Contains(pageParams.Term.ToLower())));
+                query = query.Where(x => x.Email.ToLower().Contains(pageParams.Term.ToLower())
+                                        || x.FirstName.ToLower().Contains(pageParams.Term.ToLower()));
             }
             else
             {

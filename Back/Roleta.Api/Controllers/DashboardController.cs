@@ -73,6 +73,7 @@ namespace Roleta.Api.Controllers
         {
             try
             {
+                PageList<UserDashBoardDto>? users;
                 var userDto = await _accountService.GetByUserLoginAsync(User.GetUserName());
                 if (userDto == null) return Unauthorized();
 
@@ -81,7 +82,7 @@ namespace Roleta.Api.Controllers
                     pageParams.ParentEmail = userDto.Email;
                 }
 
-                var users = await _userService.GetAllByParentEmailDateAsync(pageParams);
+                users = await _userService.GetAllByParentEmailDateAsync(pageParams);
                 if (users == null) return NoContent();
 
                 Response.AddPagination("PaginationUser", users.CurrentPage, users.PageSize, users.TotalCount, users.TotalPages);
@@ -107,7 +108,7 @@ namespace Roleta.Api.Controllers
 
                 if (!await _accountService.CheckRoleAsync(userDto, "Admin"))
                 {
-                    pageParams.Term = userDto.Email;
+                    pageParams.ParentEmail = userDto.Email;
                 }
 
                 var users = await _pagamentoService.GetAllByParentEmailAsync(pageParams, true);

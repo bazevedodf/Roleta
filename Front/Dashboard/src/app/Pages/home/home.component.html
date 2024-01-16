@@ -40,7 +40,7 @@
         <div class="card-footer">
           <div class="stats">
             <i class="fas fa-info-circle me-2"></i>
-            <a>Pagamentos Recebidos</a>
+            <a>Depósitos Recebidos</a>
           </div>
         </div>
       </div>
@@ -79,22 +79,34 @@
         </div>
         <div class="card-body">
           <div class="container-fluid">
-            <!-- <div class="row">
-
-              <div class="col-md-6 mb-2 d-flex">
+            <div class="row mb-2">
+              <div class="col-md-4">
                 <div class="form-group">
-                  <label>Afiliado</label>
-                  <select #ddltipoReceita class="form-select" aria-label="Tipo Receita">
-                    <option value="0">Todas</option>
-                  </select>
+                  <label>Data Inicial</label>
+                  <input type="text"
+                    placeholder="Daterangepicker"
+                    class="form-control"
+                    [(ngModel)]="dtIni"
+                     bsDatepicker [bsConfig]="bsConfig">
                 </div>
-                <button class="btn bg-green text-white mt-4 ms-2 d-flex">
+              </div>
+              <div class="col-md-4">
+                <div class="form-group">
+                  <label>Data Final</label>
+                  <input type="text"
+                    placeholder="Daterangepicker"
+                    class="form-control"
+                    [(ngModel)]="dtFim"
+                    bsDatepicker [bsConfig]="{ isAnimated: true, adaptivePosition: true }">
+                </div>
+              </div>
+              <div class="col-md-1 me-0">
+                <button class="btn bg-green text-white mt-4 d-flex" (click)="carregarUsers();">
                   <i class="fa fa-search mt-1"></i>
-                  <span class="ms-2 d-none d-sm-block">Filtrar</span>
+                  <span class="ms-2 d-sm-block">Filtrar</span>
                 </button>
               </div>
-
-            </div> -->
+            </div>
             <div class="row">
               <div>
                 <table class="table table-hover">
@@ -149,7 +161,7 @@
           <div class="card-Text d-flex bg-purple">
             <i class="fas fa-file-invoice-dollar"></i>
             <div class="text-white lh-1 ms-1">
-              <h5 class="card-title mb-0">Cobranças</h5>
+              <h5 class="card-title mb-0">Depósitos</h5>
               <p class="card-category m-0">Emitidas e Recebidas Hoje</p>
             </div>
             <h2 class="ms-auto text-white">{{pagamentoPagination.totalItems}}</h2>
@@ -173,6 +185,34 @@
               </div>
 
             </div> -->
+            <div class="row mb-2">
+              <div class="col-md-4">
+                <div class="form-group">
+                  <label>Data Inicial</label>
+                  <input type="text"
+                    placeholder="Daterangepicker"
+                    class="form-control"
+                    [(ngModel)]="dtIniP"
+                     bsDatepicker [bsConfig]="bsConfig">
+                </div>
+              </div>
+              <div class="col-md-4">
+                <div class="form-group">
+                  <label>Data Final</label>
+                  <input type="text"
+                    placeholder="Daterangepicker"
+                    class="form-control"
+                    [(ngModel)]="dtFimP"
+                    bsDatepicker [bsConfig]="{ isAnimated: true, adaptivePosition: true }">
+                </div>
+              </div>
+              <div class="col-md-1 me-0">
+                <button class="btn bg-green text-white mt-4 d-flex" (click)="carregarPagamentos();">
+                  <i class="fa fa-search mt-1"></i>
+                  <span class="ms-2 d-sm-block">Filtrar</span>
+                </button>
+              </div>
+            </div>
             <div class="row">
               <div>
                 <table class="table table-hover">
@@ -180,7 +220,8 @@
                     <tr>
                       <th scope="col">#</th>
                       <th scope="col">Nome</th>
-                      <th scope="col">CPF</th>
+                      <!-- <th scope="col">CPF</th> -->
+                      <th scope="col">R$</th>
                       <th scope="col">Data</th>
                     </tr>
                   </thead>
@@ -192,10 +233,21 @@
                         </a>
                       </td>
                       <td style="cursor: pointer;">{{pagamento.user.email}}</td>
-                      <td style="cursor: pointer;">{{pagamento.cpf}}</td>
-                      <td>{{pagamento.dataCadastro | DateFormat}}</td>
+                      <!-- <td style="cursor: pointer;">{{pagamento.cpf}}</td> -->
+                      <td style="cursor: pointer;">{{pagamento.valor | currency: 'BRL'}}</td>
+                      <td>{{pagamento.dataCadastro | DateTimeFormat}}</td>
                     </tr>
                   </tbody>
+                  <tfoot *ngIf="pagamentos.length">
+                    <tr >
+                      <td colspan="3" style="background-color: var(--bs-card-cap-bg);color: #9c27b0;font-weight: bold;">
+                        Total
+                      </td>
+                      <td style="background-color:var(--bs-card-cap-bg);color: #9c27b0;font-weight: bold;">
+                        {{vlTotalDepositosHoje | currency: 'BRL'}}
+                      </td>
+                    </tr>
+                  </tfoot>
                   <tfoot *ngIf="!pagamentos.length">
                     <tr>
                       <td colspan="4" class="text-center">

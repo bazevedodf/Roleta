@@ -18,7 +18,8 @@ export class SaqueComponent implements OnInit, OnDestroy{
   public user = {} as UserGame;
   public viewForm : boolean = false;
   public form!: FormGroup;
-  public valorSaque: number = 0;
+  public valorMinimoSaque: number = 0;
+  public valorMaximoSaque: number = 0;
 
   get f(): any{ return this.form.controls; }
 
@@ -51,22 +52,25 @@ export class SaqueComponent implements OnInit, OnDestroy{
     };
 
     this.form = this.fb.group({
-      valor: ['', [Validators.required, Validators.min(this.valorSaque)]],
+      valor: ['', [Validators.required, Validators.min(this.valorMinimoSaque), Validators.max(this.valorMaximoSaque)]],
       saldo: [this.user.carteira?.saldoAtual, [Validators.required]]
     }, formOptions);
   }
 
   public getValorSaque(){
+    this.spinner.show();
     this.roletaService.GetRoleta().subscribe({
       next:(result: any) => {
         if (result){
-          this.valorSaque = result.valorSaque;
+          this.valorMinimoSaque = result.valorMinimoSaque;
+          this.valorMaximoSaque = result.valorMaximoSaque;
+          this.Validacao();
         }
       },
       error:(error: any) =>{
         this.toastr.error("Erro de conexão, tente mais tarde!","Erro!");
       }
-    });
+    }).add(() => { this.spinner.hide(); });
   }
 
   public GetUserData(): void{
@@ -89,7 +93,6 @@ export class SaqueComponent implements OnInit, OnDestroy{
   }
 
   public solicitarSaque(): void{
-    debugger;
     let valor = this.f.valor.value;
     this.spinner.show();
     this.roletaService.Saque(valor).subscribe({
@@ -101,8 +104,13 @@ export class SaqueComponent implements OnInit, OnDestroy{
         }
       },
       error:(error: any) => {
+        if (error.status == 403){
+          this.toastr.error("Dados inválidos, atualize seu perfil!", "Erro!");
+        }
+        else{
+          this.toastr.error(error.error, "Erro");
+        }
         this.form.reset();
-        this.toastr.error(error.error, "Erro");
       }
     }).add(()=>{this.spinner.hide()});
   }

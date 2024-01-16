@@ -2,7 +2,7 @@
 
 namespace Roleta.Dominio
 {
-    public class Produto
+    public class _Produto
     {
         public int Id { get; set; }
         public TipoProduto TipoProduto { get; set; }

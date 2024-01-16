@@ -11,14 +11,14 @@ using Roleta.Persistencia;
 namespace Roleta.Persistencia.Migrations
 {
     [DbContext(typeof(RoletaContext))]
-    [Migration("20231202214922_Alterando Carteira, adicionado SaldoDemo")]
-    partial class AlterandoCarteiraadicionadoSaldoDemo
+    [Migration("20240115023356_Inicial")]
+    partial class Inicial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "6.0.9")
+                .HasAnnotation("ProductVersion", "6.0.25")
                 .HasAnnotation("Relational:MaxIdentifierLength", 64);
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<System.Guid>", b =>
@@ -112,9 +112,7 @@ namespace Roleta.Persistencia.Migrations
                         .HasColumnType("int");
 
                     b.Property<DateTime>("DataAtualizacao")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime(6)")
-                        .HasDefaultValueSql("NOW()");
+                        .HasColumnType("datetime(6)");
 
                     b.Property<DateTime>("DataCadastro")
                         .HasColumnType("datetime(6)");
@@ -134,34 +132,6 @@ namespace Roleta.Persistencia.Migrations
                         .IsUnique();
 
                     b.ToTable("Carteiras", (string)null);
-                });
-
-            modelBuilder.Entity("Roleta.Dominio.GiroRoleta", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("Data")
-                        .HasColumnType("datetime(6)");
-
-                    b.Property<decimal>("Multiplicador")
-                        .HasColumnType("decimal(65,30)");
-
-                    b.Property<int>("Posicao")
-                        .HasColumnType("int");
-
-                    b.Property<Guid>("UserId")
-                        .HasColumnType("char(36)");
-
-                    b.Property<int>("ValorAposta")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("GirosRoleta");
                 });
 
             modelBuilder.Entity("Roleta.Dominio.Identity.Role", b =>
@@ -193,22 +163,22 @@ namespace Roleta.Persistencia.Migrations
                     b.HasData(
                         new
                         {
-                            Id = new Guid("40a6abec-f467-4d67-9a51-21e0fecf4525"),
-                            ConcurrencyStamp = "a0bf5f0b-7415-4571-9779-ed988e00ef02",
+                            Id = new Guid("51dc99b7-4ecf-49de-829f-fe58d467ea61"),
+                            ConcurrencyStamp = "0ad684a7-b7ea-4d27-9842-7afb20c84bfa",
                             Name = "Admin",
                             NormalizedName = "ADMIN"
                         },
                         new
                         {
-                            Id = new Guid("936d9b27-472c-46ae-9bf7-4e1847afaef9"),
-                            ConcurrencyStamp = "fdad8d0e-eb7c-4871-939d-f33aac37d1b2",
+                            Id = new Guid("e6234fdd-f201-41cd-8b7f-f741005b603d"),
+                            ConcurrencyStamp = "ac2150d2-feef-4f01-bb5b-4e5a8f857903",
                             Name = "User",
                             NormalizedName = "USER"
                         },
                         new
                         {
-                            Id = new Guid("fe8821ef-47de-4ba9-a2ed-07390ad96720"),
-                            ConcurrencyStamp = "9eb33d9a-db98-4793-aee8-32bb0350fb52",
+                            Id = new Guid("6c35cfbc-feba-428d-b0c4-4a19fa5bd187"),
+                            ConcurrencyStamp = "0778e585-6dc1-43d1-a9bb-2388defc03c0",
                             Name = "Afiliate",
                             NormalizedName = "AFILIATE"
                         });
@@ -291,6 +261,9 @@ namespace Roleta.Persistencia.Migrations
                     b.Property<string>("SecurityStamp")
                         .HasColumnType("longtext");
 
+                    b.Property<string>("TipoChavePix")
+                        .HasColumnType("longtext");
+
                     b.Property<bool>("TwoFactorEnabled")
                         .HasColumnType("tinyint(1)");
 
@@ -348,7 +321,7 @@ namespace Roleta.Persistencia.Migrations
                     b.Property<DateTime>("DataCadastro")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime(6)")
-                        .HasDefaultValueSql("NOW()");
+                        .HasDefaultValue(new DateTime(2024, 1, 14, 23, 33, 56, 418, DateTimeKind.Local).AddTicks(2740));
 
                     b.Property<DateTime>("DataStatus")
                         .HasColumnType("datetime(6)");
@@ -357,9 +330,6 @@ namespace Roleta.Persistencia.Migrations
                         .IsRequired()
                         .HasMaxLength(80)
                         .HasColumnType("varchar(80)");
-
-                    b.Property<int>("ProdutoId")
-                        .HasColumnType("int");
 
                     b.Property<string>("QrCode")
                         .IsRequired()
@@ -386,8 +356,6 @@ namespace Roleta.Persistencia.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("ProdutoId");
-
                     b.HasIndex("TransactionId")
                         .IsUnique();
 
@@ -396,94 +364,16 @@ namespace Roleta.Persistencia.Migrations
                     b.ToTable("Pagamentos", (string)null);
                 });
 
-            modelBuilder.Entity("Roleta.Dominio.Produto", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    b.Property<bool>("Ativo")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("tinyint(1)")
-                        .HasDefaultValue(false);
-
-                    b.Property<DateTime>("DataCadastro")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime(6)")
-                        .HasDefaultValueSql("NOW()");
-
-                    b.Property<string>("Descricao")
-                        .HasMaxLength(200)
-                        .HasColumnType("varchar(200)");
-
-                    b.Property<int>("Giros")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasDefaultValue(0);
-
-                    b.Property<string>("Nome")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("varchar(50)");
-
-                    b.Property<decimal>("SaldoDeposito")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("decimal(65,30)")
-                        .HasDefaultValue(0m);
-
-                    b.Property<int>("TipoProduto")
-                        .HasColumnType("int");
-
-                    b.Property<decimal>("Valor")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("decimal(65,30)")
-                        .HasDefaultValue(0m);
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Produtos", (string)null);
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            Ativo = true,
-                            DataCadastro = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Giros = 0,
-                            Nome = "R$ 75,00 (25,00 Bônus)",
-                            SaldoDeposito = 75m,
-                            TipoProduto = 0,
-                            Valor = 50.00m
-                        },
-                        new
-                        {
-                            Id = 2,
-                            Ativo = true,
-                            DataCadastro = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Giros = 0,
-                            Nome = "R$ 200,00 (100,00 Bônus)",
-                            SaldoDeposito = 200m,
-                            TipoProduto = 0,
-                            Valor = 100.00m
-                        },
-                        new
-                        {
-                            Id = 3,
-                            Ativo = true,
-                            DataCadastro = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Giros = 0,
-                            Nome = "R$ 500,00 (300,00 Bônus)",
-                            SaldoDeposito = 500m,
-                            TipoProduto = 0,
-                            Valor = 200.00m
-                        });
-                });
-
             modelBuilder.Entity("Roleta.Dominio.RoletaSorte", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
+
+                    b.Property<int>("ContagemPerda")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasDefaultValue(0);
 
                     b.Property<string>("Nome")
                         .IsRequired()
@@ -495,22 +385,37 @@ namespace Roleta.Persistencia.Migrations
                         .HasColumnType("int")
                         .HasDefaultValue(60);
 
-                    b.Property<int>("PremiacaoMaxima")
+                    b.Property<decimal>("PremiacaoMaxima")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("decimal(65,30)")
+                        .HasDefaultValue(0m);
+
+                    b.Property<decimal>("SaldoBanca")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("decimal(65,30)")
+                        .HasDefaultValue(0m);
+
+                    b.Property<decimal>("SaldoLucro")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("decimal(65,30)")
+                        .HasDefaultValue(0m);
+
+                    b.Property<int>("TaxaPerda")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasDefaultValue(10);
+
+                    b.Property<int>("TaxaSaque")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
                         .HasDefaultValue(0);
 
-                    b.Property<decimal>("ValorBanca")
+                    b.Property<int>("ValorMaximoSaque")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("decimal(65,30)")
-                        .HasDefaultValue(0m);
+                        .HasColumnType("int")
+                        .HasDefaultValue(0);
 
-                    b.Property<decimal>("ValorSaldo")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("decimal(65,30)")
-                        .HasDefaultValue(0m);
-
-                    b.Property<int>("ValorSaque")
+                    b.Property<int>("ValorMinimoSaque")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
                         .HasDefaultValue(0);
@@ -523,12 +428,16 @@ namespace Roleta.Persistencia.Migrations
                         new
                         {
                             Id = 1,
+                            ContagemPerda = 0,
                             Nome = "RoletaSorte",
                             PercentualBanca = 60,
-                            PremiacaoMaxima = 10,
-                            ValorBanca = 0m,
-                            ValorSaldo = 0m,
-                            ValorSaque = 50
+                            PremiacaoMaxima = 10m,
+                            SaldoBanca = 0m,
+                            SaldoLucro = 0m,
+                            TaxaPerda = 0,
+                            TaxaSaque = 5,
+                            ValorMaximoSaque = 500,
+                            ValorMinimoSaque = 50
                         });
                 });
 
@@ -542,7 +451,7 @@ namespace Roleta.Persistencia.Migrations
                         .IsRequired()
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime(6)")
-                        .HasDefaultValueSql("NOW()");
+                        .HasDefaultValue(new DateTime(2024, 1, 14, 23, 33, 56, 418, DateTimeKind.Local).AddTicks(4835));
 
                     b.Property<DateTime?>("DataStatus")
                         .HasColumnType("datetime(6)");
@@ -589,7 +498,7 @@ namespace Roleta.Persistencia.Migrations
                     b.Property<DateTime>("Data")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime(6)")
-                        .HasDefaultValueSql("NOW()");
+                        .HasDefaultValue(new DateTime(2024, 1, 14, 23, 33, 56, 418, DateTimeKind.Local).AddTicks(791));
 
                     b.Property<string>("Tipo")
                         .IsRequired()
@@ -619,7 +528,12 @@ namespace Roleta.Persistencia.Migrations
                     b.Property<DateTime>("Data")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime(6)")
-                        .HasDefaultValueSql("NOW()");
+                        .HasDefaultValue(new DateTime(2024, 1, 14, 23, 33, 56, 417, DateTimeKind.Local).AddTicks(8184));
+
+                    b.Property<string>("Descricao")
+                        .IsRequired()
+                        .HasMaxLength(30)
+                        .HasColumnType("varchar(30)");
 
                     b.Property<int>("RoletaId")
                         .HasColumnType("int");
@@ -637,6 +551,8 @@ namespace Roleta.Persistencia.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("RoletaSorteId");
+
+                    b.HasIndex("TransacaoId");
 
                     b.ToTable("TransacoesRoleta", (string)null);
                 });
@@ -688,17 +604,6 @@ namespace Roleta.Persistencia.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("Roleta.Dominio.GiroRoleta", b =>
-                {
-                    b.HasOne("Roleta.Dominio.Identity.User", "User")
-                        .WithMany("GirosRoleta")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("User");
-                });
-
             modelBuilder.Entity("Roleta.Dominio.Identity.UserRole", b =>
                 {
                     b.HasOne("Roleta.Dominio.Identity.Role", "Role")
@@ -720,21 +625,12 @@ namespace Roleta.Persistencia.Migrations
 
             modelBuilder.Entity("Roleta.Dominio.Pagamento", b =>
                 {
-                    b.HasOne("Roleta.Dominio.Produto", "Produto")
-                        .WithMany()
-                        .HasForeignKey("ProdutoId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
-                        .HasConstraintName("FK_Produto_pagamento");
-
                     b.HasOne("Roleta.Dominio.Identity.User", "User")
                         .WithMany("Pagamentos")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
                         .HasConstraintName("FK_User_Pagamento");
-
-                    b.Navigation("Produto");
 
                     b.Navigation("User");
                 });
@@ -768,7 +664,15 @@ namespace Roleta.Persistencia.Migrations
                         .WithMany("TransacoesRoleta")
                         .HasForeignKey("RoletaSorteId");
 
+                    b.HasOne("Roleta.Dominio.Transacao", "TransacaoUser")
+                        .WithMany()
+                        .HasForeignKey("TransacaoId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.Navigation("RoletaSorte");
+
+                    b.Navigation("TransacaoUser");
                 });
 
             modelBuilder.Entity("Roleta.Dominio.Carteira", b =>
@@ -784,8 +688,6 @@ namespace Roleta.Persistencia.Migrations
             modelBuilder.Entity("Roleta.Dominio.Identity.User", b =>
                 {
                     b.Navigation("Carteira");
-
-                    b.Navigation("GirosRoleta");
 
                     b.Navigation("Pagamentos");
 

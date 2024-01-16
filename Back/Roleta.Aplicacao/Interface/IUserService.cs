@@ -6,8 +6,9 @@ namespace Roleta.Aplicacao.Interface
 {
     public interface IUserService
     {
+        Task<UpdateUserGameDto> PutUserGame(UpdateUserGameDto model);
         Task<UserGameDto> UpdateUserGame(UserGameDto model, bool includeRole = false);
-        Task<UserDashBoardDto> UpdateUserDashBoard(UserUpdateDashDto model, bool includeRole = false);
+        Task<UserDashBoardDto> UpdateUserDashBoard(UserUpdateDashDto model);
 
         Task<int> GetCountByParentEmail(string? parentEmail = null);
         Task<UserGameDto> GetByIdAsync(Guid userId);

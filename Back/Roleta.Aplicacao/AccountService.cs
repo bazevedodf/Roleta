@@ -195,7 +195,7 @@ namespace Roleta.Aplicacao
             }
             catch (Exception ex)
             {
-                throw new Exception($"Erro ao tentar verificar Password. Erro: {ex.Message}");
+                throw new Exception($"Erro ao tentar verificar Role. Erro: {ex.Message}");
             }
         }
 

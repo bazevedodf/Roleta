@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Localization;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Roleta.Aplicacao;
@@ -31,10 +32,11 @@ app.Run();
 
 static void ConfigureDbContext(WebApplicationBuilder builder)
 {
+    string connectionString = builder.Configuration.GetConnectionString("ConnDB");
+    //ServerVersion.AutoDetect(connectionString)
     builder.Services.AddDbContext<RoletaContext>(
         context => {
-            context.UseMySql(builder.Configuration.GetConnectionString("ConnDB"), 
-                             ServerVersion.Parse("10.6.15-MariaDB"));
+            context.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString), options => options.EnableRetryOnFailure());
             //context.UseSqlite(builder.Configuration.GetConnectionString("ConnDB")); //for SQLite
             //context.UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking); //somente para SQLServer
             context.EnableSensitiveDataLogging();
@@ -108,10 +110,17 @@ static void ConfigureServices(WebApplicationBuilder builder)
         options.AddPolicy("BetBrazil",
             policy =>
             {
-                policy.WithOrigins("https://www.betbrazil.pro", "https://betbrazil.pro", "http://localhost:4200")
+                policy.WithOrigins("https://www.betbrazil.pro",
+                                   "https://betbrazil.pro",
+                                   "http://localhost:4200",
+                                   "https://admin.betbrazil.pro")
                             .AllowAnyHeader()
                             .AllowAnyMethod()
                             .AllowCredentials();
+
+                //policy.AllowAnyHeader()
+                //    .AllowAnyMethod()
+                //    .AllowCredentials();
             });
 
         options.AddPolicy("AcessoLivre",
@@ -129,20 +138,17 @@ static void ConfigureServices(WebApplicationBuilder builder)
     builder.Services.AddScoped<IAccountService, AccountService>();
     builder.Services.AddScoped<IUserService, UserService>();
     builder.Services.AddScoped<ICarteiraService, CarteiraService>();
-    builder.Services.AddScoped<IProdutoService, ProdutoService>();
     builder.Services.AddScoped<IPagamentoService, PagamentoService>();
     builder.Services.AddTransient<ISaqueService, SaqueService>();    
     builder.Services.AddScoped<IRoletaService, RoletaService>();
 
     builder.Services.AddScoped<IUserPersist, UserPersist>();
-    builder.Services.AddScoped<IProdutoPersist, ProdutoPersist>();
     builder.Services.AddScoped<ICarteiraPersist, CarteiraPersist>();
     builder.Services.AddScoped<ITransacaoPersist, TransacaoPersist>();
     builder.Services.AddScoped<ITransacaoRoletaPersist, TransacaoRoletaPersist>();
     builder.Services.AddScoped<IRoletaPersist, RoletaPersist>();
     builder.Services.AddScoped<IPagamentoPersist, PagamentoPersist>();
     builder.Services.AddScoped<ISaquePersist, SaquePersist>();
-    builder.Services.AddScoped<IGiroRoletaPersist, GiroRoletaPersist>();
 
     builder.Services.AddEndpointsApiExplorer();
     builder.Services.AddSwaggerGen(options =>

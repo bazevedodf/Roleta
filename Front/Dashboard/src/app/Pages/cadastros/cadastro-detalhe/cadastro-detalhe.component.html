@@ -17,14 +17,15 @@
           <i class="fa-solid fa-id-card"></i>
           <div class="text-white lh-1 ms-2">
             <h5 class="card-title mb-0">Cadastro</h5>
-            <p class="card-category m-0">Detalhes do Usuários</p>
+            <p class="card-category m-0">Detalhes do Usuário</p>
           </div>
         </div>
       </div>
       <div class="card-body">
         <div class="card rouded shadow-sm">
           <form [formGroup]="form">
-            <!-- {{this.userSelected | json}} -->
+            <!-- {{form.value | json}}
+            {{form.status | json}} -->
             <div class="p-3">
               <div class="row mb-3">
 
@@ -65,108 +66,177 @@
 
                         <div class="col-md-3 my-2">
                           <label>Comissão (% <small>Sobre a Perda</small>)</label>
-                          <input type="number" class="form-control" readonly formControlName="comissao" [(ngModel)]="userSelected.comissao">
+                          <input type="number" class="form-control" [readonly]="!userSelected.isAfiliate" formControlName="comissao" [(ngModel)]="userSelected.comissao">
                         </div>
                       </div>
                     </div>
                   </div>
                 </div>
               </div>
-              <div class="row">
-                <div class="col-md-4 my-2 d-flex">
-                  <div style="width: 300px;">
-                    <label>Data Cadastro</label>
-                    <input type="datetime" readonly value="{{userSelected.dataCadastro | DateTimeFormat}}" class="form-control bg-body-secondary">
-                  </div>
-                  <div class="form-check mt-4 ms-5">
-                    <input type="checkbox"
-                      id="isBlocked"
-                      class="form-check-input mt-0"
-                      formControlName="isBlocked"
-                      [(ngModel)]="userSelected.isBlocked">
-                    <label class="form-check-label" for="isBlocked">
-                      Bloqueado
-                    </label>
-                  </div>
-                </div>
-                <div class="col-md-4 my-2 d-flex">
-                  <div class="form-check mt-4">
-                    <input type="checkbox"
-                      id="demoAcount"
-                      class="form-check-input mt-0"
-                      formControlName="demoAcount"
-                      [(ngModel)]="userSelected.demoAcount">
-                    <label class="form-check-label" for="demoAcount">
-                      Conta Demo
-                    </label>
-                  </div>
-                  <div class="form-check">
-                    <label>Saldo Demo</label>
-                    <input type="text"
-                      currencyMask
-                      [options]="{ prefix: 'R$ ', thousands: '.', decimal: ',', align: 'left' }"
-                      [ngClass]="{'bg-body-secondary' : !userSelected.demoAcount}"
-                      [readonly]="!userSelected.demoAcount"
-                      formControlName="saldoDemo"
-                      [(ngModel)]="carteira.saldoDemo"
-                      class="form-control">
-                  </div>
-                </div>
-                <div class="col-md-2 my-2">
-                  <label>Saldo Atual</label>
-                  <input type="text"
-                    currencyMask
-                    formControlName="saldoAtual"
-                    [options]="{ prefix: 'R$ ', thousands: '.', decimal: ',', align: 'left' }"
-                    [value]="carteira.saldoAtual | currency: 'BRL'"
-                    class="form-control bg-body-secondary" readonly>
-                </div>
-              </div>
               <div class="row mb-3">
-                <div class="col-md-4 my-2">
-                  <label>Nome</label>
-                  <input type="text" class="form-control" formControlName="firstName" [(ngModel)]="userSelected.firstName">
-                </div>
-                <div class="col-md-4 my-2">
-                  <label>Sobre Nome</label>
-                  <input type="text" class="form-control" formControlName="lastName" [(ngModel)]="userSelected.lastName">
-                </div>
+                <div class="container">
+                  <div class="card">
+                    <div class="card-header">
+                      <h5 class="card-title text-body-secondary">Dados da Conta</h5>
+                    </div>
+                    <div class="card-body">
+                      <div class="row">
+                        <div class="col-md-4 my-2 d-flex">
+                          <div style="width: 300px;">
+                            <label>Data Cadastro</label>
+                            <input type="datetime" readonly value="{{userSelected.dataCadastro | DateTimeFormat}}" class="form-control bg-body-secondary">
+                          </div>
+                          <div class="form-check mt-4 ms-5">
+                            <input type="checkbox"
+                              id="isBlocked"
+                              class="form-check-input mt-0"
+                              formControlName="isBlocked"
+                              [(ngModel)]="userSelected.isBlocked">
+                            <label class="form-check-label" for="isBlocked">
+                              Bloqueado
+                            </label>
+                          </div>
+                        </div>
 
-                <div class="col-md-4 my-2">
-                  <label>E-Mail</label>
-                  <input type="text" class="form-control" formControlName="email" [(ngModel)]="userSelected.email">
+                        <div class="col-md-4 my-2 d-flex">
+                          <div class="form-check mt-4">
+                            <input type="checkbox"
+                              id="demoAcount"
+                              class="form-check-input mt-0"
+                              formControlName="demoAcount"
+                              [(ngModel)]="userSelected.demoAcount">
+                            <label class="form-check-label" for="demoAcount">
+                              Conta Demo
+                            </label>
+                          </div>
+                          <div class="form-check">
+                            <label>Saldo Demo</label>
+                            <input type="text"
+                              currencyMask
+                              [options]="{ prefix: 'R$ ', thousands: '.', decimal: ',', align: 'left' }"
+                              [ngClass]="{'bg-body-secondary' : !userSelected.demoAcount}"
+                              [readonly]="!userSelected.demoAcount"
+                              formControlName="saldoDemo"
+                              [(ngModel)]="carteira.saldoDemo"
+                              class="form-control">
+                          </div>
+                        </div>
+
+                        <div class="col-md-2 my-2">
+                          <label>Saldo Atual</label>
+                          <input type="text"
+                            currencyMask
+                            formControlName="saldoAtual"
+                            [options]="{ prefix: 'R$ ', thousands: '.', decimal: ',', align: 'left' }"
+                            [value]="carteira.saldoAtual | currency: 'BRL'"
+                            class="form-control bg-body-secondary" readonly>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="row mb-3">
+                <div class="container">
+                  <div class="card">
+                    <div class="card-header">
+                      <h5 class="mb-0 pt-1">Dados Pessoais</h5>
+                    </div>
+                    <div class="card-body">
+
+                      <div class="row mb-3">
+                        <div class="col-md-4 my-2">
+                          <label>Nome</label>
+                          <input type="text" class="form-control" formControlName="firstName" [(ngModel)]="userSelected.firstName">
+                        </div>
+                        <div class="col-md-4 my-2">
+                          <label>Sobre Nome</label>
+                          <input type="text" class="form-control" formControlName="lastName" [(ngModel)]="userSelected.lastName">
+                        </div>
+
+                        <div class="col-md-4 my-2">
+                          <label>E-Mail</label>
+                          <input type="text" class="form-control" formControlName="email" [(ngModel)]="userSelected.email">
+                        </div>
+                      </div>
+
+                      <div class="row">
+                        <div class="col-md-4 my-2">
+                          <label>CPF</label>
+                          <input type="text"
+                            class="form-control"
+                            formControlName="cpf"
+                            [showMaskTyped]="true"
+                            [dropSpecialCharacters]="true"
+                            mask="000.000.000-00"
+                            [(ngModel)]="userSelected.cpf" >
+                        </div>
+
+                        <div class="col-md-4 my-2">
+                          <label>Celular (Watsapp)</label>
+                          <input type="tel"
+                            formControlName="phoneNumber"
+                            [(ngModel)]="userSelected.phoneNumber"
+                            class="form-control"
+                            [showMaskTyped]="true"
+                            [dropSpecialCharacters]="true"
+                            mask="(00) 00000-0000">
+                        </div>
+
+                      </div>
+                    </div>
+
+                  </div>
                 </div>
               </div>
 
               <div class="row">
+                <div class="container">
+                  <div class="card">
+                    <div class="card-header">
+                      <h5 class="mb-0 pt-1">Dados Pix</h5>
+                    </div>
+                    <div class="card-body">
+                      <div class="row">
+                        <div class="col-md-4 d-flex">
+                          <div class="form-check mt-4 me-4">
+                            <input class="form-check-input"
+                              formControlName="tipoChavePix"
+                              [(ngModel)]="userSelected.tipoChavePix"
+                              type="radio" value="CPF" name="tipoChavePix" id="TipoChavePix1">
+                            <label class="form-check-label" for="TipoChavePix1">
+                              CPF
+                            </label>
+                          </div>
+                          <div class="form-check mt-4 me-4">
+                            <input class="form-check-input"
+                              formControlName="tipoChavePix"
+                              [(ngModel)]="userSelected.tipoChavePix"
+                              type="radio" value="Celular" name="tipoChavePix" id="TipoChavePix2">
+                            <label class="form-check-label" for="TipoChavePix2">
+                              Celular
+                            </label>
+                          </div>
+                          <div class="form-check mt-4">
+                            <input class="form-check-input"
+                              formControlName="tipoChavePix"
+                              [(ngModel)]="userSelected.tipoChavePix"
+                              type="radio" value="EMAIL" name="tipoChavePix" id="TipoChavePix3">
+                            <label class="form-check-label" for="TipoChavePix3">
+                              E-Mail
+                            </label>
+                          </div>
+                        </div>
+                        <div class="col-md-4 my-2">
+                          <label>Chave PIX</label>
+                          <input type="text" formControlName="chavePix" [(ngModel)]="userSelected.chavePix" class="form-control">
+                        </div>
+                      </div>
+                    </div>
 
-                <div class="col-md-4 my-2">
-                  <label>CPF</label>
-                  <input type="text"
-                    class="form-control"
-                    formControlName="cpf"
-                    [showMaskTyped]="true"
-                    [dropSpecialCharacters]="true"
-                    mask="000.000.000-00"
-                    [(ngModel)]="userSelected.cpf" >
+                  </div>
                 </div>
-
-                <div class="col-md-4 my-2">
-                  <label>Chave PIX</label>
-                  <input type="text" formControlName="chavePix" [(ngModel)]="userSelected.chavePix" class="form-control">
-                </div>
-
-                <div class="col-md-4 my-2">
-                  <label>Celular (Watsapp)</label>
-                  <input type="tel"
-                    formControlName="phoneNumber"
-                    [(ngModel)]="userSelected.phoneNumber"
-                    class="form-control"
-                    [showMaskTyped]="true"
-                    [dropSpecialCharacters]="true"
-                    mask="(00) 00000-0000">
-                </div>
-
               </div>
 
             </div>
@@ -175,7 +245,7 @@
                 <button class="btn btn-outline-secondary mr-auto border" (click)="btnCancelar()">
                   Cancelar Alteração
                 </button>
-                <button class="btn btn-success ms-auto" [disabled]="!form.valid || form.pristine" (click)="salvarUser()">
+                <button class="btn btn-success ms-auto" [disabled]="!form.valid" (click)="salvarUser()">
                   <!-- <span class="spinner-border spinner-border-sm mr-1"></span> -->
                   Salvar Dados
                 </button>

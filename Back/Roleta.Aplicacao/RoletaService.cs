@@ -35,21 +35,29 @@ namespace Roleta.Aplicacao
                 List<ItemRoletaDto> posicoes = new List<ItemRoletaDto>()
                 {
                     new ItemRoletaDto { Id = 1, Multiplicador = 0 },
+                    new ItemRoletaDto { Id = 1, Multiplicador = 0 },
                     new ItemRoletaDto { Id = 2, Multiplicador = 0.5M },
-                    new ItemRoletaDto { Id = 3, Multiplicador = 1.2M },
+                    new ItemRoletaDto { Id = 2, Multiplicador = 0.5M },
+                    new ItemRoletaDto { Id = 3, Multiplicador = 1 },
                     new ItemRoletaDto { Id = 4, Multiplicador = 3 },
                     new ItemRoletaDto { Id = 5, Multiplicador = 0 },
+                    new ItemRoletaDto { Id = 5, Multiplicador = 0 },
                     new ItemRoletaDto { Id = 6, Multiplicador = 0.5M },
-                    new ItemRoletaDto { Id = 7, Multiplicador = 1.2M },
+                    new ItemRoletaDto { Id = 6, Multiplicador = 0.5M },
+                    new ItemRoletaDto { Id = 7, Multiplicador = 1 },
                     new ItemRoletaDto { Id = 8, Multiplicador = 5 },
                     new ItemRoletaDto { Id = 9, Multiplicador = 100 },
                     new ItemRoletaDto { Id = 10, Multiplicador = 0 },
+                    new ItemRoletaDto { Id = 10, Multiplicador = 0 },
                     new ItemRoletaDto { Id = 11, Multiplicador = 0.5M },
-                    new ItemRoletaDto { Id = 12, Multiplicador = 1.2M },
+                    new ItemRoletaDto { Id = 11, Multiplicador = 0.5M },
+                    new ItemRoletaDto { Id = 12, Multiplicador = 1 },
                     new ItemRoletaDto { Id = 13, Multiplicador = 7 },
                     new ItemRoletaDto { Id = 14, Multiplicador = 0 },
+                    new ItemRoletaDto { Id = 14, Multiplicador = 0 },
                     new ItemRoletaDto { Id = 15, Multiplicador = 0.5M },
-                    new ItemRoletaDto { Id = 16, Multiplicador = 1.2M },
+                    new ItemRoletaDto { Id = 15, Multiplicador = 0.5M },
+                    new ItemRoletaDto { Id = 16, Multiplicador = 1 },
                     new ItemRoletaDto { Id = 17, Multiplicador = 9 },
                     new ItemRoletaDto { Id = 18, Multiplicador = 20 }
                 };
@@ -59,13 +67,15 @@ namespace Roleta.Aplicacao
 
                 if (freeSpin)
                 {
+                    posicoes = posicoes.DistinctBy(x => x.Id).ToList();
                     giro = Sorteio(posicoes, valorAposta);
                     return giro;
                 }
                 
                 if (user.DemoAcount)
                 {
-                    posicoes = posicoes.FindAll(x => x.Multiplicador > 1);                    
+                    posicoes = posicoes.DistinctBy(x => x.Id).ToList();
+                    posicoes = posicoes.FindAll(x => x.Multiplicador > 1);
                     giro = Sorteio(posicoes, valorAposta);
                     
                     if (!await ProcessaGiro(giro, user))
@@ -79,14 +89,20 @@ namespace Roleta.Aplicacao
                 //Valor máximo que pode ser pago
                 var valorPremiacaoMaxima = (roleta.SaldoBanca / 100) * roleta.PremiacaoMaxima;
 
+                //se a contagem de perda for menor que taxa de perda ele zera
+                if (roleta.ContagemPerda < roleta.TaxaPerda)
+                    valorPremiacaoMaxima = 0;
+
                 // Multiplicador maximo permitido para essa rodada
-                if (valorPremiacaoMaxima <= 0)
-                {
-                    if (user.Carteira.SaldoAtual < roleta.ValorSaque)
-                        valorPremiacaoMaxima = roleta.ValorSaque - user.Carteira.SaldoAtual;
-                }
+                //if (valorPremiacaoMaxima <= 0)
+                //{
+                //    if (user.Carteira.SaldoAtual < roleta.ValorMinimoSaque)
+                //        valorPremiacaoMaxima = roleta.ValorMinimoSaque - user.Carteira.SaldoAtual;
+                //}
                 MaiorMultiplicadorPossivel = valorPremiacaoMaxima / valorAposta;
 
+                if (MaiorMultiplicadorPossivel == 0) 
+                    MaiorMultiplicadorPossivel = 1;
 
                 posicoes = posicoes.FindAll(x => x.Multiplicador <= MaiorMultiplicadorPossivel);
 
@@ -112,6 +128,7 @@ namespace Roleta.Aplicacao
                 {
                     if (giro.Multiplicador > 0)
                     {
+                        user.Carteira.SaldoDemo -= giro.ValorAposta;
                         user.Carteira.SaldoDemo += giro.ValorAposta * giro.Multiplicador;
                         await _userService.UpdateUserGame(user);
                     }
@@ -156,6 +173,7 @@ namespace Roleta.Aplicacao
                     creditoPremio = await _carteiraService.AddTransacaoAsync(creditoPremio);
 
                     user.Carteira.SaldoAtual += creditoPremio.valor;
+                    roleta.ContagemPerda = 0;
                 }
 
                 //double valorBanca = valorAposta;
@@ -216,6 +234,7 @@ namespace Roleta.Aplicacao
                     };
                     creditoLucro = await AddTransacaoRoleta(creditoLucro);
                     roleta.SaldoLucro += creditoLucro.valor;
+                    roleta.ContagemPerda++;
                 }
                 else
                 {

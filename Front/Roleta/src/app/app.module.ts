@@ -28,6 +28,7 @@ import { DateTimeFormatPipe } from './helpers/DateTimeFormat.pipe';
 import { TermosDeUsoComponent } from './Pages/termos-de-uso/termos-de-uso.component';
 import { PoliticaDePrivacidadeComponent } from './Pages/politica-de-privacidade/politica-de-privacidade.component';
 import { provideNgxMask, NgxMaskDirective } from 'ngx-mask';
+import { PerfilComponent } from './Pages/perfil/perfil.component';
 
 @NgModule({
   declarations: [
@@ -43,6 +44,7 @@ import { provideNgxMask, NgxMaskDirective } from 'ngx-mask';
     DateTimeFormatPipe,
     TermosDeUsoComponent,
     PoliticaDePrivacidadeComponent,
+    PerfilComponent,
   ],
   imports: [
     FormsModule,

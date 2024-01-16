@@ -67,7 +67,7 @@
   </app-dialog>
   <app-dialog [(visible)]="showDialog" [closable]="false">
     <h4 class="text-center">{{tituloDialo}}</h4>
-    <h2 *ngIf="valorPremio > 0" class="text-center"> Lucrou {{valorPremio | currency:'BRL' }}</h2>
+    <h5 *ngIf="valorPremio > 0" class="text-center"> Resultado {{valorPremio | currency:'BRL' }}</h5>
     <div class="text-center mb-2">
       {{mensagemDialog}}
     </div>
@@ -78,7 +78,7 @@
   </app-dialog>
   <app-dialog [(visible)]="showResult" [closable]="false">
     <h4 class="text-center">{{tituloResult}}</h4>
-    <h2 *ngIf="valorPremio > 0" class="text-center"> Lucrou {{valorPremio | currency:'BRL' }}</h2>
+    <h5 *ngIf="valorPremio > 0" class="text-center"> Resultado {{valorPremio | currency:'BRL' }}</h5>
     <div class="text-center">Vamos para próxima rodada?</div>
     <div class="text-center">
       <a class='btn mt-2 my-0' (click)="proxima()">Próxima Rodada</a>

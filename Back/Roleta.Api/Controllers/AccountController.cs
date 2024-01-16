@@ -2,10 +2,10 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
+using Roleta.Aplicacao.Dtos;
 using Roleta.Aplicacao.Dtos.Identity;
 using Roleta.Aplicacao.Extensions;
 using Roleta.Aplicacao.Interface;
-using Roleta.Dominio.Identity;
 using System.Reflection;
 using System.Text;
 
@@ -73,6 +73,27 @@ namespace Roleta.Api.Controllers
                     $"Erro ao tentar recuperar conta de usuário. Erro: {ex.Message}");
             }
         }
+
+        [HttpPut("PutUserGame")]
+        public async Task<IActionResult> PutUser(UpdateUserGameDto model)
+        {
+            try
+            {
+                var userLogado = await _accountService.GetUserGameAsync(User.GetUserName());
+                if(userLogado == null || userLogado.Email != model.Email) return Unauthorized();
+
+                var user = await _userService.PutUserGame(model);
+                if (user == null) return NoContent();
+
+                return Ok(user);
+            }
+            catch (Exception ex)
+            {
+                return this.StatusCode(StatusCodes.Status500InternalServerError,
+                    $"Erro ao tentar atualizar Usuário. Erro: {ex.Message}");
+            }
+        }
+
 
         [AllowAnonymous]
         [HttpGet("UserExist/{userName}")]

@@ -13,7 +13,7 @@
 
         public string Term { get; set; } = string.Empty;
         public string ParentEmail { get; set; } = string.Empty;
-        public DateTime DataIni { get; set; } = DateTime.Now.AddDays(-2).Date;
-        public DateTime DataFim { get; set; } = DateTime.Now.AddDays(1);
+        public DateTime DataIni { get; set; } = DateTime.Now.Date;
+        public DateTime DataFim { get; set; } = DateTime.Now.AddDays(1).Date;
     }
 }

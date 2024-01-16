@@ -17,7 +17,6 @@ namespace Roleta.Persistencia.Mapeamentos
             //Propriedades
             builder.Property(x => x.SaldoAtual);
             builder.Property(x => x.DataAtualizacao)
-                   .HasDefaultValueSql("NOW()")
                    .IsRequired();
 
             //Relacionamento

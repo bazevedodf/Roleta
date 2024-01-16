@@ -1,35 +1,71 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Identity;
 using Roleta.Aplicacao.Dtos;
 using Roleta.Aplicacao.Dtos.Identity;
 using Roleta.Aplicacao.Interface;
+using Roleta.Dominio.Identity;
 using Roleta.Persistencia.Interface;
 using Roleta.Persistencia.Models;
+using System.Data;
 using System.Text.RegularExpressions;
 
 namespace Roleta.Aplicacao
 {
     public class UserService: IUserService
     {
+        private readonly UserManager<User> _userManager;
+        private readonly RoleManager<Role> _roleManager;
         private readonly IUserPersist _userPersist;
         private readonly IMapper _mapper;
 
-        public UserService(IUserPersist userPersist, IMapper mapper)
+        public UserService(UserManager<User> userManager,
+                           RoleManager<Role> roleManager,
+                           IUserPersist userPersist, 
+                           IMapper mapper)
         {
+            _userManager = userManager;
+            _roleManager = roleManager;
             _userPersist = userPersist;
             _mapper = mapper;
         }
 
-        public async Task<UserDashBoardDto> UpdateUserDashBoard(UserUpdateDashDto model, bool includeRole = false) 
+        public async Task<UpdateUserGameDto> PutUserGame(UpdateUserGameDto model)
         {
             try
             {
-                var user = await _userPersist.GetByUserLoginAsync(model.Email, includeRole);
+                var user = await _userPersist.GetByUserLoginAsync(model.Email);
+                if (user == null) return null;
+
+                model.Email = user.Email;
+                _mapper.Map(model, user);
+
+                _userPersist.Update(user);
+                if (await _userPersist.SaveChangeAsync())
+                {
+                    var retorno = await _userPersist.GetByUserLoginAsync(user.Email);
+
+                    return _mapper.Map<UpdateUserGameDto>(retorno);
+                }
+                return null;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+
+        public async Task<UserDashBoardDto> UpdateUserDashBoard(UserUpdateDashDto model) 
+        {
+            try
+            {
+                var roleAfiliate = "Afiliate";
+                var user = await _userPersist.GetByUserLoginAsync(model.Email, false);
                 if (user == null) return null;
 
                 model.Carteira.SaldoAtual = user.Carteira.SaldoAtual;
                 _mapper.Map(model, user);
 
-                if(string.IsNullOrEmpty(user.AfiliateCode) && user.isAfiliate)
+                if (string.IsNullOrEmpty(user.AfiliateCode)  && user.isAfiliate)
                 {
                     user.AfiliateCode = GetAfiliateCode(user.Id);
                 }
@@ -37,9 +73,14 @@ namespace Roleta.Aplicacao
                 _userPersist.Update(user);
                 if (await _userPersist.SaveChangeAsync())
                 {
-                    var retorno = await _userPersist.GetByUserLoginAsync(user.Email, includeRole);
+                    if (user.isAfiliate)
+                        await _userManager.AddToRoleAsync(user, roleAfiliate);
+                    else
+                        await _userManager.RemoveFromRoleAsync(user, roleAfiliate);
+ 
+                    var retorno = await GetByUserLoginAsync(user.Email, true);
 
-                    return _mapper.Map<UserDashBoardDto>(retorno);
+                    return retorno;
                 }
                 return null;
             }
@@ -122,8 +163,13 @@ namespace Roleta.Aplicacao
         {
             try
             {
-                var users = await _userPersist.GetAllByParentEmailDateAsync(pageParams, includePagamentos);
-                
+                PageList<User>? users;
+
+                if (string.IsNullOrEmpty(pageParams.Term))
+                    users = await _userPersist.GetAllByParentEmailDateAsync(pageParams, includePagamentos);
+                else
+                    users = await _userPersist.GetAllByNomeDataAsync(pageParams, includePagamentos);
+
                 if (users == null) return null;
 
                 var resultado = _mapper.Map<PageList<UserDashBoardDto>>(users);

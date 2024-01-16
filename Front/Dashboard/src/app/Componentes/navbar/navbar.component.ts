@@ -12,13 +12,21 @@ import { take } from 'rxjs';
 export class NavbarComponent implements OnInit {
 
   isCollapsed = true;
-  user = {} as UserDash;
 
   constructor(public accountService: AccountService,
               private router: Router) {}
 
   ngOnInit():void {
-    this.user = this.accountService.user;
+    this.accountService.loggedIn();
+  }
+
+  public verificaRole(roles : string) : boolean{
+    let list = roles.split(',');
+    for(var i in list) {
+      if(this.accountService.user.role.includes(list[i]))
+        return true
+    }
+    return false;
   }
 
   logout(): void {

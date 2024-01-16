@@ -42,16 +42,24 @@ namespace Roleta.Persistencia.Migrations
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     Email = table.Column<string>(type: "varchar(256)", maxLength: 256, nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
-                    Description = table.Column<string>(type: "longtext", nullable: true)
-                        .Annotation("MySql:CharSet", "utf8mb4"),
                     ImagemUrl = table.Column<string>(type: "longtext", nullable: true)
                         .Annotation("MySql:CharSet", "utf8mb4"),
-                    FreeSpin = table.Column<int>(type: "int", nullable: false),
-                    SaldoDeposito = table.Column<decimal>(type: "decimal(65,30)", nullable: false),
-                    SaldoSaque = table.Column<decimal>(type: "decimal(65,30)", nullable: false),
+                    Verified = table.Column<bool>(type: "tinyint(1)", nullable: false),
+                    DemoAcount = table.Column<bool>(type: "tinyint(1)", nullable: false),
+                    isAfiliate = table.Column<bool>(type: "tinyint(1)", nullable: false),
+                    AfiliateCode = table.Column<string>(type: "longtext", nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    CPF = table.Column<string>(type: "longtext", nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    TipoChavePix = table.Column<string>(type: "longtext", nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    ChavePix = table.Column<string>(type: "longtext", nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    Comissao = table.Column<int>(type: "int", nullable: false),
+                    isBlocked = table.Column<bool>(type: "tinyint(1)", nullable: false),
                     ParentEmail = table.Column<string>(type: "longtext", nullable: true)
                         .Annotation("MySql:CharSet", "utf8mb4"),
-                    Verified = table.Column<bool>(type: "tinyint(1)", nullable: false),
+                    DataCadastro = table.Column<DateTime>(type: "datetime(6)", nullable: false),
                     UserName = table.Column<string>(type: "varchar(256)", maxLength: 256, nullable: true)
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     NormalizedUserName = table.Column<string>(type: "varchar(256)", maxLength: 256, nullable: true)
@@ -80,24 +88,26 @@ namespace Roleta.Persistencia.Migrations
                 .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
-                name: "Produtos",
+                name: "Roletas",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
-                    TipoProduto = table.Column<int>(type: "int", nullable: false),
-                    Nome = table.Column<string>(type: "varchar(50)", maxLength: 50, nullable: false)
+                    Nome = table.Column<string>(type: "varchar(30)", maxLength: 30, nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
-                    Descricao = table.Column<string>(type: "varchar(200)", maxLength: 200, nullable: true)
-                        .Annotation("MySql:CharSet", "utf8mb4"),
-                    Valor = table.Column<decimal>(type: "decimal(65,30)", nullable: false, defaultValue: 0m),
-                    Giros = table.Column<int>(type: "int", nullable: false, defaultValue: 0),
-                    DataCadastro = table.Column<DateTime>(type: "datetime(6)", nullable: false, defaultValueSql: "NOW()"),
-                    Ativo = table.Column<bool>(type: "tinyint(1)", nullable: false, defaultValue: false)
+                    SaldoBanca = table.Column<decimal>(type: "decimal(65,30)", nullable: false, defaultValue: 0m),
+                    PremiacaoMaxima = table.Column<decimal>(type: "decimal(65,30)", nullable: false, defaultValue: 0m),
+                    SaldoLucro = table.Column<decimal>(type: "decimal(65,30)", nullable: false, defaultValue: 0m),
+                    ValorMinimoSaque = table.Column<int>(type: "int", nullable: false, defaultValue: 0),
+                    ValorMaximoSaque = table.Column<int>(type: "int", nullable: false, defaultValue: 0),
+                    PercentualBanca = table.Column<int>(type: "int", nullable: false, defaultValue: 60),
+                    TaxaPerda = table.Column<int>(type: "int", nullable: false, defaultValue: 10),
+                    ContagemPerda = table.Column<int>(type: "int", nullable: false, defaultValue: 0),
+                    TaxaSaque = table.Column<int>(type: "int", nullable: false, defaultValue: 0)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Produtos", x => x.Id);
+                    table.PrimaryKey("PK_Roletas", x => x.Id);
                 })
                 .Annotation("MySql:CharSet", "utf8mb4");
 
@@ -223,51 +233,22 @@ namespace Roleta.Persistencia.Migrations
                 .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
-                name: "GirosRoleta",
+                name: "Carteiras",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
-                    ValorAposta = table.Column<int>(type: "int", nullable: false),
-                    Posicao = table.Column<int>(type: "int", nullable: false),
-                    Multiplicador = table.Column<decimal>(type: "decimal(65,30)", nullable: false),
+                    SaldoAtual = table.Column<decimal>(type: "decimal(65,30)", nullable: false),
+                    SaldoDemo = table.Column<decimal>(type: "decimal(65,30)", nullable: false),
                     UserId = table.Column<Guid>(type: "char(36)", nullable: false, collation: "ascii_general_ci"),
-                    Data = table.Column<DateTime>(type: "datetime(6)", nullable: false)
+                    DataCadastro = table.Column<DateTime>(type: "datetime(6)", nullable: false),
+                    DataAtualizacao = table.Column<DateTime>(type: "datetime(6)", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_GirosRoleta", x => x.Id);
+                    table.PrimaryKey("PK_Carteiras", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_GirosRoleta_AspNetUsers_UserId",
-                        column: x => x.UserId,
-                        principalTable: "AspNetUsers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                })
-                .Annotation("MySql:CharSet", "utf8mb4");
-
-            migrationBuilder.CreateTable(
-                name: "Saques",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
-                    TransactionId = table.Column<string>(type: "varchar(15)", maxLength: 15, nullable: true)
-                        .Annotation("MySql:CharSet", "utf8mb4"),
-                    Valor = table.Column<decimal>(type: "decimal(65,30)", nullable: false),
-                    Status = table.Column<string>(type: "varchar(20)", maxLength: 20, nullable: false, defaultValue: "Pendente")
-                        .Annotation("MySql:CharSet", "utf8mb4"),
-                    TextoInformativo = table.Column<string>(type: "longtext", nullable: true)
-                        .Annotation("MySql:CharSet", "utf8mb4"),
-                    DataStatus = table.Column<DateTime>(type: "datetime(6)", nullable: true),
-                    DataCadastro = table.Column<DateTime>(type: "datetime(6)", nullable: false, defaultValueSql: "NOW()"),
-                    UserId = table.Column<Guid>(type: "char(36)", nullable: false, collation: "ascii_general_ci")
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Saques", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_User_Saque",
+                        name: "FK_Carteiras_AspNetUsers_UserId",
                         column: x => x.UserId,
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
@@ -295,23 +276,102 @@ namespace Roleta.Persistencia.Migrations
                     Status = table.Column<string>(type: "longtext", nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     DataStatus = table.Column<DateTime>(type: "datetime(6)", nullable: false),
-                    DataCadastro = table.Column<DateTime>(type: "datetime(6)", nullable: false, defaultValueSql: "NOW()"),
-                    UserId = table.Column<Guid>(type: "char(36)", nullable: false, collation: "ascii_general_ci"),
-                    ProdutoId = table.Column<int>(type: "int", nullable: false)
+                    DataCadastro = table.Column<DateTime>(type: "datetime(6)", nullable: false, defaultValue: new DateTime(2024, 1, 14, 23, 33, 56, 418, DateTimeKind.Local).AddTicks(2740)),
+                    UserId = table.Column<Guid>(type: "char(36)", nullable: false, collation: "ascii_general_ci")
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Pagamentos", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Produto_pagamento",
-                        column: x => x.ProdutoId,
-                        principalTable: "Produtos",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
                         name: "FK_User_Pagamento",
                         column: x => x.UserId,
                         principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                })
+                .Annotation("MySql:CharSet", "utf8mb4");
+
+            migrationBuilder.CreateTable(
+                name: "Saques",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    TransactionId = table.Column<string>(type: "varchar(15)", maxLength: 15, nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    Valor = table.Column<decimal>(type: "decimal(65,30)", nullable: false),
+                    Status = table.Column<string>(type: "varchar(20)", maxLength: 20, nullable: false, defaultValue: "Pendente")
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    TextoInformativo = table.Column<string>(type: "longtext", nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    DataStatus = table.Column<DateTime>(type: "datetime(6)", nullable: true),
+                    DataCadastro = table.Column<DateTime>(type: "datetime(6)", nullable: false, defaultValue: new DateTime(2024, 1, 14, 23, 33, 56, 418, DateTimeKind.Local).AddTicks(4835)),
+                    UserId = table.Column<Guid>(type: "char(36)", nullable: false, collation: "ascii_general_ci")
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Saques", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_User_Saque",
+                        column: x => x.UserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                })
+                .Annotation("MySql:CharSet", "utf8mb4");
+
+            migrationBuilder.CreateTable(
+                name: "Transacoes",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    Tipo = table.Column<string>(type: "varchar(30)", maxLength: 30, nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    valor = table.Column<decimal>(type: "decimal(65,30)", nullable: false),
+                    Data = table.Column<DateTime>(type: "datetime(6)", nullable: false, defaultValue: new DateTime(2024, 1, 14, 23, 33, 56, 418, DateTimeKind.Local).AddTicks(791)),
+                    TransactionId = table.Column<string>(type: "varchar(30)", maxLength: 30, nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    CarteiraId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Transacoes", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Transacoes_Carteiras_CarteiraId",
+                        column: x => x.CarteiraId,
+                        principalTable: "Carteiras",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                })
+                .Annotation("MySql:CharSet", "utf8mb4");
+
+            migrationBuilder.CreateTable(
+                name: "TransacoesRoleta",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    valor = table.Column<decimal>(type: "decimal(65,30)", nullable: false),
+                    Descricao = table.Column<string>(type: "varchar(30)", maxLength: 30, nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    Data = table.Column<DateTime>(type: "datetime(6)", nullable: false, defaultValue: new DateTime(2024, 1, 14, 23, 33, 56, 417, DateTimeKind.Local).AddTicks(8184)),
+                    TransacaoId = table.Column<int>(type: "int", maxLength: 15, nullable: false),
+                    RoletaId = table.Column<int>(type: "int", nullable: false),
+                    RoletaSorteId = table.Column<int>(type: "int", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_TransacoesRoleta", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_TransacoesRoleta_Roletas_RoletaSorteId",
+                        column: x => x.RoletaSorteId,
+                        principalTable: "Roletas",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_TransacoesRoleta_Transacoes_TransacaoId",
+                        column: x => x.TransacaoId,
+                        principalTable: "Transacoes",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 })
@@ -322,20 +382,15 @@ namespace Roleta.Persistencia.Migrations
                 columns: new[] { "Id", "ConcurrencyStamp", "Name", "NormalizedName" },
                 values: new object[,]
                 {
-                    { new Guid("9059e131-db4e-48ec-b8fa-9a03318ce294"), "43425a34-aff8-4e5d-8148-4f9f7e90d740", "Afiliado", "Afiliado" },
-                    { new Guid("929290a4-9f69-4571-a87b-57285646d3cd"), "8e3e47e3-4c9d-4494-978e-051636359c13", "Admin", "ADMIN" },
-                    { new Guid("9ceee7ad-0e67-4634-939b-a06b58cf6c52"), "b1a3c2a1-656e-48aa-9ab5-78354439dea6", "Apostador", "Apostador" }
+                    { new Guid("51dc99b7-4ecf-49de-829f-fe58d467ea61"), "0ad684a7-b7ea-4d27-9842-7afb20c84bfa", "Admin", "ADMIN" },
+                    { new Guid("6c35cfbc-feba-428d-b0c4-4a19fa5bd187"), "0778e585-6dc1-43d1-a9bb-2388defc03c0", "Afiliate", "AFILIATE" },
+                    { new Guid("e6234fdd-f201-41cd-8b7f-f741005b603d"), "ac2150d2-feef-4f01-bb5b-4e5a8f857903", "User", "USER" }
                 });
 
             migrationBuilder.InsertData(
-                table: "Produtos",
-                columns: new[] { "Id", "Ativo", "Descricao", "Nome", "TipoProduto", "Valor" },
-                values: new object[,]
-                {
-                    { 1, true, null, "R$ 75,00 (25,00 Bônus)", 0, 50.00m },
-                    { 2, true, null, "R$ 200,00 (100,00 Bônus)", 0, 100.00m },
-                    { 3, true, null, "R$ 500,00 (300,00 Bônus)", 0, 200.00m }
-                });
+                table: "Roletas",
+                columns: new[] { "Id", "Nome", "PercentualBanca", "PremiacaoMaxima", "TaxaSaque", "ValorMaximoSaque", "ValorMinimoSaque" },
+                values: new object[] { 1, "RoletaSorte", 60, 10m, 5, 500, 50 });
 
             migrationBuilder.CreateIndex(
                 name: "IX_AspNetRoleClaims_RoleId",
@@ -375,14 +430,10 @@ namespace Roleta.Persistencia.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_GirosRoleta_UserId",
-                table: "GirosRoleta",
-                column: "UserId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Pagamentos_ProdutoId",
-                table: "Pagamentos",
-                column: "ProdutoId");
+                name: "IX_Carteiras_UserId",
+                table: "Carteiras",
+                column: "UserId",
+                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_Pagamentos_TransactionId",
@@ -405,6 +456,21 @@ namespace Roleta.Persistencia.Migrations
                 name: "IX_Saques_UserId",
                 table: "Saques",
                 column: "UserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Transacoes_CarteiraId",
+                table: "Transacoes",
+                column: "CarteiraId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_TransacoesRoleta_RoletaSorteId",
+                table: "TransacoesRoleta",
+                column: "RoletaSorteId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_TransacoesRoleta_TransacaoId",
+                table: "TransacoesRoleta",
+                column: "TransacaoId");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
@@ -425,19 +491,25 @@ namespace Roleta.Persistencia.Migrations
                 name: "AspNetUserTokens");
 
             migrationBuilder.DropTable(
-                name: "GirosRoleta");
-
-            migrationBuilder.DropTable(
                 name: "Pagamentos");
 
             migrationBuilder.DropTable(
                 name: "Saques");
 
             migrationBuilder.DropTable(
+                name: "TransacoesRoleta");
+
+            migrationBuilder.DropTable(
                 name: "AspNetRoles");
 
             migrationBuilder.DropTable(
-                name: "Produtos");
+                name: "Roletas");
+
+            migrationBuilder.DropTable(
+                name: "Transacoes");
+
+            migrationBuilder.DropTable(
+                name: "Carteiras");
 
             migrationBuilder.DropTable(
                 name: "AspNetUsers");

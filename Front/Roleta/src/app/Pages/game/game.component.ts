@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, Inject, LOCALE_ID, OnInit, ViewChild } from '@angular/core';
 import { RoletaService } from '@app/Services/roleta.service';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { ToastrService } from 'ngx-toastr';
@@ -9,6 +9,7 @@ import { GiroRoleta } from '@app/model/GiroRoleta';
 import { interval, Observable } from 'rxjs';
 import { PaymentService } from '@app/Services/payment.service';
 import { Pix } from '@app/model/Pix';
+import { CurrencyPipe, formatCurrency } from '@angular/common';
 
 @Component({
   selector: 'app-game',
@@ -47,20 +48,20 @@ export class GameComponent implements OnInit {
   items: any = [
     { "id": 1, "text": "0x", "fillStyle": "#003399", "textFillStyle": "white", "textFontSize": "22" },
     { "id": 2, "text": "0.5x", "fillStyle": "#006633", "textFillStyle": "white", "textFontSize": "22" },
-    { "id": 3, "text": "1.2x", "fillStyle": "#ffcc00", "textFillStyle": "white", "textFontSize": "22" },
+    { "id": 3, "text": "1x", "fillStyle": "#ffcc00", "textFillStyle": "white", "textFontSize": "22" },
     { "id": 4, "text": "3x", "fillStyle": "#ff6600", "textFillStyle": "white", "textFontSize": "22" },
     { "id": 5, "text": "0x", "fillStyle": "#003399", "textFillStyle": "white", "textFontSize": "22" },
     { "id": 6, "text": "0.5x", "fillStyle": "#006633", "textFillStyle": "white", "textFontSize": "22"},
-    { "id": 7, "text": "1.2x", "fillStyle": "#ffcc00", "textFillStyle": "white", "textFontSize": "22"},
+    { "id": 7, "text": "1x", "fillStyle": "#ffcc00", "textFillStyle": "white", "textFontSize": "22"},
     { "id": 8, "text": "5x", "fillStyle": "#ff6600", "textFillStyle": "white", "textFontSize": "22"},
     { "id": 9, "text": "100x", "fillStyle": "#fff", "textFillStyle": "black", "textFontSize": "22"},
     { "id": 10, "text": "0x", "fillStyle": "#003399", "textFillStyle": "white", "textFontSize": "22"},
     { "id": 11, "text": "0.5x", "fillStyle": "#006633", "textFillStyle": "white", "textFontSize": "22"},
-    { "id": 12, "text": "1.2x", "fillStyle": "#ffcc00", "textFillStyle": "white", "textFontSize": "22"},
+    { "id": 12, "text": "1x", "fillStyle": "#ffcc00", "textFillStyle": "white", "textFontSize": "22"},
     { "id": 13, "text": "7x", "fillStyle": "#ff6600", "textFillStyle": "white", "textFontSize": "22"},
     { "id": 14, "text": "0x", "fillStyle": "#003399", "textFillStyle": "white", "textFontSize": "22"},
     { "id": 15, "text": "0.5x", "fillStyle": "#006633", "textFillStyle": "white", "textFontSize": "22"},
-    { "id": 16, "text": "1.2x", "fillStyle": "#ffcc00", "textFillStyle": "white", "textFontSize": "22"},
+    { "id": 16, "text": "1x", "fillStyle": "#ffcc00", "textFillStyle": "white", "textFontSize": "22"},
     { "id": 17, "text": "9x", "fillStyle": "#ff6600", "textFillStyle": "white", "textFontSize": "22"},
     { "id": 18, "text": "20x", "fillStyle": "#fff", "textFillStyle": "black", "textFontSize": "22"}
 
@@ -76,6 +77,7 @@ export class GameComponent implements OnInit {
               private paymentService: PaymentService,
               private accountService: AccountService,
               private roletaService: RoletaService,
+              @Inject(LOCALE_ID) private locale: string,
               private toastr: ToastrService){
   }
 
@@ -89,13 +91,25 @@ export class GameComponent implements OnInit {
       next:(result: UserGame) => {
         if (result){
           if (!this.user){
-            if (result.carteira.saldoAtual === 0)
-              this.showDialog = true;
+
+            if (!result.demoAcount){
+              if (result.carteira.saldoAtual <= 5)
+                this.showDialog = true;
+              else{
+                this.freeBet = false;
+                this.reelDialog = "SELECIONE O VALOR E GIRE";
+              }
+            }
             else{
-              this.freeBet = false;
-              this.reelDialog = "SELECIONE O VALOR E GIRE";
+              if (result.carteira.saldoDemo <= 5)
+                this.showDialog = true;
+              else{
+                this.freeBet = false;
+                this.reelDialog = "SELECIONE O VALOR E GIRE";
+              }
             }
           }
+
           this.user = result;
           if (this.user.pagamentos.length > 0)
             this.observablePagamentos(5000);
@@ -131,19 +145,33 @@ export class GameComponent implements OnInit {
   }
 
   public before(): void{
-    //console.log('before');
+    console.log('before');
+    //this.GetUserData(false);
+  }
+
+  getFormattedPrice(price: number) {
+    return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(price);
   }
 
   public after(): void{
     this.valorPremio = this.valorAposta * this.GiroRoleta.multiplicador;
     if (!this.freeBet){
-      this.user.carteira.saldoAtual -= this.valorAposta;
-      this.user.carteira.saldoAtual += this.valorPremio;
-      this.tituloResult = "Você multiplicou por "+ this.GiroRoleta.multiplicador + "x";
+      if( this.user.demoAcount)
+      {
+        this.user.carteira.saldoDemo -= this.valorAposta;
+        this.user.carteira.saldoDemo += this.valorPremio;
+      }
+      else{
+        this.user.carteira.saldoAtual -= this.valorAposta;
+        this.user.carteira.saldoAtual += this.valorPremio;
+      }
+      let currencyPipe: CurrencyPipe = new CurrencyPipe('pt-BR');
+
+      this.tituloResult = "Você multiplicou "+ this.getFormattedPrice(this.valorAposta)  +" por "+ this.GiroRoleta.multiplicador + "x";
       this.showResult = true;
     }
     else{
-      if(this.user.carteira.saldoAtual > 0){
+      if(this.user.carteira.saldoAtual > 5){
         this.freeBet = false
         this.setAlertBox("","Você possue saldo, é hora de multiplicar");
       }
@@ -176,7 +204,7 @@ export class GameComponent implements OnInit {
     else
       this.btnPressionado = true
 
-    if (!this.freeBet){
+    if (!this.freeBet && !this.user.demoAcount){
       if (this.user.carteira.saldoAtual < 5)
       {
         this.setAlertBox("Saldo Insuficiente!", "Você não possue saldo suficiente para fazer uma nova aposta, tente depositar ou converter seu lucro em saldo. Menu -> Saque -> Converter Lucros");
@@ -185,6 +213,22 @@ export class GameComponent implements OnInit {
       }
 
       if (this.user.carteira.saldoAtual < this.valorAposta)
+      {
+        this.setAlertBox("Saldo Insuficiente!", "Você está tentando apostar um valor superior ao seu saldo de jogo.");
+        this.btnPressionado = false;
+        return;
+      }
+    }
+
+    if(!this.freeBet && this.user.demoAcount){
+      if (this.user.carteira.saldoDemo < 5)
+      {
+        this.setAlertBox("Saldo Insuficiente!", "Você não possue saldo suficiente para fazer uma nova aposta, tente depositar ou converter seu lucro em saldo. Menu -> Saque -> Converter Lucros");
+        this.btnPressionado = false;
+        return;
+      }
+
+      if (this.user.carteira.saldoDemo < this.valorAposta)
       {
         this.setAlertBox("Saldo Insuficiente!", "Você está tentando apostar um valor superior ao seu saldo de jogo.");
         this.btnPressionado = false;

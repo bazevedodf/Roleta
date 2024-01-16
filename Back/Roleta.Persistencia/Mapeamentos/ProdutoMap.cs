@@ -4,9 +4,9 @@ using Roleta.Dominio;
 
 namespace Roleta.Persistencia.Mapeamentos
 {
-    public class ProdutoMap : IEntityTypeConfiguration<Produto>
+    public class ProdutoMap : IEntityTypeConfiguration<_Produto>
     {
-        public void Configure(EntityTypeBuilder<Produto> builder)
+        public void Configure(EntityTypeBuilder<_Produto> builder)
         {
             //Nome Tabela
             builder.ToTable("Produtos");
@@ -42,7 +42,7 @@ namespace Roleta.Persistencia.Mapeamentos
                 .HasDefaultValue(false);
 
             builder.HasData(
-                new Produto()
+                new _Produto()
                 {
                     Id= 1,
                     Nome = "R$ 75,00 (25,00 Bônus)",
@@ -50,7 +50,7 @@ namespace Roleta.Persistencia.Mapeamentos
                     Valor = 50.00M,
                     Ativo = true
                 },
-                new Produto()
+                new _Produto()
                 {
                     Id = 2,
                     Nome = "R$ 200,00 (100,00 Bônus)",
@@ -58,7 +58,7 @@ namespace Roleta.Persistencia.Mapeamentos
                     Valor = 100.00M,
                     Ativo = true
                 },
-                new Produto()
+                new _Produto()
                 {
                     Id = 3,
                     Nome = "R$ 500,00 (300,00 Bônus)",
