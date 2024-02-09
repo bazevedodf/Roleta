@@ -10,10 +10,14 @@ namespace Roleta.Aplicacao
     public class EzzePayService : IEzzePayService
     {
         private readonly EzzePayConfig _credential;
+        public int TaxaDeposito { get; set; }
+        public int TaxaSaque { get; set; }
 
         public EzzePayService(EzzePayConfig credential)
         {
             _credential = credential;
+            TaxaSaque = _credential.TaxaSaque;
+            TaxaDeposito = _credential.TaxaDeposito;
         }
 
         public bool ValidaAssinaturaWebHook(string reqTimestamp, string requestPayload, string reqSignature)
@@ -65,7 +69,8 @@ namespace Roleta.Aplicacao
                     }
                     else
                     {
-                        throw new Exception($"Erro ao obter AccessToken: " + response.StatusCode);
+                        return null;
+                        //throw new Exception($"Erro ao obter AccessToken: {response.StatusCode}");
                     }
                 }
                 catch (Exception ex)
@@ -212,47 +217,60 @@ namespace Roleta.Aplicacao
 
         public async Task<SaqueDto> SaquePix(SaqueDto saque, UserGameDto user)
         {
-            var accessToken = await GetTokenAsync();
-            if (!string.IsNullOrEmpty(accessToken))
+            try
             {
-                using (var client = new HttpClient())
+                var accessToken = await GetTokenAsync();
+                if (!string.IsNullOrEmpty(accessToken))
                 {
-                    client.BaseAddress = new Uri(_credential.ApiUrl);
-                    client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
-                    client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-                    
-                    var paymentData = new
+                    using (var client = new HttpClient())
                     {
-                        amount = saque.Valor,
-                        description = "Saque Pix",
-                        external_id = "",
-                        creditParty = new {
-                            name = $"{user.FirstName} {user.LastName}" ,
-                            keyType = user.TipoChavePix, //CPF - TELEFONE - EMAIL - CHAVE_ALEATORIA
-                            key = user.ChavePix,
-                            taxId = user.CPF
+                        client.BaseAddress = new Uri(_credential.ApiUrl);
+                        client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
+                        client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+
+                        var paymentData = new
+                        {
+                            amount = saque.Valor,
+                            description = saque.Description,
+                            external_id = "",
+                            creditParty = new
+                            {
+                                name = $"{user.FirstName} {user.LastName}",
+                                keyType = user.TipoChavePix, //CPF - TELEFONE - EMAIL - CHAVE_ALEATORIA
+                                key = user.ChavePix,
+                                taxId = user.CPF
+                            }
+                        };
+
+                        var jsonPayload = JsonConvert.SerializeObject(paymentData);
+                        var content = new StringContent(jsonPayload, Encoding.UTF8, "application/json");
+
+                        HttpResponseMessage response = await client.PostAsync("v2/pix/payment", content);
+                        if (response.IsSuccessStatusCode)
+                        {
+                            var qrCodeResponseContent = await response.Content.ReadAsStringAsync();
+                            dynamic qrCodeResponse = JsonConvert.DeserializeObject(qrCodeResponseContent);
+
+                            saque.Status = qrCodeResponse.status;
+                            saque.TransactionId = qrCodeResponse.transactionId;
+                            saque.DataStatus = qrCodeResponse.createdAt;
+                            saque.TextoInformativo = qrCodeResponse.creditParty.bank;
+                            return saque;
                         }
-                    };
-
-                    var jsonPayload = JsonConvert.SerializeObject(paymentData);
-                    var content = new StringContent(jsonPayload, Encoding.UTF8, "application/json");
-
-                    HttpResponseMessage response = await client.PostAsync("v2/pix/payment", content);
-                    if (response.IsSuccessStatusCode)
-                    {
-                        var qrCodeResponseContent = await response.Content.ReadAsStringAsync();
-                        dynamic qrCodeResponse = JsonConvert.DeserializeObject(qrCodeResponseContent);
-
-                        saque.Status = qrCodeResponse.status;
-                        saque.TransactionId = qrCodeResponse.transactionId;
-                        saque.DataStatus = qrCodeResponse.createdAt;
-                        saque.TextoInformativo = qrCodeResponse.creditParty.bank;
-                        return saque;
+                        else
+                        {
+                            return null;
+                        }
                     }
                 }
-            }
 
-            return null;
+                return null;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+            
         }
     }
 }

@@ -47,15 +47,6 @@ namespace Roleta.Persistencia
             return await query.AsNoTracking().FirstOrDefaultAsync();
         }
 
-        public async Task<User> GetByAfiliateCodeAsync(string afiliateCode)
-        {
-            IQueryable<User> query = _context.Users.Where(x => x.AfiliateCode == afiliateCode);
-
-            query = query.Include(x => x.Carteira);
-
-            return await query.AsNoTracking().FirstOrDefaultAsync();
-        }
-
         public async Task<User> GetByUserLoginAsync(string userLogin, bool includeRole = false)
         {
             IQueryable<User> query = _context.Users.Where(x => x.UserName.ToLower() == userLogin.ToLower() || 
@@ -135,6 +126,57 @@ namespace Roleta.Persistencia
                 query = query.Include(x => x.Pagamentos);
 
             query = query.OrderByDescending(x => x.DataCadastro).AsNoTracking();
+
+            return await PageList<User>.CreateAsync(query, pageParams.PageNumber, pageParams.pageSize);
+        }
+
+        //Funcoes para Afiliados
+        public async Task<User> GetByAfiliateCodeAsync(string afiliateCode)
+        {
+            IQueryable<User> query = _context.Users.Where(x => x.AfiliateCode == afiliateCode);
+
+            query = query.Include(x => x.Carteira);
+
+            return await query.AsNoTracking().FirstOrDefaultAsync();
+        }
+        public async Task<User[]> GetAllAfiliatesAsync(bool includeBlock = false)
+        {
+            IQueryable<User> query = _context.Users.Where(x => x.isAfiliate);
+
+            if (!includeBlock)
+                query = query.Where(x => x.isBlocked == false);
+
+            query = query.Include(x => x.Carteira);
+
+            return await query.AsNoTracking().OrderBy(x => x.FirstName).ToArrayAsync();
+        }
+        public async Task<PageList<User>> GetAllAfiliatesAsync(PageParams pageParams, bool includeBlocks = false)
+        {
+            IQueryable<User> query = _context.Users.Where(x => x.isAfiliate);
+
+            if (!includeBlocks) 
+            {
+                query = query.Where(x => x.isBlocked == false);
+            }
+
+            query = query.Include(x => x.Carteira).OrderByDescending(x => x.Carteira.SaldoAtual).AsNoTracking();
+
+            return await PageList<User>.CreateAsync(query, pageParams.PageNumber, pageParams.pageSize);
+        }
+        public async Task<PageList<User>> GetAllAfiliatesNomeEmailAsync(PageParams pageParams, bool includeBlocks = false)
+        {
+            IQueryable<User> query = _context.Users.Where(x => x.isAfiliate).Include(x => x.Carteira);
+
+            if (!includeBlocks)
+                query = query.Where(x => x.isBlocked == false);
+
+            if (!string.IsNullOrEmpty(pageParams.Term))
+            {
+                query = query.Where(x => x.Email.ToLower().Contains(pageParams.Term.ToLower())
+                                        || x.FirstName.ToLower().Contains(pageParams.Term.ToLower()));
+            }            
+
+            query = query.OrderByDescending(x => x.Carteira.SaldoAtual).AsNoTracking();
 
             return await PageList<User>.CreateAsync(query, pageParams.PageNumber, pageParams.pageSize);
         }

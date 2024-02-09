@@ -8,16 +8,24 @@ import { AuthRoleGuard } from './Guard/auth-role.guard';
 import { CadastrosComponent } from './Pages/cadastros/cadastros.component';
 import { CadastroDetalheComponent } from './Pages/cadastros/cadastro-detalhe/cadastro-detalhe.component';
 import { CadastroListaComponent } from './Pages/cadastros/cadastro-lista/cadastro-lista.component';
+import { AfiliadosComponent } from './Pages/afiliados/afiliados.component';
+import { AfiliadoListaComponent } from './Pages/afiliados/afiliado-lista/afiliado-lista.component';
 
 const routes: Routes = [
   { path: '', redirectTo: 'home', pathMatch: 'full' },
   { path: 'login', component: LoginComponent },
   { path: 'cadastros', redirectTo: 'cadastros/lista' },
+  { path: 'afiliados', redirectTo: 'afiliados/lista' },
   { path: '', runGuardsAndResolvers: 'always', canActivate: [AuthGuard],
     children: [
       { path: 'home', component: HomeComponent, canActivate: [AuthGuard] },
       { path: 'home/:afl', component: HomeComponent, canActivate: [AuthGuard] },
       { path: 'depositos', component: PagamentosComponent, canActivate: [AuthGuard, AuthRoleGuard], data:{ role: 'Admin' } },
+      { path: 'afiliados', component: AfiliadosComponent, canActivate: [AuthGuard, AuthRoleGuard], data:{ role: 'Admin' },
+        children: [
+          { path: 'lista', component: AfiliadoListaComponent }
+        ]
+      },
       { path: 'cadastros', component: CadastrosComponent, canActivate: [AuthGuard, AuthRoleGuard], data:{ role: 'Admin' },
         children: [
           { path: 'detalhe/:email', component: CadastroDetalheComponent },

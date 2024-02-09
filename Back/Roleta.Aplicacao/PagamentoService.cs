@@ -11,6 +11,7 @@ namespace Roleta.Aplicacao
     {
         private readonly IPagamentoPersist _pagamentoPersist;
         private readonly IUserService _userService;
+        private readonly IRoletaService _roletaService;
         private readonly ICarteiraService _carteiraService;
         private readonly IEmailService _emailService;
         private readonly IEzzePayService _ezzePayService;
@@ -18,6 +19,7 @@ namespace Roleta.Aplicacao
 
         public PagamentoService(IPagamentoPersist pagamentoPersist,
                                 IUserService userService,
+                                IRoletaService roletaService,
                                 ICarteiraService carteiraService,
                                 IEzzePayService ezzePayService,
                                 IEmailService emailService,
@@ -25,6 +27,7 @@ namespace Roleta.Aplicacao
         {
             _pagamentoPersist = pagamentoPersist;
             _userService = userService;
+            _roletaService = roletaService;
             _carteiraService = carteiraService;
             _ezzePayService = ezzePayService;
             _emailService = emailService;
@@ -73,29 +76,30 @@ namespace Roleta.Aplicacao
         {
             try
             {
-                if (pagamento.Status == "APPROVED")
+                PagamentoDto retorno = null;
+
+                if (pagamento.Status != "APPROVED")
                 {
+                    pagamento.Status = "APPROVED";
                     var user = await _userService.GetByIdAsync(pagamento.UserId);
-                    var trasacaoUser = new Transacao()
+
+                    if (await _roletaService.DepositoCaixa(pagamento, 1))
                     {
-                        CarteiraId = user.Carteira.Id,
-                        valor = pagamento.Valor,
-                        TransactionId = pagamento.TransactionId,
-                        Tipo = "Deposito Pix"
-                    };
-                    //user.Carteira.Transacoes.Append(trasacaoUser);
-                    var returnTransacao = await _carteiraService.AddTransacaoAsync(trasacaoUser);
-                    if (returnTransacao == null) return null;
-                    
-                    user.Carteira.SaldoAtual += pagamento.Valor;
-                    user.Carteira.DataAtualizacao = DateTime.Now;
-                    var retornoUser = await _userService.UpdateUserGame(user);
-                    if (retornoUser == null) return null;
+                        if (!string.IsNullOrEmpty(user.ParentEmail))
+                        {
+                            await _roletaService.ComissaoAfiliado(user.ParentEmail, pagamento.Valor, pagamento.TransactionId);
+                        }
+
+                        user.Carteira.SaldoAtual += pagamento.Valor;
+                        user.Carteira.DataAtualizacao = DateTime.Now;
+                        var retornoUser = await _userService.UpdateUserGame(user);
+                        if (retornoUser == null) return null;
+
+                    }
+                    retorno = await UpdateAsync(pagamento);
                 }
 
-                var retorno = await UpdateAsync(pagamento);
-
-                return retorno != null ? retorno : null;
+                return retorno;
             }
             catch (Exception ex)
             {
@@ -228,6 +232,24 @@ namespace Roleta.Aplicacao
                 if (pagamento == null) return null;
 
                 return _mapper.Map<PagamentoDto>(pagamento);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+
+        public async Task<PagamentoDto[]> GetAllAfiliateAsync(PageParams pageParams, bool somentePagos = false)
+        {
+            try
+            {
+                var users = await _pagamentoPersist.GetAllByAfiliateAsync(pageParams, somentePagos);
+
+                if (users == null) return null;
+
+                var resultado = _mapper.Map<PagamentoDto[]>(users);
+
+                return resultado;
             }
             catch (Exception ex)
             {

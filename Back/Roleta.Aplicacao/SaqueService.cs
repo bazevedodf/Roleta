@@ -27,43 +27,38 @@ namespace Roleta.Aplicacao
             _mapper = mapper;
         }
 
-        public async Task<SaqueDto> SolicitarSaquePix(UserGameDto user, decimal valor, decimal taxaSaque)
+        public async Task<SaqueDto> SolicitarSaquePix(UserGameDto user, decimal valor, decimal taxaSaque, string descricao)
         {
             try
             {
-                SaqueDto saque = new SaqueDto()
+                user.Carteira.SaldoAtual -= valor;
+                user.Carteira.DataAtualizacao = DateTime.Now;
+
+                var saque = new SaqueDto()
                 {
                     UserId = user.Id,
                     Valor = valor - taxaSaque,
-                    Status = "PROCESSING"
+                    Status = "PROCESSING",
+                    Description = descricao
                 };
 
                 saque = await _ezzePayService.SaquePix(saque, user);
                 if (saque != null)
                 {
-                    saque.Valor += taxaSaque;
-                    var retornoSaque = await AddAsync(saque);
-                    if (retornoSaque == null) return null;
+                    var retornoUser = await _userService.UpdateUserGame(user);
+                    //var trasacaoUser = new Transacao()
+                    //{
+                    //    CarteiraId = user.Carteira.Id,
+                    //    valor = decimal.Negate(valor),
+                    //    TransactionId = saque.TransactionId,
+                    //    Tipo = saque.Description,
+                    //    Data = saque.DataStatus
+                    //};
 
-                    var trasacaoUser = new Transacao()
-                    {
-                        CarteiraId = user.Carteira.Id,
-                        valor = decimal.Negate(valor),
-                        TransactionId = retornoSaque.TransactionId,
-                        Tipo = "Saque Pix",
-                        Data = retornoSaque.DataStatus
-                    };
-
-                    var returnTransacao = await _carteiraService.AddTransacaoAsync(trasacaoUser);
-                    if (returnTransacao == null) return null;
-
-                    user.Carteira.SaldoAtual -= retornoSaque.Valor;
-                    user.Carteira.DataAtualizacao = DateTime.Now;
-                    await _userService.UpdateUserGame(user);
-                    
-                    return retornoSaque;
+                    //var returnTransacao = await _carteiraService.AddTransacaoAsync(trasacaoUser);
+                    return await AddAsync(saque);
                 }
-                
+
                 return null;
             }
             catch (Exception ex)

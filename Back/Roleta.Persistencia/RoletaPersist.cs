@@ -13,9 +13,12 @@ namespace Roleta.Persistencia
             _context = context;
         }
 
-        public async Task<RoletaSorte> GetByIdAsync(int id, bool includeTransacoes = false)
+        public async Task<RoletaSorte> GetByIdAsync(int id, bool includeBancaDia = false, bool includeTransacoes = false)
         {
             IQueryable<RoletaSorte> query = _context.Roletas.Where(x => x.Id == id);
+
+            if (includeBancaDia)
+                query = query.Include(x => x.BancasPagadoras.Where(x => x.DataBanca.Date > DateTime.Now.Date));
 
             if (includeTransacoes)
                 query = query.Include(x => x.TransacoesRoleta);

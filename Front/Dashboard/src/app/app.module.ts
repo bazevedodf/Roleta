@@ -31,6 +31,8 @@ import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
 import { CadastrosComponent } from './Pages/cadastros/cadastros.component';
 import { CadastroDetalheComponent } from './Pages/cadastros/cadastro-detalhe/cadastro-detalhe.component';
 import { CadastroListaComponent } from './Pages/cadastros/cadastro-lista/cadastro-lista.component';
+import { AfiliadosComponent } from './Pages/afiliados/afiliados.component';
+import { AfiliadoListaComponent } from './Pages/afiliados/afiliado-lista/afiliado-lista.component';
 
 defineLocale('pt-br', ptBrLocale);
 
@@ -45,7 +47,9 @@ defineLocale('pt-br', ptBrLocale);
     DateFormatPipe,
     CadastrosComponent,
     CadastroDetalheComponent,
-    CadastroListaComponent
+    CadastroListaComponent,
+    AfiliadosComponent,
+    AfiliadoListaComponent
   ],
   imports: [
     FormsModule,

@@ -103,6 +103,28 @@ namespace Roleta.Persistencia.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
+            modelBuilder.Entity("Roleta.Dominio.BancaPagadora", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("DataBanca")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<int>("RoletaSorteId")
+                        .HasColumnType("int");
+
+                    b.Property<decimal>("SaldoDia")
+                        .HasColumnType("decimal(65,30)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("RoletaSorteId");
+
+                    b.ToTable("BancasPagadora", (string)null);
+                });
+
             modelBuilder.Entity("Roleta.Dominio.Carteira", b =>
                 {
                     b.Property<int>("Id")
@@ -161,22 +183,22 @@ namespace Roleta.Persistencia.Migrations
                     b.HasData(
                         new
                         {
-                            Id = new Guid("51dc99b7-4ecf-49de-829f-fe58d467ea61"),
-                            ConcurrencyStamp = "0ad684a7-b7ea-4d27-9842-7afb20c84bfa",
+                            Id = new Guid("5fa3fada-a5ac-46d2-af90-026450ca7f30"),
+                            ConcurrencyStamp = "aae7f9ee-5751-4306-b886-12095ab5bf89",
                             Name = "Admin",
                             NormalizedName = "ADMIN"
                         },
                         new
                         {
-                            Id = new Guid("e6234fdd-f201-41cd-8b7f-f741005b603d"),
-                            ConcurrencyStamp = "ac2150d2-feef-4f01-bb5b-4e5a8f857903",
+                            Id = new Guid("3d072957-8464-413e-bee3-6538a973c423"),
+                            ConcurrencyStamp = "c9c9383c-96ff-4a60-b21d-da51e0e6ffda",
                             Name = "User",
                             NormalizedName = "USER"
                         },
                         new
                         {
-                            Id = new Guid("6c35cfbc-feba-428d-b0c4-4a19fa5bd187"),
-                            ConcurrencyStamp = "0778e585-6dc1-43d1-a9bb-2388defc03c0",
+                            Id = new Guid("eb66bcd2-6800-47fb-82c9-eef86fa38a3e"),
+                            ConcurrencyStamp = "be7cc711-3919-421d-9d4a-5e6e5159cab9",
                             Name = "Afiliate",
                             NormalizedName = "AFILIATE"
                         });
@@ -269,6 +291,9 @@ namespace Roleta.Persistencia.Migrations
                         .HasMaxLength(256)
                         .HasColumnType("varchar(256)");
 
+                    b.Property<decimal>("ValorComissao")
+                        .HasColumnType("decimal(65,30)");
+
                     b.Property<bool>("Verified")
                         .HasColumnType("tinyint(1)");
 
@@ -305,6 +330,42 @@ namespace Roleta.Persistencia.Migrations
                     b.ToTable("AspNetUserRoles", (string)null);
                 });
 
+            modelBuilder.Entity("Roleta.Dominio.OperacaoRoleta", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("Data")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<string>("Descricao")
+                        .IsRequired()
+                        .HasMaxLength(30)
+                        .HasColumnType("varchar(30)");
+
+                    b.Property<int>("RoletaSorteId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("TransactionId")
+                        .HasMaxLength(25)
+                        .HasColumnType("varchar(25)");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("char(36)");
+
+                    b.Property<decimal>("Valor")
+                        .HasColumnType("decimal(65,30)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("RoletaSorteId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Operacoes", (string)null);
+                });
+
             modelBuilder.Entity("Roleta.Dominio.Pagamento", b =>
                 {
                     b.Property<int>("Id")
@@ -317,9 +378,7 @@ namespace Roleta.Persistencia.Migrations
                         .HasColumnType("varchar(11)");
 
                     b.Property<DateTime>("DataCadastro")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime(6)")
-                        .HasDefaultValue(new DateTime(2024, 1, 14, 23, 33, 56, 418, DateTimeKind.Local).AddTicks(2740));
+                        .HasColumnType("datetime(6)");
 
                     b.Property<DateTime>("DataStatus")
                         .HasColumnType("datetime(6)");
@@ -447,12 +506,13 @@ namespace Roleta.Persistencia.Migrations
 
                     b.Property<DateTime?>("DataCadastro")
                         .IsRequired()
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime(6)")
-                        .HasDefaultValue(new DateTime(2024, 1, 14, 23, 33, 56, 418, DateTimeKind.Local).AddTicks(4835));
+                        .HasColumnType("datetime(6)");
 
                     b.Property<DateTime?>("DataStatus")
                         .HasColumnType("datetime(6)");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("longtext");
 
                     b.Property<string>("Status")
                         .IsRequired()
@@ -465,8 +525,8 @@ namespace Roleta.Persistencia.Migrations
                         .HasColumnType("longtext");
 
                     b.Property<string>("TransactionId")
-                        .HasMaxLength(15)
-                        .HasColumnType("varchar(15)");
+                        .HasMaxLength(25)
+                        .HasColumnType("varchar(25)");
 
                     b.Property<Guid>("UserId")
                         .HasColumnType("char(36)");
@@ -494,9 +554,7 @@ namespace Roleta.Persistencia.Migrations
                         .HasColumnType("int");
 
                     b.Property<DateTime>("Data")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime(6)")
-                        .HasDefaultValue(new DateTime(2024, 1, 14, 23, 33, 56, 418, DateTimeKind.Local).AddTicks(791));
+                        .HasColumnType("datetime(6)");
 
                     b.Property<string>("Tipo")
                         .IsRequired()
@@ -524,9 +582,7 @@ namespace Roleta.Persistencia.Migrations
                         .HasColumnType("int");
 
                     b.Property<DateTime>("Data")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime(6)")
-                        .HasDefaultValue(new DateTime(2024, 1, 14, 23, 33, 56, 417, DateTimeKind.Local).AddTicks(8184));
+                        .HasColumnType("datetime(6)");
 
                     b.Property<string>("Descricao")
                         .IsRequired()
@@ -591,6 +647,17 @@ namespace Roleta.Persistencia.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("Roleta.Dominio.BancaPagadora", b =>
+                {
+                    b.HasOne("Roleta.Dominio.RoletaSorte", "RoletaSorte")
+                        .WithMany("BancasPagadoras")
+                        .HasForeignKey("RoletaSorteId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("RoletaSorte");
+                });
+
             modelBuilder.Entity("Roleta.Dominio.Carteira", b =>
                 {
                     b.HasOne("Roleta.Dominio.Identity.User", "User")
@@ -617,6 +684,25 @@ namespace Roleta.Persistencia.Migrations
                         .IsRequired();
 
                     b.Navigation("Role");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("Roleta.Dominio.OperacaoRoleta", b =>
+                {
+                    b.HasOne("Roleta.Dominio.RoletaSorte", "RoletaSorte")
+                        .WithMany("OperacoesRoleta")
+                        .HasForeignKey("RoletaSorteId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Roleta.Dominio.Identity.User", "User")
+                        .WithMany("OperacoesRoleta")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("RoletaSorte");
 
                     b.Navigation("User");
                 });
@@ -687,6 +773,8 @@ namespace Roleta.Persistencia.Migrations
                 {
                     b.Navigation("Carteira");
 
+                    b.Navigation("OperacoesRoleta");
+
                     b.Navigation("Pagamentos");
 
                     b.Navigation("Saques");
@@ -696,6 +784,10 @@ namespace Roleta.Persistencia.Migrations
 
             modelBuilder.Entity("Roleta.Dominio.RoletaSorte", b =>
                 {
+                    b.Navigation("BancasPagadoras");
+
+                    b.Navigation("OperacoesRoleta");
+
                     b.Navigation("TransacoesRoleta");
                 });
 #pragma warning restore 612, 618

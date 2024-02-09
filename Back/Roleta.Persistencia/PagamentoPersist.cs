@@ -29,6 +29,18 @@ namespace Roleta.Persistencia
             return await query.AsNoTracking().OrderBy(x => x.DataCadastro).ToArrayAsync();
         }
 
+        public async Task<Pagamento[]> GetAllByAfiliateAsync(PageParams pageParams, bool somentePagos = false)
+        {
+            IQueryable<Pagamento> query = _context.Pagamentos.Include(x => x.User)
+                                                  .Where(x => x.DataCadastro >= pageParams.DataIni
+                                                           && x.DataCadastro < pageParams.DataFim
+                                                           && x.User.ParentEmail.ToLower().Contains(pageParams.ParentEmail.ToLower()));
+            if (somentePagos)
+                query = query.Where(x => x.Status.ToUpper() == "APPROVED");
+
+            return await query.OrderByDescending(x => x.DataCadastro).ToArrayAsync();
+        }
+
         public async Task<PageList<Pagamento>> GetAllByParentEmailAsync(PageParams pageParams, bool somentePagos = false)
         {
             IQueryable<Pagamento> query = _context.Pagamentos.Include(x => x.User)

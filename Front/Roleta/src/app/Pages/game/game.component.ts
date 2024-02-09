@@ -30,7 +30,7 @@ export class GameComponent implements OnInit {
   idToLandOn: number = 0;
   textOrientation: TextOrientation = TextOrientation.HORIZONTAL
   textAlignment: TextAlignment = TextAlignment.INNER
-  soudFile: string = 'assets/sounds/tick.mp3';
+  //soudFile: string = 'assets/sounds/tick.mp3';
 
   showDialog = false;
   tituloDialo: string = "Bem Vindo!";

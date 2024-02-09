@@ -1,0 +1,248 @@
+<div class="row align-middle mt-3 px-2">
+  <div class="col-md-6 d-flex text-brand">
+    <h3>AFILIADOS</h3>
+  </div>
+  <div class="text-end col-md-6 text-brand">
+    <ol class="breadcrumb float-sm-end">
+      <li class="breadcrumb-item"><a routerLink="/home">Dashboard</a></li>
+      <li class="breadcrumb-item active">Afiliados</li>
+    </ol>
+  </div>
+</div>
+<div class="row mt-3">
+  <div class="col-md-12">
+    <div class="card card-dasboard">
+      <div class="card-header">
+        <div class="card-Text d-flex bg-purple">
+          <i class="fas fa-user-check"></i>
+          <div class="text-white lh-1 ms-2">
+            <h5 class="card-title mb-0">Afiliados</h5>
+            <p class="card-category m-0">Lista de afiliados</p>
+          </div>
+          <h2 class="ms-auto text-white">{{userPagination.totalItems}}</h2>
+        </div>
+      </div>
+      <div class="card-body">
+        <div class="container-fluid">
+          <div class="row">
+            <div class="col-md-2">
+              <div class="form-check">
+                <input class="form-check-input" type="checkbox" value="" id="flexCheckChecked" [(ngModel)]="includeBlocks">
+                <label class="form-check-label" for="flexCheckChecked">
+                  Mostrar Bloqueados
+                </label>
+              </div>
+            </div>
+          </div>
+
+          <div class="row  mt-3">
+            <div class="col-md-2">
+              <div class="form-group">
+                <label>Data Inicial</label>
+                <input type="text"
+                  placeholder="Daterangepicker"
+                  class="form-control"
+                  [(ngModel)]="dtIni"
+                   bsDatepicker [bsConfig]="bsConfig">
+              </div>
+            </div>
+            <div class="col-md-2">
+              <div class="form-group">
+                <label>Data Final</label>
+                <input type="text"
+                  placeholder="Daterangepicker"
+                  class="form-control"
+                  [(ngModel)]="dtFim"
+                  bsDatepicker [bsConfig]="{ isAnimated: true, adaptivePosition: true }">
+              </div>
+            </div>
+          </div>
+
+          <div class="row mt-3">
+            <div class="col-md-6">
+              <label for="nome">Nome/E-Mail</label>
+              <input type="text" id="nome" class="form-control" [(ngModel)]="paramName">
+            </div>
+            <div class="col-md-1 me-0">
+              <button class="btn bg-green text-white mt-4 d-flex" (click)="carregarAfiliados();">
+                <i class="fa fa-search mt-1"></i>
+                <span class="ms-2 d-none d-sm-block">Filtrar</span>
+              </button>
+            </div>
+          </div>
+
+          <div class="row mt-3">
+            <div class="col-md-6">
+              <button class="btn btn-outline-secondary btn-sm" (click)="setSaldoDemo()">Deinir Saldo Demo</button>
+            </div>
+          </div>
+
+          <div class="row mt-3">
+            <div>
+              <table class="table table-hover">
+                <thead class="text-primary">
+                  <tr>
+                    <th scope="col">Email</th>
+                    <th scope="col">Depósitos</th>
+                    <th scope="col">Faturamento</th>
+                    <th scope="col">Comissão</th>
+                    <th scope="col">Saque</th>
+                  </tr>
+                </thead>
+                <tbody *ngIf="users && users.length">
+                  <tr *ngFor="let user of users" style="cursor: pointer;">
+                    <td style="cursor: pointer;">{{user.email}}</td>
+                    <td style="cursor: pointer;">{{user.totalDepositos}}</td>
+                    <td style="cursor: pointer;">{{user.totalFaturamento | currency:'BRL'}}</td>
+                    <td style="cursor: pointer;">{{user.carteira.saldoAtual | currency:'BRL'}}</td>
+                    <td>
+                      <a style="cursor: pointer;">
+                        <button class="btn bg-purple text-white btn-sm" (click)="openModal(template, user.email)">
+                          <i class="fa-solid fa-hand-holding-dollar text-white me-2"></i>Pagar
+                        </button>
+                      </a>
+                    </td>
+                  </tr>
+                </tbody>
+                <tfoot *ngIf="!users.length">
+                  <tr>
+                    <td colspan="5" class="text-center">
+                      <h5 class="text-muted">Nenhuma registro encontrado</h5>
+                    </td>
+                  </tr>
+                </tfoot>
+              </table>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="d-flex justify-content-center">
+              <pagination [boundaryLinks]="true"
+                [totalItems]="userPagination.totalItems"
+                [(ngModel)]="userPagination.currentPage"
+                [itemsPerPage]="userPagination.itemsPerPage"
+                [align]="true"
+                pageBtnClass="btn"
+                (pageChanged)="AfiliatePageChanged($event)"
+                [maxSize]="6"
+                previousText="Voltar" nextText="Próximo" firstText="&laquo;" lastText="&raquo;">
+              </pagination>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<ng-template #template>
+  <div class="modal-header">
+    <h5 class="text-body-secondary pull-left">Pagamento de Afiliado</h5>
+    <button type="button" class="btn-close close pull-right" aria-label="Close" (click)="modalRef?.hide()">
+      <span aria-hidden="true" class="visually-hidden">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <div class="card">
+      <div class="card-header">
+        <h5 class="card-title text-body-secondary">Dados da Conta</h5>
+      </div>
+      <div class="card-body">
+        <div class="row">
+          <div class="col-md-4 my-2 d-flex">
+            <div style="width: 300px;">
+              <label>Nome</label>
+              <input type="text" readonly value="{{userSelected.firstName != 'undefined' ? userSelected.firstName : ''}}" class="form-control bg-body-secondary">
+            </div>
+          </div>
+          <div class="col-md-4 my-2">
+            <label>E-mail</label>
+            <input type="text" readonly value="{{userSelected.email}}" class="form-control bg-body-secondary" readonly>
+          </div>
+          <div class="col-md-4 my-2">
+            <label>Celular (Watsapp)</label>
+            <input type="tel" readonly
+              [(ngModel)]="userSelected.phoneNumber"
+              class="form-control bg-body-secondary"
+              [showMaskTyped]="true"
+              [dropSpecialCharacters]="true"
+              mask="(00) 00000-0000">
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-4 my-2">
+            <label>CPF</label>
+            <input type="text" readonly
+              class="form-control bg-body-secondary"
+              [(ngModel)]="userSelected.cpf"
+              [showMaskTyped]="true"
+              [dropSpecialCharacters]="true"
+              mask="000.000.000-00" >
+          </div>
+
+          <div class="col-md-4  my-2">
+            <label>Tipo Chave Pix</label>
+            <input type="text" readonly value="{{userSelected.tipoChavePix != 'undefined' ? userSelected.tipoChavePix : ''}}" class="form-control bg-body-secondary" readonly>
+          </div>
+
+          <div class="col-md-4  my-2">
+            <label>Chave Pix</label>
+            <input type="text" readonly value="{{userSelected.chavePix}}" class="form-control bg-body-secondary" readonly>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-4 my-2">
+            <label>Saldo Atual</label>
+            <input type="text"
+              currencyMask
+              [options]="{ prefix: 'R$ ', thousands: '.', decimal: ',', align: 'left' }"
+              [value]="userSelected.carteira.saldoAtual"
+              class="form-control bg-body-secondary" readonly>
+          </div>
+          <div class="col-md-4 d-flex">
+            <div class="mt-4">
+              <div class="form-check me-4">
+                <input class="form-check-input"
+                  [checked]="tipoSaque"
+                  (click)="toggle('Saque')"
+                  type="radio" value="Saque" name="tipoTrasferencia" id="tipoTrasferencia1">
+                <label class="form-check-label" for="tipoTrasferencia1">
+                  Saque
+                </label>
+              </div>
+              <div class="form-check me-4">
+                <input class="form-check-input"
+                  (click)="toggle('Adiantamento')"
+                  type="radio" value="Adiantamento" name="tipoTrasferencia" id="tipoTrasferencia2">
+                <label class="form-check-label" for="tipoTrasferencia2">
+                  Adiantamento
+                </label>
+              </div>
+            </div>
+            <div class="my-2">
+              <label>Valor</label>
+              <input type="text"
+                currencyMask
+                [options]="{ prefix: 'R$ ', thousands: '.', decimal: ',', align: 'left' }"
+                [ngClass]="{'bg-body-secondary' : tipoSaque}"
+                [(ngModel)]="valorTrasferencia"
+                [readonly]="tipoSaque"
+                class="form-control bg-body-secondary">
+            </div>
+          </div>
+          <div class="col-md-4 my-2">
+            <button class="btn bg-purple text-white mt-4" (click)="enviarPix()">
+              <i class="fa-solid fa-hand-holding-dollar text-white me-2"></i>Enviar Pix
+            </button>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-12">
+            <div *ngIf="errorMsg == 'DadosInvalidos'" class="invalid-feedback d-block text-cener">Faltando informações para o envio do Pix</div>
+            <div *ngIf="errorMsg == 'ValorInvalido'" class="invalid-feedback d-block text-cener">Informe o valor</div>
+            <div *ngIf="errorMsg == 'RetornoInvalido'" class="invalid-feedback d-block text-cener">{{mensagem}}</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</ng-template>

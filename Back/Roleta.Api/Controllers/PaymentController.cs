@@ -146,7 +146,7 @@ namespace Roleta.Api.Controllers
                     using (StreamReader reader = new StreamReader(Request.Body))
                     {
                         string requestPayload = await reader.ReadToEndAsync();
-                        if (_ezzePayService.ValidaAssinaturaWebHook(reqTimestamp, requestPayload, reqSignature))
+                        //if (_ezzePayService.ValidaAssinaturaWebHook(reqTimestamp, requestPayload, reqSignature))
                         {
                             var json = JsonConvert.DeserializeObject<dynamic>(requestPayload);
                             if (json != null)
@@ -170,7 +170,7 @@ namespace Roleta.Api.Controllers
                                         }
                                         if (transactionType == "RECEIVEPIX")
                                         {
-                                            pagamento.Status = "APPROVED";
+                                            //pagamento.Status = "APPROVED";
                                             pagamento.DataStatus = DateTime.Now;
                                             var retorno = await _pagamentoService.ConfirmarDepositoPix(pagamento);
                                             if (retorno != null)

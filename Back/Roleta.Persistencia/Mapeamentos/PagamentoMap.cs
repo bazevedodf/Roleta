@@ -31,17 +31,13 @@ namespace Roleta.Persistencia.Mapeamentos
             builder.Property(x => x.Status);
             builder.Property(x => x.DataStatus);
             builder.Property(x => x.DataCadastro)
-                .IsRequired()
-                .HasDefaultValue(DateTime.Now);
+                .IsRequired();
 
             //Relacionamento
             builder.HasOne(x => x.User)
                 .WithMany(x => x.Pagamentos)
                 .HasConstraintName("FK_User_Pagamento");
 
-            //builder.HasOne(x => x.Produto)
-            //    .WithMany()
-            //    .HasConstraintName("FK_Produto_pagamento");
 
             //Index
             builder.HasIndex(x => x.TransactionId)

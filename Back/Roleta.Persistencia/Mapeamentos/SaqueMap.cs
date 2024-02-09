@@ -16,15 +16,14 @@ namespace Roleta.Persistencia.Mapeamentos
 
             //Propriedades
             builder.Property(x => x.TransactionId)
-                   .HasMaxLength(15);
+                   .HasMaxLength(25);
             builder.Property(x => x.Valor);
             builder.Property(x => x.Status)
                    .HasDefaultValue("Pendente")
                    .HasMaxLength(20);
             builder.Property(x => x.DataStatus);
             builder.Property(x => x.DataCadastro)
-                .IsRequired()
-                .HasDefaultValue(DateTime.Now);
+                .IsRequired();
 
             //Relacionamento
             builder.HasOne(x => x.User)

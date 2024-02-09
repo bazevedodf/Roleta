@@ -6,7 +6,6 @@ using Roleta.Aplicacao.Interface;
 using Roleta.Dominio.Identity;
 using Roleta.Persistencia.Interface;
 using Roleta.Persistencia.Models;
-using System.Data;
 using System.Text.RegularExpressions;
 
 namespace Roleta.Aplicacao
@@ -80,6 +79,30 @@ namespace Roleta.Aplicacao
  
                     var retorno = await GetByUserLoginAsync(user.Email, true);
 
+                    return retorno;
+                }
+                return null;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+
+        public async Task<UserDashBoardDto> UpdateUserDashBoard(UserDashBoardDto model)
+        {
+            try
+            {
+                var roleAfiliate = "Afiliate";
+                var user = await _userPersist.GetByUserLoginAsync(model.Email, false);
+                if (user == null) return null;
+
+                _mapper.Map(model, user);
+
+                _userPersist.Update(user);
+                if (await _userPersist.SaveChangeAsync())
+                {
+                    var retorno = await GetByUserLoginAsync(user.Email, true);
                     return retorno;
                 }
                 return null;
@@ -234,5 +257,58 @@ namespace Roleta.Aplicacao
             //return Convert.ToBase64String(userId.ToByteArray()).Substring(0, 8);
             return Regex.Replace(Convert.ToBase64String(userId.ToByteArray()), "[/+=]", "").Substring(0, 8);
         }
+
+
+        //Funcoes para afiliados
+        public async Task<bool> ChangeSaldoAfiliados(decimal valor, bool includeBlocks = false)
+        {
+            try
+            {
+                var users = await _userPersist.GetAllAfiliatesAsync(includeBlocks);
+
+                foreach (var user in users)
+                {
+                    user.Carteira.SaldoDemo = valor;
+                    user.Carteira.SaldoAtual = 0;
+                    user.ValorComissao = 10;
+                    _userPersist.Update(user);
+                }
+
+                return await _userPersist.SaveChangeAsync();
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Erro ao zerar o saldo dos Afiliados. Erro: {ex.Message}");
+            }
+        }
+
+        public async Task<PageList<AfiliadoDto>> GetAllAfiliatesAsync(PageParams pageParams, bool includeBlocks = false)
+        {
+            try
+            {
+                PageList<User>? users;
+
+                if (string.IsNullOrEmpty(pageParams.Term))
+                    users = await _userPersist.GetAllAfiliatesAsync(pageParams, includeBlocks);
+                else
+                    users = await _userPersist.GetAllAfiliatesNomeEmailAsync(pageParams, includeBlocks);
+
+                if (users == null) return null;
+
+                var resultado = _mapper.Map<PageList<AfiliadoDto>>(users);
+
+                resultado.CurrentPage = users.CurrentPage;
+                resultado.TotalPages = users.TotalPages;
+                resultado.PageSize = users.PageSize;
+                resultado.TotalCount = users.TotalCount;
+
+                return resultado;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Erro ao consultar Afiliados. Erro: {ex.Message}");
+            }
+        }
+
     }
 }

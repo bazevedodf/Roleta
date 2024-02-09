@@ -2193,9 +2193,9 @@ function winwheelAnimationLoop()
         }
 
         if (winwheelToDrawDuringAnimation.animation.soundFile){
-          audio = new Audio('assets/sounds/tick.mp3');
-          if (audio)
-            winwheelToDrawDuringAnimation.animation.callbackSound = playSound;
+          //audio = new Audio('assets/sounds/tick.mp3');
+          //if (audio)
+          //  winwheelToDrawDuringAnimation.animation.callbackSound = playSound;
 
           // If there is a sound callback then call a function which figures out if the sound should be triggered
           // and if so then call the function specified by the developer.

@@ -42,7 +42,7 @@ export class NgxWheelComponent implements OnInit, AfterViewInit{
   @Input() disableSpinOnClick: boolean = true;
   @Input() textOrientation!: TextOrientation;
   @Input() textAlignment!: TextAlignment;
-  @Input() soundFile!: string;
+  //@Input() soundFile!: string;
 
 
   @Output() onSpinStart: EventEmitter<any> = new EventEmitter();
@@ -102,7 +102,7 @@ export class NgxWheelComponent implements OnInit, AfterViewInit{
         duration: this.spinDuration, // How long the animation is to take in seconds.
         spins: this.spinAmount, // The number of complete 360 degree rotations the wheel is to do.
         //callbackFinished : this.alertPrize,
-        soundFile: this.soundFile,
+        //soundFile: this.soundFile,
       },
       /* pins:				// Turn pins on.
       {

@@ -13,10 +13,8 @@ namespace Roleta.Dominio
         public decimal Valor { get; set; }
         public string Status { get; set; }
         public DateTime DataStatus { get; set; }
-        public DateTime DataCadastro { get; set; }
+        public DateTime DataCadastro { get; set; } = DateTime.Now;
         public Guid UserId { get; set; }
         public User? User { get; set; }
-        //public int ProdutoId { get; set; }
-        //public Produto? Produto { get; set; }
     }
 }

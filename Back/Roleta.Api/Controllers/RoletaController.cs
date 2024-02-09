@@ -157,7 +157,7 @@ namespace Roleta.Api.Controllers
                                 $"Chave Pix Inválida.");
                 }
                 
-                var retorno = await _saqueService.SolicitarSaquePix(user, valor, roleta.TaxaSaque);
+                var retorno = await _saqueService.SolicitarSaquePix(user, valor, roleta.TaxaSaque, "Saque Game");
 
                 if (retorno == null) return BadRequest("Erro ao solicitar o Saque");
 

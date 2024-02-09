@@ -14,5 +14,9 @@ namespace Roleta.Persistencia.Interface
         Task<User[]> GetAllByParentEmailAsync(string parentEmail, bool includeRole = false);
         Task<PageList<User>> GetAllByNomeDataAsync(PageParams pageParams, bool includePagamentos = false);
         Task<PageList<User>> GetAllByParentEmailDateAsync(PageParams pageParams, bool includePagamentos = false);
+
+        Task<User[]> GetAllAfiliatesAsync(bool includeBlock = false);
+        Task<PageList<User>> GetAllAfiliatesAsync(PageParams pageParams, bool includeBlocks = false);
+        Task<PageList<User>> GetAllAfiliatesNomeEmailAsync(PageParams pageParams, bool includeBlocks = false);
     }
 }

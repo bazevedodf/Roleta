@@ -27,6 +27,109 @@ namespace Roleta.Aplicacao
             _mapper = mapper;
         }
 
+        public async Task<bool> DepositoCaixa(PagamentoDto pagamento, int roletaId)
+        {
+            try
+            {
+                var roleta = await GetByIdAsync(roletaId, true);
+                
+                if (roleta != null) 
+                {
+                    var desconto = pagamento.Valor * 0.03M;
+                    roleta.SaldoLucro += pagamento.Valor - desconto;
+
+                    //Criar e alimentar o caixa do proximo dia
+                    if (roleta.BancasPagadoras.Count() == 0)
+                    {
+                        List<BancaPagadora> bancas = new() { 
+                            new BancaPagadora()
+                            {
+                                RoletaSorteId = roleta.Id,
+                                SaldoDia = 0,
+                                DataBanca = DateTime.Now.AddDays(1)
+                            }
+                        };
+
+                        roleta.BancasPagadoras = bancas;
+                    }
+
+                    decimal valorBanca = pagamento.Valor * ((decimal)roleta.PercentualBanca / 100);
+                    var banca = roleta.BancasPagadoras.First();
+                    banca.SaldoDia += valorBanca;
+
+                    List<OperacaoRoleta> operacoes = new() {
+                            new OperacaoRoleta()
+                            {
+                                Descricao = "Depósito",
+                                Valor = pagamento.Valor - desconto,
+                                UserId = pagamento.UserId,
+                                RoletaSorteId = roleta.Id,
+                                TransactionId = pagamento.TransactionId
+                            }
+                        };
+                    roleta.OperacoesRoleta = operacoes;
+
+                    var result = await UpdateAsync(roleta);
+
+                    if (result != null) return true;
+                }
+                
+                return false;
+            }
+            catch (Exception)
+            {
+                throw new Exception("Erro ao tentar fazer o deposito no caixa da roleta.");
+            }
+        }
+
+        public async Task<bool> SaqueCaixa(decimal valorSaque, int roletaId)
+        {
+            try
+            {
+                var roleta = await GetByIdAsync(roletaId);
+
+                if (roleta != null)
+                {
+                                    
+                }
+
+                return false;
+            }
+            catch (Exception)
+            {
+                throw new Exception("Erro ao tentar fazer o saque no caixa da roleta.");
+            }
+        }
+
+        public async Task<bool> ComissaoAfiliado(string emailAfiliado, decimal valorDeposito, string transacionId)
+        {
+            try
+            {
+                var user = await _userService.GetByUserLoginAsync(emailAfiliado);
+                if (user != null && !user.isBlocked)
+                {
+                    user.Carteira.SaldoAtual += user.ValorComissao;
+                    var retorno = await _userService.UpdateUserDashBoard(user);
+                    if (retorno != null) return true;
+
+                    var creditoAfiliado = new Transacao()
+                    {
+                        Tipo = "Comissão",
+                        valor = user.ValorComissao,
+                        Data = DateTime.Now,
+                        CarteiraId = user.Carteira.Id,
+                        TransactionId = transacionId
+                    };
+                    await _carteiraService.AddTransacaoAsync(creditoAfiliado);
+                }
+
+                return false;
+            }
+            catch (Exception)
+            {
+                throw new Exception("Erro ao tentar distribuir a comissão do afiliado.");
+            }
+        }
 
         public async Task<GiroRoletaDto> GirarRoleta(int valorAposta, bool freeSpin = false, UserGameDto? user = null)
         {
@@ -35,25 +138,23 @@ namespace Roleta.Aplicacao
                 List<ItemRoletaDto> posicoes = new List<ItemRoletaDto>()
                 {
                     new ItemRoletaDto { Id = 1, Multiplicador = 0 },
-                    new ItemRoletaDto { Id = 1, Multiplicador = 0 },
-                    new ItemRoletaDto { Id = 2, Multiplicador = 0.5M },
                     new ItemRoletaDto { Id = 2, Multiplicador = 0.5M },
                     new ItemRoletaDto { Id = 3, Multiplicador = 1 },
                     new ItemRoletaDto { Id = 4, Multiplicador = 3 },
-                    new ItemRoletaDto { Id = 5, Multiplicador = 0 },
+                    new ItemRoletaDto { Id = 4, Multiplicador = 3 },
+                    new ItemRoletaDto { Id = 4, Multiplicador = 3 },
                     new ItemRoletaDto { Id = 5, Multiplicador = 0 },
                     new ItemRoletaDto { Id = 6, Multiplicador = 0.5M },
-                    new ItemRoletaDto { Id = 6, Multiplicador = 0.5M },
+                    new ItemRoletaDto { Id = 7, Multiplicador = 1 },
                     new ItemRoletaDto { Id = 7, Multiplicador = 1 },
                     new ItemRoletaDto { Id = 8, Multiplicador = 5 },
                     new ItemRoletaDto { Id = 9, Multiplicador = 100 },
                     new ItemRoletaDto { Id = 10, Multiplicador = 0 },
                     new ItemRoletaDto { Id = 10, Multiplicador = 0 },
                     new ItemRoletaDto { Id = 11, Multiplicador = 0.5M },
-                    new ItemRoletaDto { Id = 11, Multiplicador = 0.5M },
+                    new ItemRoletaDto { Id = 12, Multiplicador = 1 },
                     new ItemRoletaDto { Id = 12, Multiplicador = 1 },
                     new ItemRoletaDto { Id = 13, Multiplicador = 7 },
-                    new ItemRoletaDto { Id = 14, Multiplicador = 0 },
                     new ItemRoletaDto { Id = 14, Multiplicador = 0 },
                     new ItemRoletaDto { Id = 15, Multiplicador = 0.5M },
                     new ItemRoletaDto { Id = 15, Multiplicador = 0.5M },
@@ -158,7 +259,7 @@ namespace Roleta.Aplicacao
                         Descricao = "Pagamento Giro",
                         Data = DateTime.Now,
                         RoletaId = roleta.Id,
-                        TransacaoId = debitoUser.Id                        
+                        TransacaoId = debitoUser.Id
                     };
                     debitoRoleta = await AddTransacaoRoleta(debitoRoleta);
                     roleta.SaldoBanca += debitoRoleta.valor;
@@ -178,78 +279,78 @@ namespace Roleta.Aplicacao
 
                 //double valorBanca = valorAposta;
 
-                if (valorPerda > 0)
-                {
-                    double valorBanca = valorPerda * ((double)roleta.PercentualBanca / 100);
-                    valorPerda -= valorBanca;
+                //if (valorPerda > 0)
+                //{
+                //    double valorBanca = valorPerda * ((double)roleta.PercentualBanca / 100);
+                //    valorPerda -= valorBanca;
 
-                    //credito para a banca
-                    var creditoBanca = new TransacaoRoleta()
-                    {
-                        valor = (decimal)valorBanca,
-                        Descricao = "Divisao Banca",
-                        Data = DateTime.Now,
-                        TransacaoId = debitoUser.Id,
-                        RoletaId = roleta.Id
-                    };
-                    creditoBanca = await AddTransacaoRoleta(creditoBanca);
-                    roleta.SaldoBanca += creditoBanca.valor;
+                //    //credito para a banca
+                //    var creditoBanca = new TransacaoRoleta()
+                //    {
+                //        valor = (decimal)valorBanca,
+                //        Descricao = "Divisao Banca",
+                //        Data = DateTime.Now,
+                //        TransacaoId = debitoUser.Id,
+                //        RoletaId = roleta.Id
+                //    };
+                //    creditoBanca = await AddTransacaoRoleta(creditoBanca);
+                //    roleta.SaldoBanca += creditoBanca.valor;
 
 
-                    //verifica se tem afiliado e paga
-                    if (user.ParentEmail != null)
-                    {
-                        var Afiliado = await _userService.GetUserGameByEmailAsync(user.ParentEmail);
-                        if (Afiliado != null && Afiliado.isAfiliate && !Afiliado.isBlocked)
-                        {
-                            double comissaoAfiliado = valorPerda * ((double)Afiliado.Comissao / 100);
+                //    //verifica se tem afiliado e paga
+                //    if (user.ParentEmail != null)
+                //    {
+                //        var Afiliado = await _userService.GetUserGameByEmailAsync(user.ParentEmail);
+                //        if (Afiliado != null && Afiliado.isAfiliate && !Afiliado.isBlocked)
+                //        {
+                //            double comissaoAfiliado = valorPerda * ((double)Afiliado.Comissao / 100);
 
-                            //credito para o afiliado
-                            var creditoAfiliado = new Transacao()
-                            {
-                                Tipo = "Comissão",
-                                valor = (decimal)comissaoAfiliado,
-                                Data = DateTime.Now,
-                                CarteiraId = Afiliado.Carteira.Id,
-                                TransactionId = debitoUser.Id.ToString()
-                            };
-                            creditoAfiliado = await _carteiraService.AddTransacaoAsync(creditoAfiliado);
-                            Afiliado.Carteira.SaldoAtual += creditoAfiliado.valor;
+                //            //credito para o afiliado
+                //            var creditoAfiliado = new Transacao()
+                //            {
+                //                Tipo = "Comissão",
+                //                valor = (decimal)comissaoAfiliado,
+                //                Data = DateTime.Now,
+                //                CarteiraId = Afiliado.Carteira.Id,
+                //                TransactionId = debitoUser.Id.ToString()
+                //            };
+                //            creditoAfiliado = await _carteiraService.AddTransacaoAsync(creditoAfiliado);
+                //            Afiliado.Carteira.SaldoAtual += creditoAfiliado.valor;
 
-                            Afiliado = await _userService.UpdateUserGame(Afiliado);
+                //            Afiliado = await _userService.UpdateUserGame(Afiliado);
 
-                            if (Afiliado != null)
-                                valorPerda -= comissaoAfiliado;
-                        }
-                    }
+                //            if (Afiliado != null)
+                //                valorPerda -= comissaoAfiliado;
+                //        }
+                //    }
 
-                    //credito para os lucros da casa
-                    var creditoLucro = new TransacaoRoleta()
-                    {
-                        valor = (decimal)valorPerda,
-                        Descricao = "Divisao Lucro",
-                        Data = DateTime.Now,
-                        TransacaoId = debitoUser.Id,
-                        RoletaId = roleta.Id
-                    };
-                    creditoLucro = await AddTransacaoRoleta(creditoLucro);
-                    roleta.SaldoLucro += creditoLucro.valor;
-                    roleta.ContagemPerda++;
-                }
-                else
-                {
-                    //credito para banca
-                    var creditoBanca = new TransacaoRoleta()
-                    {
-                        valor = (decimal)valorAposta,
-                        Descricao = "Divisao Banca",
-                        Data = DateTime.Now,
-                        TransacaoId = debitoUser.Id,
-                        RoletaId = roleta.Id
-                    };
-                    creditoBanca = await AddTransacaoRoleta(creditoBanca);
-                    roleta.SaldoBanca += creditoBanca.valor;
-                }
+                //    //credito para os lucros da casa
+                //    var creditoLucro = new TransacaoRoleta()
+                //    {
+                //        valor = (decimal)valorPerda,
+                //        Descricao = "Divisao Lucro",
+                //        Data = DateTime.Now,
+                //        TransacaoId = debitoUser.Id,
+                //        RoletaId = roleta.Id
+                //    };
+                //    creditoLucro = await AddTransacaoRoleta(creditoLucro);
+                //    roleta.SaldoLucro += creditoLucro.valor;
+                //    roleta.ContagemPerda++;
+                //}
+                //else
+                //{
+                //    //credito para banca
+                //    var creditoBanca = new TransacaoRoleta()
+                //    {
+                //        valor = (decimal)valorAposta,
+                //        Descricao = "Divisao Banca",
+                //        Data = DateTime.Now,
+                //        TransacaoId = debitoUser.Id,
+                //        RoletaId = roleta.Id
+                //    };
+                //    creditoBanca = await AddTransacaoRoleta(creditoBanca);
+                //    roleta.SaldoBanca += creditoBanca.valor;
+                //}
 
                 user.Carteira.DataAtualizacao = DateTime.Now;
                 user = await _userService.UpdateUserGame(user);
@@ -308,7 +409,7 @@ namespace Roleta.Aplicacao
                 _roletaPersist.Update(roleta);
                 if (await _roletaPersist.SaveChangeAsync())
                 {
-                    var retorno = await _roletaPersist.GetByIdAsync(roleta.Id);
+                    var retorno = await _roletaPersist.GetByIdAsync(roleta.Id, true);
                     return _mapper.Map<RoletaSorteDto>(retorno);
                 }
 
@@ -320,11 +421,11 @@ namespace Roleta.Aplicacao
             }
         }
 
-        public async Task<RoletaSorteDto> GetByIdAsync(int roletaId, bool includeTransacoes = false)
+        public async Task<RoletaSorteDto> GetByIdAsync(int roletaId, bool includeBancaDia = false, bool includeTransacoes = false)
         {
             try
             {
-                var roleta = await _roletaPersist.GetByIdAsync(roletaId, includeTransacoes);
+                var roleta = await _roletaPersist.GetByIdAsync(roletaId, includeBancaDia, includeTransacoes);
                 if (roleta == null) return null;
 
                 var retorno = _mapper.Map<RoletaSorteDto>(roleta);
@@ -335,80 +436,5 @@ namespace Roleta.Aplicacao
                 throw new Exception(ex.Message);
             }
         }
-
-        //public async Task<GiroRoletaDto> AddAsync(GiroRoletaDto model)
-        //{
-        //    try
-        //    {
-        //        var giroRoleta = _mapper.Map<GiroRoleta>(model);
-
-        //        _giroRoletaPersist.Add(giroRoleta);
-        //        if (await _giroRoletaPersist.SaveChangeAsync())
-        //        {
-        //            var retorno = await _giroRoletaPersist.GetByIdAsync(giroRoleta.Id);
-        //            return _mapper.Map<GiroRoletaDto>(retorno);
-        //        }
-        //        return null;
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        throw new Exception(ex.Message);
-        //    }
-        //}
-
-        //public async Task<GiroRoletaDto> UpdateAsync(GiroRoletaDto model)
-        //{
-        //    try
-        //    {
-        //        var giroRoleta = await _giroRoletaPersist.GetByIdAsync(model.Id);
-        //        if (giroRoleta == null) return null;
-
-        //        _mapper.Map(model, giroRoleta);
-        //        _giroRoletaPersist.Update(giroRoleta);
-        //        if (await _giroRoletaPersist.SaveChangeAsync())
-        //        {
-        //            var retorno = await _giroRoletaPersist.GetByIdAsync(giroRoleta.Id);
-        //            return _mapper.Map<GiroRoletaDto>(retorno);
-        //        }
-
-        //        return null;
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        throw new Exception(ex.Message);
-        //    }
-        //}
-
-        //public async Task<bool> DeleteAsync(int id)
-        //{
-        //    try
-        //    {
-        //        var giroRoleta = await _giroRoletaPersist.GetByIdAsync(id);
-        //        if (giroRoleta == null) throw new Exception("Giro da roleta não encontrado");
-
-        //        _giroRoletaPersist.Delete(giroRoleta);
-        //        return await _giroRoletaPersist.SaveChangeAsync();
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        throw new Exception(ex.Message);
-        //    }
-        //}
-
-        //public async Task<GiroRoletaDto> GetGiroByIdAsync(int id)
-        //{
-        //    try
-        //    {
-        //        var geiroRoleta = await _giroRoletaPersist.GetByIdAsync(id);
-        //        if (geiroRoleta == null) return null;
-
-        //        return _mapper.Map<GiroRoletaDto>(geiroRoleta);
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        throw new Exception(ex.Message);
-        //    }
-        //}
-
     }
 }

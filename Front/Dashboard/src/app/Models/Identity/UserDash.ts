@@ -1,3 +1,4 @@
+import { Carteira } from '../Carteira';
 export interface UserDash {
   userName: string;
   email: string;
@@ -10,8 +11,10 @@ export interface UserDash {
   isAfiliate : boolean;
   afiliateCode : string;
   comissao: number;
+  ValorComissao: number;
   isBlocked : boolean;
   dataCadastro: Date;
   token: string;
   role: string;
+  carteira: Carteira;
 }

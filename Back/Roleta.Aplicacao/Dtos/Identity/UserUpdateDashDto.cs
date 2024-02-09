@@ -10,7 +10,8 @@
         public string? CPF { get; set; }
         public string? TipoChavePix { get; set; }
         public string? ChavePix { get; set; }
-        public int Comissao { get; set; } = 25;
+        public int Comissao { get; set; }
+        public decimal ValorComissao { get; set; }
         public bool Verified { get; set; }
         public bool isAfiliate { get; set; } = false;
         public string? AfiliateCode { get; set; }

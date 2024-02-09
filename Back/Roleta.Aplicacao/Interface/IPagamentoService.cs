@@ -16,6 +16,7 @@ namespace Roleta.Aplicacao.Interface
         Task<PagamentoDto[]> GetAllByStatusAsync(string status);
         Task<int> GetAllAproveByParentEmailAsync(string? parentEmail = null);
         Task<PagamentoDto> GetByTransactionIdAsync(string transactionId);
+        Task<PagamentoDto[]> GetAllAfiliateAsync(PageParams pageParams, bool somentePagos = false);
         Task<PageList<PagamentoDto>> GetAllByParentEmailAsync(PageParams pageParams, bool somentePagos = false);
     }
 }

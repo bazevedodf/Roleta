@@ -21,7 +21,6 @@ namespace Roleta.Persistencia.Mapeamentos
                 .HasMaxLength(30)
                 .IsRequired();
             builder.Property(x => x.Data)
-                   .HasDefaultValue(DateTime.Now)
                    .IsRequired();
             builder.Property(x => x.TransacaoId)
                 .HasMaxLength(15);
