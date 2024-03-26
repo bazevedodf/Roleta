@@ -1,0 +1,175 @@
+<div class="row align-middle mt-3 px-2">
+  <div class="col-md-6 d-flex text-brand">
+    <h3>Configuração</h3>
+  </div>
+  <div class="text-end col-md-6 text-brand">
+    <ol class="breadcrumb float-sm-end">
+      <li class="breadcrumb-item"><a routerLink="/home">Dashboard</a></li>
+      <li class="breadcrumb-item active">Configuração</li>
+    </ol>
+  </div>
+</div>
+<div class="row mt-3">
+  <div class="col-md-12">
+    <div class="card card-dasboard">
+      <div class="card-header">
+        <div class="card-Text d-flex bg-purple">
+          <i class="fa-solid fa-gear"></i>
+          <div class="text-white lh-1 ms-2">
+            <h5 class="card-title mb-0">Configurações</h5>
+            <p class="card-category m-0">Configurações da Roleta</p>
+          </div>
+        </div>
+      </div>
+      <div class="card-body">
+        <div class="card rouded shadow-sm">
+          <form [formGroup]="form">
+            <!-- {{form.value | json}}
+            {{form.status | json}} -->
+            <div class="card-body row gx-4 gy-3">
+              <div class="container">
+
+                <div class="card mt-3">
+                  <div class="card-header">
+                    <h5 class="card-title text-body-secondary">Configuracão da Roleta</h5>
+                  </div>
+                  <div class="card-body">
+                    <div class="row">
+                      <div class="col-md-2 my-2 d-flex">
+                        <div>
+                          <label>Saldo Total</label>
+                          <input type="text"
+                            class="form-control"
+                            currencyMask
+                            readonly
+                            [options]="{ prefix: 'R$ ', thousands: '.', decimal: ',', align: 'left' }"
+                            [(ngModel)]="roletaSorte.saldoLucro"
+                            formControlName="saldoLucro">
+                        </div>
+                      </div>
+                      <div class="col-md-2 my-2 d-flex">
+                        <div>
+                          <label>(%) Banca Pagadora </label><i class="fa-solid fa-circle-info ms-2" tooltip="Valor percentual de cada depósito para construção da banca pagadora."></i>
+                          <input type="text"
+                            class="form-control"
+                            [(ngModel)]="roletaSorte.percentualBanca"
+                            suffix="%"
+                            [decimalMarker]="','"
+                            mask="percent.2"
+                            formControlName="percentualBanca">
+                        </div>
+                      </div>
+                      <div class="col-md-3 my-2 d-flex">
+                        <div>
+                          <label>(%) Premiação Máxima </label><i class="fa-solid fa-circle-info ms-2" tooltip="Valor percentual de premiação sobre o valor da banca pagadora."></i>
+                          <input type="text"
+                            class="form-control"
+                            [(ngModel)]="roletaSorte.premiacaoMaxima"
+                            suffix="%"
+                            [decimalMarker]="','"
+                            mask="percent.2"
+                            formControlName="premiacaoMaxima">
+                        </div>
+                      </div>
+                    </div>
+                    <div class="row mt-2">
+                      <div class="col-md-2 d-flex">
+                        <div class="form-check me-3">
+                          <input type="checkbox"
+                            id="SaqueAtivo"
+                            class="form-check-input mt-0"
+                            [(ngModel)]="roletaSorte.bloquearSaque"
+                            formControlName="bloquearSaque">
+                          <label class="form-check-label"  for="flexCheckChecked">
+                            Dasativar Saques
+                          </label>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="row mt-2">
+                      <div class="col-md-2 my-2">
+                        <label>Taxa de Saque</label>
+                        <input type="text"
+                          class="form-control"
+                          [ngClass]="{'bg-body-secondary' : roletaSorte.bloquearSaque}"
+                          [readonly]="roletaSorte.bloquearSaque"
+                          [(ngModel)]="roletaSorte.taxaSaque"
+                          currencyMask
+                          [options]="{ prefix: 'R$ ', thousands: '.', decimal: ',', align: 'left' }"
+                          formControlName="taxaSaque">
+                      </div>
+                      <div class="col-md-2 my-2">
+                        <label>Saque Mínimo</label>
+                        <input type="text"
+                          class="form-control"
+                          [ngClass]="{'bg-body-secondary' : roletaSorte.bloquearSaque}"
+                          [readonly]="roletaSorte.bloquearSaque"
+                          [(ngModel)]="roletaSorte.valorMinimoSaque"
+                          currencyMask
+                          [options]="{ prefix: 'R$ ', thousands: '.', decimal: ',', align: 'left' }"
+                          formControlName="valorMinimoSaque">
+                      </div>
+                      <div class="col-md-2 my-2">
+                        <label>Saque Máximo</label>
+                        <input type="text"
+                          class="form-control"
+                          [ngClass]="{'bg-body-secondary' : roletaSorte.bloquearSaque}"
+                          [readonly]="roletaSorte.bloquearSaque"
+                          [(ngModel)]="roletaSorte.valorMaximoSaque"
+                          currencyMask
+                          [options]="{ prefix: 'R$ ', thousands: '.', decimal: ',', align: 'left' }"
+                          formControlName="valorMaximoSaque">
+                      </div>
+
+                    </div>
+                  </div>
+                </div>
+
+                <div *ngIf="roletaSorte.bancasPagadoras !== undefined && roletaSorte.bancasPagadoras.length > 0" class="card mt-3">
+                  <div class="card-header">
+                    <h5 class="card-title text-body-secondary">Bancas Pagadoras</h5>
+                  </div>
+                  <div class="card-body">
+                    <div class="row">
+
+                      <div class="col-md-2 my-2 d-flex">
+                        <div>
+                          <label>(%) Banca {{comparaData(roletaSorte.bancasPagadoras[0].dataBanca)}}</label>
+                          <i class="fa-solid fa-circle-info ms-2" tooltip="Valor percentual de cada deposito para construção da banca pagadora."></i>
+                          <input type="text"
+                            class="form-control"
+                            currencyMask
+                            [options]="{ prefix: 'R$ ', thousands: '.', decimal: ',', align: 'left' }"
+                            formControlName="bancaHoje">
+                        </div>
+                      </div>
+                      <div *ngIf="roletaSorte.bancasPagadoras.length > 1" class="col-md-2 my-2">
+                        <label>(%) Banca {{comparaData(roletaSorte.bancasPagadoras[1].dataBanca)}}</label>
+                        <input type="text"
+                          class="form-control"
+                          currencyMask
+                          [options]="{ prefix: 'R$ ', thousands: '.', decimal: ',', align: 'left' }"
+                          formControlName="bancaAmanha">
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="card-footer">
+              <div class="d-flex my-2">
+                <button class="btn btn-outline-secondary mr-auto border" (click)="btnCancelar()">
+                  Cancelar Alteração
+                </button>
+                <button class="btn btn-success ms-auto" [disabled]="!form.valid || !form.touched" (click)="salvarConfig()">
+                  <!-- <span class="spinner-border spinner-border-sm mr-1"></span> -->
+                  Salvar Dados
+                </button>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

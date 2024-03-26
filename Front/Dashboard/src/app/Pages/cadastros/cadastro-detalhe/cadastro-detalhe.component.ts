@@ -51,7 +51,7 @@ export class CadastroDetalheComponent implements OnInit{
       tipoChavePix: ['CPF'],
       isAfiliate :  [false],
       afiliateCode : ['',],
-      comissao: ['25'],
+      valorComissao: [10],
       isBlocked :  [false],
       demoAcount :  [false],
       saldoDemo :  [0],
@@ -65,8 +65,8 @@ export class CadastroDetalheComponent implements OnInit{
       this.spinner.show();
       this.dashboradService.getUserDash(emailParam).subscribe({
         next: (user: UserUpdate) => {
-          if(user.comissao === 0)
-            user.comissao = 25;
+          if(user.valorComissao === 0)
+            user.valorComissao = 10;
           this.carteira = {...user.carteira};
           this.userSelected = {...user};
 

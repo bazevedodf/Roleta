@@ -18,7 +18,7 @@ namespace Roleta.Persistencia
             IQueryable<RoletaSorte> query = _context.Roletas.Where(x => x.Id == id);
 
             if (includeBancaDia)
-                query = query.Include(x => x.BancasPagadoras.Where(x => x.DataBanca.Date > DateTime.Now.Date));
+                query = query.Include(x => x.BancasPagadoras.Where(x => x.DataBanca.Date >= DateTime.Now.Date));
 
             if (includeTransacoes)
                 query = query.Include(x => x.TransacoesRoleta);

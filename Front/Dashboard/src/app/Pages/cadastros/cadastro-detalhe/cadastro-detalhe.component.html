@@ -65,8 +65,14 @@
                         </div>
 
                         <div class="col-md-3 my-2">
-                          <label>Comissão (% <small>Sobre a Perda</small>)</label>
-                          <input type="number" class="form-control" [readonly]="!userSelected.isAfiliate" formControlName="comissao" [(ngModel)]="userSelected.comissao">
+                          <label>Comissão (<small>R$ 10,00</small>)</label>
+                          <input type="text"
+                            class="form-control"
+                            currencyMask
+                            [options]="{ prefix: 'R$ ', thousands: '.', decimal: ',', align: 'left' }"
+                            [readonly]="!userSelected.isAfiliate"
+                            formControlName="valorComissao"
+                            [(ngModel)]="userSelected.valorComissao">
                         </div>
                       </div>
                     </div>
@@ -213,7 +219,7 @@
                             <input class="form-check-input"
                               formControlName="tipoChavePix"
                               [(ngModel)]="userSelected.tipoChavePix"
-                              type="radio" value="Celular" name="tipoChavePix" id="TipoChavePix2">
+                              type="radio" value="TELEFONE" name="tipoChavePix" id="TipoChavePix2">
                             <label class="form-check-label" for="TipoChavePix2">
                               Celular
                             </label>

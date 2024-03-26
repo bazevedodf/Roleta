@@ -20,18 +20,21 @@ namespace Roleta.Api.Controllers
     {
         private readonly IAccountService _accountService;
         private readonly IUserService _userService;
+        private readonly IRoletaService _roletaService;
         private readonly IPagamentoService _pagamentoService;
         private readonly ISaqueService _saqueService;
         private readonly IMapper _mapper;
 
         public DashboardController(IAccountService accountService,
                                    IUserService userService,
+                                   IRoletaService roletaService,
                                    IPagamentoService pagamentoService,
                                    ISaqueService saqueService,
                                    IMapper mapper)
         {
             _accountService = accountService;
             _userService = userService;
+            _roletaService = roletaService;
             _pagamentoService = pagamentoService;
             _saqueService = saqueService;
             _mapper = mapper;
@@ -133,8 +136,26 @@ namespace Roleta.Api.Controllers
             }
         }
 
-        
-        
+
+        [Authorize(Roles = "Admin")]
+        [HttpGet("GetRoleta")]
+        public async Task<IActionResult> GetRoleta()
+        {
+            try
+            {
+                var roleta = await _roletaService.GetByIdAsync(1, true);
+                if (roleta == null) return BadRequest();
+
+                return Ok(_mapper.Map<RoletaSorteUpdateDto>(roleta));
+            }
+            catch (Exception ex)
+            {
+                return this.StatusCode(
+                    StatusCodes.Status500InternalServerError,
+                    $"Erro ao tentar recuperar usuário. Erro: {ex.Message}");
+            }
+        }
+
         [Authorize(Roles = "Admin")]
         [HttpGet("GetUser")]
         public async Task<IActionResult> GetUserByEmail(string email)
@@ -169,6 +190,24 @@ namespace Roleta.Api.Controllers
             {
                 return this.StatusCode(StatusCodes.Status500InternalServerError,
                     $"Erro ao tentar atualizar Usuário. Erro: {ex.Message}");
+            }
+        }
+
+        [Authorize(Roles = "Admin")]
+        [HttpPut("PutRoleta")]
+        public async Task<IActionResult> PutRoleta(RoletaSorteDto model)
+        {
+            try
+            {
+                var roleta = await _roletaService.UpdateAsync(model);
+                if (roleta == null) return NoContent();
+
+                return Ok(_mapper.Map<RoletaSorteUpdateDto>(roleta));
+            }
+            catch (Exception ex)
+            {
+                return this.StatusCode(StatusCodes.Status500InternalServerError,
+                    $"Erro ao tentar atualizar configurações da roleta. Erro: {ex.Message}");
             }
         }
 
@@ -252,7 +291,7 @@ namespace Roleta.Api.Controllers
                     return BadRequest($"CPF não cadastrado!");
                 }
 
-                if (user.TipoChavePix == "TELEFONE" && user.ChavePix.IndexOf("+55") <= 0)
+                if (user.TipoChavePix == "TELEFONE" && user.ChavePix.IndexOf("+55") == -1)
                 {
                     return BadRequest($"Chave Pix Telefone sem +55.");
                 }

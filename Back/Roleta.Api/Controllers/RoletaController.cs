@@ -28,43 +28,6 @@ namespace Roleta.Api.Controllers
             _mapper = mapper;
         }
 
-        //[HttpGet("ItensRoleta")]
-        //public async Task<IActionResult> GetItensRoleta()
-        //{
-        //    try
-        //    {
-        //        List<ItemRoletaDto> itens = new List<ItemRoletaDto>() {
-        //            new ItemRoletaDto { Id = 1, Text = "0x", FillStyle = "#003399", TextFillStyle = "white", TextFontSize = "22" },
-        //            new ItemRoletaDto { Id = 2, Text = "0.5x", FillStyle = "#006633", TextFillStyle = "white", TextFontSize = "22" },
-        //            new ItemRoletaDto { Id = 3, Text = "1.2x", FillStyle = "#ffcc00", TextFillStyle = "white", TextFontSize = "22" },
-        //            new ItemRoletaDto { Id = 4, Text = "3x", FillStyle = "#ff6600", TextFillStyle = "white", TextFontSize = "22" },
-        //            new ItemRoletaDto { Id = 5, Text = "0x", FillStyle = "#003399", TextFillStyle = "white", TextFontSize = "22" },
-        //            new ItemRoletaDto { Id = 6, Text = "0.5x", FillStyle = "#006633", TextFillStyle = "white", TextFontSize = "22" },
-        //            new ItemRoletaDto { Id = 7, Text = "1.2x", FillStyle = "#ffcc00", TextFillStyle = "white", TextFontSize = "22" },
-        //            new ItemRoletaDto { Id = 8, Text = "5x", FillStyle = "#ff6600", TextFillStyle = "white", TextFontSize = "22" },
-        //            new ItemRoletaDto { Id = 9, Text = "100x", FillStyle = "#fff", TextFillStyle = "black", TextFontSize = "22" },
-        //            new ItemRoletaDto { Id = 10, Text = "0x", FillStyle = "#003399", TextFillStyle = "white", TextFontSize = "22" },
-        //            new ItemRoletaDto { Id = 11, Text = "0.5x", FillStyle = "#006633", TextFillStyle = "white", TextFontSize = "22" },
-        //            new ItemRoletaDto { Id = 12, Text = "1.2x", FillStyle = "#ffcc00", TextFillStyle = "white", TextFontSize = "22" },
-        //            new ItemRoletaDto { Id = 13, Text = "7x", FillStyle = "#ff6600", TextFillStyle = "white", TextFontSize = "22" },
-        //            new ItemRoletaDto { Id = 14, Text = "0x", FillStyle = "#003399", TextFillStyle = "white", TextFontSize = "22" },
-        //            new ItemRoletaDto { Id = 15, Text = "0.5x", FillStyle = "#006633", TextFillStyle = "white", TextFontSize = "22" },
-        //            new ItemRoletaDto { Id = 16, Text = "1.2x", FillStyle = "#ffcc00", TextFillStyle = "white", TextFontSize = "22" },
-        //            new ItemRoletaDto { Id = 17, Text = "9x", FillStyle = "#ff6600", TextFillStyle = "white", TextFontSize = "22" },
-        //            new ItemRoletaDto { Id = 18, Text = "20x", FillStyle = "#fff", TextFillStyle = "black", TextFontSize = "22" }
-        //        };
-                
-
-        //        return Ok(itens);
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        return this.StatusCode(
-        //            StatusCodes.Status500InternalServerError,
-        //            $"Erro ao tentar recuperar conta de usuário. Erro: {ex.Message}");
-        //    }
-        //}
-
         [HttpGet("SpinBet")]
         public async Task<IActionResult> SpinBet(int valorAposta, bool freeSpin = false)
         {
@@ -105,11 +68,6 @@ namespace Roleta.Api.Controllers
                     
                     var giro = await _roletaService.GirarRoleta(valorAposta, freeSpin, user);
 
-                    //user.SaldoDeposito -= giro.ValorAposta;
-                    //user.SaldoSaque += giro.ValorAposta * giro.Multiplicador;
-
-                    //var retorno = await _accountService.UpdateUserAsync(user);
-
                     return Ok(giro);
                 }
             }
@@ -137,7 +95,7 @@ namespace Roleta.Api.Controllers
 
                 if (user.isAfiliate) return Unauthorized("Não é possivel fazer saques nessa conta!");
 
-                var roleta = await _roletaService.GetByIdAsync(1);
+                var roleta = await _roletaService.GetByIdAsync(1, true);
 
                 if (valor < roleta.ValorMinimoSaque)
                     return this.StatusCode(StatusCodes.Status403Forbidden, 
@@ -158,7 +116,6 @@ namespace Roleta.Api.Controllers
                 }
                 
                 var retorno = await _saqueService.SolicitarSaquePix(user, valor, roleta.TaxaSaque, "Saque Game");
-
                 if (retorno == null) return BadRequest("Erro ao solicitar o Saque");
 
                 return Ok(retorno);
@@ -191,24 +148,6 @@ namespace Roleta.Api.Controllers
                     $"Erro ao tentar recuperar dados da Roleta. Erro: {ex.Message}");
             }
         }
-
-        //[HttpGet("GetOferta/{id:int}")]
-        //public async Task<IActionResult> GetOferta(int id)
-        //{
-        //    try
-        //    {
-        //        var oferta = await _produtoService.GetByIdAsync(id);
-        //        if (oferta == null) return NoContent();
-
-        //        return Ok(oferta);
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        return this.StatusCode(
-        //            StatusCodes.Status500InternalServerError,
-        //            $"Erro ao tentar recuperar conta de usuário. Erro: {ex.Message}");
-        //    }
-        //}
 
     }
 }

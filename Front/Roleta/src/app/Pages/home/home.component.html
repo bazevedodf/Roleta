@@ -1,11 +1,33 @@
-
-<section class="section-01">
-  <div class="mb-5 p-2 d-flex d-xs-block d-md-none animate__animated animate__fadeInDown">
-    <img width="120px" src="assets/img/logo.png" />
-    <div class="mt-2 me-3 ms-auto">
-      <img width="32px" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABAEAQAAABQ8GUWAAAAIGNIUk0AAHomAACAhAAA+gAAAIDoAAB1MAAA6mAAADqYAAAXcJy6UTwAAAACYktHRAAAqo0jMgAAAAlwSFlzAAAAYAAAAGAA8GtCzwAAAAd0SU1FB+cDERIJOxf77sMAAAGkSURBVHja7do/TgJBFAbwbzbGYilgqRQ7PIQVt6CCQwCXsLfgAojNegRbDiCUugsdmBA22kKczwKjpcmy8lC+X7fNm3nzZydvMoCIiIjIkXJFBKE/PYVrNMB6Hc4VEvPXkIRLU3A0csF6XUC8iwtyMuGfMx6TtdrOs0Xe3wPNpvXE5hPHBQxAlgFRZJ1KPlkW7ByDWWadRn6r1e4D4Pp96zTyK6DvpHNkt0s+P5PeW//afuY9+fREdjrkgZ9YIiIiIiLya76KAbJSAep14L8XCCQwnTr3+vr5WSqRd3fWNdr+DYdkGJ4A19dAq2U9L/vXbgPLpSMXC+DszLo7Nl5egu2eOFbv7wEQx9bdMMM4BhmG5O3t37jOKor35GBAhuH3MejLZbjLy6M4BpmmLnh7s+6JiIiIiIgcme013M0NOZ+bVII+Schejwx2fyGTbwAO5Q6y29176UtGEbBaHUbZnSQGSyCKDiN5AKhWDQZgNgPT1Dr1rYcHk2bpr67IxcJ2/z8+kufnZkuRvlwGGg24Wm2/DZNwSbJ9LL3ZWOUvIiIiYu4DLSZXZlk7cLUAAAAldEVYdGRhdGU6Y3JlYXRlADIwMjMtMDMtMTdUMTg6MDk6NTkrMDA6MDAKjCxLAAAAJXRFWHRkYXRlOm1vZGlmeQAyMDIzLTAzLTE3VDE4OjA5OjU5KzAwOjAwe9GU9wAAACh0RVh0ZGF0ZTp0aW1lc3RhbXAAMjAyMy0wMy0xN1QxODowOTo1OSswMDowMCzEtSgAAAAASUVORK5CYII="/>
+<nav class="navbar navbar-expand-lg mb-5 d-flex d-xs-block d-md-none">
+  <div class="container">
+    <a class="navbar-brand">
+      <img src="assets/img/logo.png" alt="" height="66" class="d-inline-block align-text-top">
+    </a>
+    <button class="navbar-toggler" style="color: var(--bs-navbar-color);" (click)="isCollapsed = !isCollapsed" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+      <i class="fa-solid fa-bars"></i>
+    </button>
+    <div class="collapse navbar-collapse" [collapse]="isCollapsed" [isAnimated]="true" id="navbarNav">
+      <ul class="navbar-nav">
+        <ng-container>
+          <li class="nav-item">
+            <a class="nav-link" routerLink="/user">Logar</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" routerLink="/user/register">Cadastrar</a>
+          </li>
+        </ng-container>
+      </ul>
+    </div>
+    <div class="my-3 d-none d-xs-none d-md-block animate__animated animate__fadeInDown">
+      <div class="d-flex">
+        <img width="120px" class="" src="assets/img/logo.png" />
+        <div class="ms-auto mt-2 py-2 btn" routerLink="/user"><span>Login | Cadastro</span></div>
+      </div>
     </div>
   </div>
+</nav>
+
+<section class="section-01">
   <div class="container p-0">
     <div class="my-3 d-none d-xs-none d-md-block animate__animated animate__fadeInDown">
       <div class="d-flex">

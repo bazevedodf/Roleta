@@ -11,18 +11,21 @@ namespace Roleta.Aplicacao
         private readonly ISaquePersist _saquePersist;
         private readonly IEzzePayService _ezzePayService;
         private readonly IUserService _userService;
+        private readonly IRoletaService _roletaService;
         private readonly ICarteiraService _carteiraService;
         private readonly IMapper _mapper;
 
         public SaqueService(ISaquePersist saquePersist,
                             IEzzePayService ezzePayService,
                             IUserService userService,
+                            IRoletaService roletaService,
                             ICarteiraService carteiraService,
                             IMapper mapper)
         {
             _saquePersist = saquePersist;
             _ezzePayService = ezzePayService;
             _userService = userService;
+            _roletaService = roletaService;
             _carteiraService = carteiraService;
             _mapper = mapper;
         }
@@ -46,16 +49,10 @@ namespace Roleta.Aplicacao
                 if (saque != null)
                 {
                     var retornoUser = await _userService.UpdateUserGame(user);
-                    //var trasacaoUser = new Transacao()
-                    //{
-                    //    CarteiraId = user.Carteira.Id,
-                    //    valor = decimal.Negate(valor),
-                    //    TransactionId = saque.TransactionId,
-                    //    Tipo = saque.Description,
-                    //    Data = saque.DataStatus
-                    //};
+                    var roleta = await _roletaService.GetByIdAsync(1, true);
+                    var banca = roleta.BancasPagadoras.FirstOrDefault(x => x.DataBanca.Date == DateTime.Now.Date);
+                    banca.SaldoDia -= valor;
 
-                    //var returnTransacao = await _carteiraService.AddTransacaoAsync(trasacaoUser);
                     return await AddAsync(saque);
                 }
 

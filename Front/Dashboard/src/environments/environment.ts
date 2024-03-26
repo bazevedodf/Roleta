@@ -4,8 +4,8 @@
 
 export const environment = {
   production: false,
-  apiURL: "https://api.betbrazil.pro/",
-  //apiURL: "https://localhost:7225/",
+  //apiURL: "https://api.betbrazil.pro/",
+  apiURL: "https://localhost:7225/",
 };
 
 /*

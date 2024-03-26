@@ -39,6 +39,14 @@
             </div>
           </a>
         </li>
+        <li *ngIf="verificaRole('Admin')" class="nav-item text-center">
+          <a class="nav-link" routerLink="configuracao" style="cursor: pointer;">
+            <div>
+              <i class="fa-solid fa-gear"></i>
+              <p  class="mb-0">Config</p>
+            </div>
+          </a>
+        </li>
       </ul>
       <!-- <div *ngIf="(accountService.currentUser$ | async) === null" class="navbar-nav ms-3 d-xs-none d-none d-md-block">
         <a class="btn btn-light" href="">Entrar</a>

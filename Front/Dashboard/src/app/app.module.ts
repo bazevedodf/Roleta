@@ -1,4 +1,4 @@
-import { CUSTOM_ELEMENTS_SCHEMA, NgModule } from '@angular/core';
+import { CUSTOM_ELEMENTS_SCHEMA, NgModule, LOCALE_ID } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 
 import { AppRoutingModule } from './app-routing.module';
@@ -33,6 +33,7 @@ import { CadastroDetalheComponent } from './Pages/cadastros/cadastro-detalhe/cad
 import { CadastroListaComponent } from './Pages/cadastros/cadastro-lista/cadastro-lista.component';
 import { AfiliadosComponent } from './Pages/afiliados/afiliados.component';
 import { AfiliadoListaComponent } from './Pages/afiliados/afiliado-lista/afiliado-lista.component';
+import { ConfiguracaoComponent } from './Pages/configuracao/configuracao.component';
 
 defineLocale('pt-br', ptBrLocale);
 
@@ -49,7 +50,8 @@ defineLocale('pt-br', ptBrLocale);
     CadastroDetalheComponent,
     CadastroListaComponent,
     AfiliadosComponent,
-    AfiliadoListaComponent
+    AfiliadoListaComponent,
+    ConfiguracaoComponent
   ],
   imports: [
     FormsModule,
@@ -75,7 +77,9 @@ defineLocale('pt-br', ptBrLocale);
       progressBar: true
     }),
   ],
-  providers: [{provide: HTTP_INTERCEPTORS, useClass: JwtInterceptor, multi: true}, provideNgxMask()],
+  providers: [
+                {provide: HTTP_INTERCEPTORS, useClass: JwtInterceptor, multi: true},
+                provideNgxMask()],
   bootstrap: [AppComponent],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })

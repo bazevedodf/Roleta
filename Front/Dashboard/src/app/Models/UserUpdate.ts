@@ -11,7 +11,7 @@ export interface UserUpdate {
   phoneNumber: string;
   isAfiliate : boolean;
   afiliateCode : string;
-  comissao: number;
+  valorComissao: number;
   isBlocked : boolean;
   demoAcount: boolean;
   dataCadastro: Date;

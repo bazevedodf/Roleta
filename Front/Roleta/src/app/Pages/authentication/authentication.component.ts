@@ -98,6 +98,10 @@ export class AuthenticationComponent implements OnInit {
   }
 
   public login(): void{
+    if (this.model.login === undefined || this.model.password === undefined){
+      this.toastr.error('Login ou senha inválidos');
+      return;
+    }
     this.spinner.show();
     this.accountService.login(this.model).subscribe({
       next :() => {

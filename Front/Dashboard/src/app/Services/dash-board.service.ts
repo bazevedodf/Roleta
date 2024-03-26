@@ -1,10 +1,10 @@
-import { formatDate } from '@angular/common';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Afiliado } from '@app/Models/Afiliado';
 import { UserDash } from '@app/Models/Identity/UserDash';
 import { Pagamento } from '@app/Models/Pagamento';
 import { PaginatedResult } from '@app/Models/Pagination';
+import { RoletaSorte } from '@app/Models/RoletaSorte';
 import { UserUpdate } from '@app/Models/UserUpdate';
 import { environment } from '@environments/environment';
 import { Observable, map, take } from 'rxjs';
@@ -20,6 +20,10 @@ export class DashBoardService {
 
   public GetTotais(): Observable<any>{
     return this.http.get(`${this.baseUrl}/GetDashData`).pipe(take(1));
+  }
+
+  public GetRoleta(): Observable<any>{
+    return this.http.get(`${this.baseUrl}/GetRoleta`).pipe(take(1));
   }
 
   public getUserDash(email: string): Observable<UserUpdate>{
@@ -170,6 +174,11 @@ export class DashBoardService {
   public putUser(userDash: UserUpdate): Observable<UserUpdate> {
     return this.http
       .put<UserUpdate>(`${this.baseUrl}/PutUser`, userDash)
+      .pipe(take(1));
+  }
+  public putRoleta(roleta: RoletaSorte): Observable<RoletaSorte> {
+    return this.http
+      .put<RoletaSorte>(`${this.baseUrl}/PutRoleta`, roleta)
       .pipe(take(1));
   }
 }
